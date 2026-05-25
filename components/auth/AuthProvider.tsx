@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setLoading(false);
 
           if (nextUser && pathname === "/login") {
-            router.replace("/");
+            router.replace("/parent/dashboard");
           }
         },
         (authError) => {
