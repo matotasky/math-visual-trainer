@@ -1,7 +1,21 @@
 "use client";
 
-import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User } from "firebase/auth";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut as firebaseSignOut,
+  type User,
+} from "firebase/auth";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { getFirebaseAuth, getGoogleAuthProvider } from "@/lib/firebase";
 
 type AuthContextValue = {
@@ -19,6 +33,9 @@ function getErrorMessage(error: unknown): string {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +49,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         (nextUser) => {
           setFirebaseUser(nextUser);
           setLoading(false);
+
+          if (nextUser && pathname === "/login") {
+            router.replace("/");
+          }
         },
         (authError) => {
           setError(getErrorMessage(authError));
@@ -46,25 +67,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return undefined;
     }
-  }, []);
+  }, [pathname, router]);
 
   const signInWithGoogle = useCallback(async () => {
     setError(null);
+    setLoading(true);
+
     try {
-      await signInWithPopup(getFirebaseAuth(), getGoogleAuthProvider());
+      const result = await signInWithPopup(getFirebaseAuth(), getGoogleAuthProvider());
+
+      setFirebaseUser(result.user);
+
+      if (pathname === "/login") {
+        router.replace("/");
+      }
     } catch (authError) {
       setError(getErrorMessage(authError));
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  }, [pathname, router]);
 
   const signOut = useCallback(async () => {
     setError(null);
     try {
       await firebaseSignOut(getFirebaseAuth());
+      router.replace("/login");
     } catch (authError) {
       setError(getErrorMessage(authError));
     }
-  }, []);
+  }, [router]);
 
   const value = useMemo(
     () => ({
@@ -72,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       error,
       signInWithGoogle,
-      signOut
+      signOut,
     }),
     [error, firebaseUser, loading, signInWithGoogle, signOut]
   );
