@@ -1,0 +1,100 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsUser(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function childProfileDocument(childProfileId) {
+      return /databases/$(database)/documents/childProfiles/$(childProfileId);
+    }
+
+    function ownsChildProfile(childProfileId) {
+      return signedIn()
+        && exists(childProfileDocument(childProfileId))
+        && get(childProfileDocument(childProfileId)).data.parentUserId == request.auth.uid;
+    }
+
+    function createsOwnedChildScopedDocument() {
+      return ownsChildProfile(request.resource.data.childProfileId);
+    }
+
+    function readsOwnedChildScopedDocument() {
+      return ownsChildProfile(resource.data.childProfileId);
+    }
+
+    function keepsChildScopeStable() {
+      return request.resource.data.childProfileId == resource.data.childProfileId;
+    }
+
+    match /users/{userId} {
+      allow create: if ownsUser(userId) && request.resource.data.role == "parent";
+      allow read, update, delete: if ownsUser(userId);
+    }
+
+    match /childProfiles/{childProfileId} {
+      allow create: if signedIn() && request.resource.data.parentUserId == request.auth.uid;
+      allow read, update, delete: if signedIn() && resource.data.parentUserId == request.auth.uid;
+    }
+
+    match /parentChildLinks/{linkId} {
+      allow create: if signedIn() && request.resource.data.parentUserId == request.auth.uid;
+      allow read, update, delete: if signedIn() && resource.data.parentUserId == request.auth.uid;
+    }
+
+    match /pinSettings/{pinSettingsId} {
+      allow create: if signedIn() && request.resource.data.parentUserId == request.auth.uid;
+      allow read, update, delete: if signedIn() && resource.data.parentUserId == request.auth.uid;
+    }
+
+    match /notificationSettings/{settingsId} {
+      allow create: if signedIn() && request.resource.data.parentUserId == request.auth.uid;
+      allow read, update, delete: if signedIn() && resource.data.parentUserId == request.auth.uid;
+    }
+
+    match /sessions/{sessionId} {
+      allow create: if createsOwnedChildScopedDocument();
+      allow read, delete: if readsOwnedChildScopedDocument();
+      allow update: if readsOwnedChildScopedDocument() && keepsChildScopeStable();
+    }
+
+    match /attempts/{attemptId} {
+      allow create: if createsOwnedChildScopedDocument();
+      allow read, delete: if readsOwnedChildScopedDocument();
+      allow update: if false;
+    }
+
+    match /dailyStats/{dailyStatsId} {
+      allow create: if createsOwnedChildScopedDocument();
+      allow read, delete: if readsOwnedChildScopedDocument();
+      allow update: if readsOwnedChildScopedDocument() && keepsChildScopeStable();
+    }
+
+    match /topicMastery/{topicMasteryId} {
+      allow create: if createsOwnedChildScopedDocument();
+      allow read, delete: if readsOwnedChildScopedDocument();
+      allow update: if readsOwnedChildScopedDocument() && keepsChildScopeStable();
+    }
+
+    match /mistakeStats/{mistakeStatsId} {
+      allow create: if createsOwnedChildScopedDocument();
+      allow read, delete: if readsOwnedChildScopedDocument();
+      allow update: if readsOwnedChildScopedDocument() && keepsChildScopeStable();
+    }
+
+    match /streaks/{streakId} {
+      allow create: if createsOwnedChildScopedDocument();
+      allow read, delete: if readsOwnedChildScopedDocument();
+      allow update: if readsOwnedChildScopedDocument() && keepsChildScopeStable();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
