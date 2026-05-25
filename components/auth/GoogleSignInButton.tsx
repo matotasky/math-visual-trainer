@@ -3,7 +3,7 @@
 import { LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
-export function GoogleSignInButton() {
+export function GoogleSignInButton({ label }: { label: string }) {
   const { loading, signInWithGoogle } = useAuth();
 
   return (
@@ -14,7 +14,7 @@ export function GoogleSignInButton() {
       onClick={() => void signInWithGoogle()}
     >
       <LogIn aria-hidden="true" size={20} />
-      Sign in with Google
+      {label}
     </button>
   );
 }

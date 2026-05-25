@@ -1,10 +1,14 @@
 import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function ChallengePage() {
+export default async function ChallengePage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <PagePlaceholder
-      title="Challenge"
-      description="Route skeleton for short timed rounds that unlock after stable mastery."
+      title={dictionary.child.pages.challenge.title}
+      description={dictionary.child.pages.challenge.description}
+      eyebrow={dictionary.child.area}
     />
   );
 }

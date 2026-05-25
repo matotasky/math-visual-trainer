@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { getDictionary } from "@/lib/i18n/messages";
+import { getRequestLocale } from "@/lib/i18n/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,11 +22,17 @@ export const metadata: Metadata = {
   description: "Visual arithmetic learning for children with parent analytics."
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const locale = await getRequestLocale();
+  const dictionary = getDictionary(locale);
+
   return (
-    <html className={`${geistSans.variable} ${geistMono.variable}`} lang="en">
+    <html className={`${geistSans.variable} ${geistMono.variable}`} lang={locale}>
       <body className="antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <LanguageSwitcher currentLocale={locale} labels={dictionary.language} />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

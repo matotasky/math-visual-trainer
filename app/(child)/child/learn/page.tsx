@@ -1,10 +1,14 @@
 import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function LearnPage() {
+export default async function LearnPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <PagePlaceholder
-      title="Learn"
-      description="Route skeleton for visual explanations, hints, interactive examples, and retry-friendly learning."
+      title={dictionary.child.pages.learn.title}
+      description={dictionary.child.pages.learn.description}
+      eyebrow={dictionary.child.area}
     />
   );
 }

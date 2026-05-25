@@ -1,12 +1,16 @@
 import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function NotFoundPage() {
+export default async function NotFoundPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <PagePlaceholder
-      title="Page not found"
-      description="This route is not part of the current Math Visual Trainer flow."
+      title={dictionary.notFound.title}
+      description={dictionary.notFound.description}
+      eyebrow={dictionary.common.fallbackEyebrow}
       primaryHref="/landing"
-      primaryLabel="Go to landing"
+      primaryLabel={dictionary.common.goToLanding}
     />
   );
 }

@@ -1,10 +1,14 @@
 import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function TestPage() {
+export default async function TestPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <PagePlaceholder
-      title="Test"
-      description="Route skeleton for fixed-length mastery checks with no hints and parent-visible results."
+      title={dictionary.child.pages.test.title}
+      description={dictionary.child.pages.test.description}
+      eyebrow={dictionary.child.area}
     />
   );
 }

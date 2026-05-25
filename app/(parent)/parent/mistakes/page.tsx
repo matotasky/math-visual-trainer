@@ -1,11 +1,15 @@
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function ParentMistakesPage() {
+export default async function ParentMistakesPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <section className="py-8">
       <ParentSectionHeader
-        title="Mistakes"
-        description="Route skeleton for frequent wrong examples, likely issue explanations, and suggested remediation."
+        title={dictionary.parent.mistakes.title}
+        description={dictionary.parent.mistakes.description}
+        eyebrow={dictionary.parent.eyebrow}
       />
     </section>
   );

@@ -3,15 +3,16 @@ import Link from "next/link";
 type PagePlaceholderProps = {
   title: string;
   description: string;
+  eyebrow?: string;
   primaryHref?: string;
   primaryLabel?: string;
 };
 
-export function PagePlaceholder({ title, description, primaryHref, primaryLabel }: PagePlaceholderProps) {
+export function PagePlaceholder({ title, description, eyebrow = "Math Visual Trainer", primaryHref, primaryLabel }: PagePlaceholderProps) {
   return (
     <section className="flex min-h-[60vh] flex-col justify-center gap-6">
       <div className="max-w-2xl">
-        <p className="text-sm font-semibold uppercase text-emerald-700">Math Visual Trainer</p>
+        <p className="text-sm font-semibold uppercase text-emerald-700">{eyebrow}</p>
         <h1 className="mt-3 text-4xl font-bold text-slate-950 sm:text-5xl">{title}</h1>
         <p className="mt-4 text-lg leading-8 text-slate-700">{description}</p>
       </div>

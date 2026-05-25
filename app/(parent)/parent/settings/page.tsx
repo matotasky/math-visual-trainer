@@ -1,11 +1,15 @@
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function ParentSettingsPage() {
+export default async function ParentSettingsPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <section className="py-8">
       <ParentSectionHeader
-        title="Settings"
-        description="Route skeleton for PIN changes, daily goals, time pressure preferences, child profile management, and phase 2 notification settings."
+        title={dictionary.parent.settings.title}
+        description={dictionary.parent.settings.description}
+        eyebrow={dictionary.parent.eyebrow}
       />
     </section>
   );

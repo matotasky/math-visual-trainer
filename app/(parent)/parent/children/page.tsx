@@ -1,11 +1,15 @@
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function ParentChildrenPage() {
+export default async function ParentChildrenPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <section className="py-8">
       <ParentSectionHeader
-        title="Children"
-        description="Route skeleton for creating, selecting, and managing local child profiles under the parent account."
+        title={dictionary.parent.children.title}
+        description={dictionary.parent.children.description}
+        eyebrow={dictionary.parent.eyebrow}
       />
     </section>
   );

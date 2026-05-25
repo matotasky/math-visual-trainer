@@ -1,11 +1,15 @@
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function ParentPinPage() {
+export default async function ParentPinPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <section className="py-8">
       <ParentSectionHeader
-        title="Parent PIN"
-        description="Route skeleton for hashed PIN verification, failed attempt tracking, and temporary lockout."
+        title={dictionary.parent.pin.title}
+        description={dictionary.parent.pin.description}
+        eyebrow={dictionary.parent.eyebrow}
       />
     </section>
   );

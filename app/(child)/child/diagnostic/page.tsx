@@ -1,10 +1,14 @@
 import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function DiagnosticPage() {
+export default async function DiagnosticPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <PagePlaceholder
-      title="Diagnostic"
-      description="Route skeleton for the friendly entry diagnostic. The next pass will connect diagnostic steps, exercise generation, timing, and placement logic."
+      title={dictionary.child.pages.diagnostic.title}
+      description={dictionary.child.pages.diagnostic.description}
+      eyebrow={dictionary.child.area}
     />
   );
 }

@@ -36,6 +36,19 @@ MVP authentication uses Firebase Authentication with Google Sign-In for parents 
 
 Client route guards will provide user experience redirects. Firestore rules must enforce ownership because client guards are not security controls.
 
+## Localization Decision
+
+The MVP supports Slovak and English from the start. Slovak is the default locale. The server chooses a locale by checking, in order:
+
+1. The explicit `mvt_locale` cookie set by the language switcher.
+2. Vercel's `x-vercel-ip-country` request header when available.
+3. The browser `Accept-Language` header.
+4. Slovak as the fallback.
+
+English is selected automatically for common English-speaking country codes or English browser preference. Slovak is selected for Slovakia, Czechia, and all unknown regions by default. This avoids paid geolocation APIs and keeps localization compatible with Vercel Hobby.
+
+User-visible strings live in `lib/i18n/messages.ts`. Future feature work should add text to the dictionary instead of hardcoding copy in route components.
+
 ## Parent PIN Decision
 
 The PIN gate is a child barrier, not the primary security layer. PIN hashes are stored in Firestore and compared client-side with the Web Crypto API. The default PIN is never shown in the UI and must be initialized during onboarding or settings flow.

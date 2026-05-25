@@ -5,7 +5,15 @@ import { useEffect, type ReactNode } from "react";
 import { getLoginRedirect } from "@/lib/auth/redirects";
 import { useAuth } from "@/hooks/useAuth";
 
-export function ProtectedRoute({ children }: { children: ReactNode }) {
+export function ProtectedRoute({
+  children,
+  loadingLabel,
+  redirectingLabel
+}: {
+  children: ReactNode;
+  loadingLabel: string;
+  redirectingLabel: string;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const { firebaseUser, loading } = useAuth();
@@ -17,11 +25,11 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   }, [firebaseUser, loading, pathname, router]);
 
   if (loading) {
-    return <div className="p-6 text-sm text-slate-600">Loading...</div>;
+    return <div className="p-6 text-sm text-slate-600">{loadingLabel}</div>;
   }
 
   if (!firebaseUser) {
-    return <div className="p-6 text-sm text-slate-600">Redirecting...</div>;
+    return <div className="p-6 text-sm text-slate-600">{redirectingLabel}</div>;
   }
 
   return children;

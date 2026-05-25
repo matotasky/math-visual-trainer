@@ -1,17 +1,17 @@
 import { z } from "zod";
 
 export const pinSchema = z.object({
-  pin: z.string().regex(/^\d{4,8}$/, "PIN must be 4 to 8 digits")
+  pin: z.string().regex(/^\d{4,8}$/, "PIN musí mať 4 až 8 číslic")
 });
 
 export const changePinSchema = z
   .object({
-    currentPin: z.string().regex(/^\d{4,8}$/, "Current PIN must be 4 to 8 digits"),
-    nextPin: z.string().regex(/^\d{4,8}$/, "New PIN must be 4 to 8 digits"),
-    confirmPin: z.string().regex(/^\d{4,8}$/, "Confirm PIN must be 4 to 8 digits")
+    currentPin: z.string().regex(/^\d{4,8}$/, "Aktuálny PIN musí mať 4 až 8 číslic"),
+    nextPin: z.string().regex(/^\d{4,8}$/, "Nový PIN musí mať 4 až 8 číslic"),
+    confirmPin: z.string().regex(/^\d{4,8}$/, "Potvrdenie PINu musí mať 4 až 8 číslic")
   })
   .refine((value) => value.nextPin === value.confirmPin, {
-    message: "PIN entries must match",
+    message: "Zadané PINy sa musia zhodovať",
     path: ["confirmPin"]
   });
 

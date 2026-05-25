@@ -1,10 +1,14 @@
 import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function PracticePage() {
+export default async function PracticePage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <PagePlaceholder
-      title="Practice"
-      description="Route skeleton for adaptive practice with timed attempts, feedback, persistence, and aggregate updates."
+      title={dictionary.child.pages.practice.title}
+      description={dictionary.child.pages.practice.description}
+      eyebrow={dictionary.child.area}
     />
   );
 }

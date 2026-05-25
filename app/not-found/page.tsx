@@ -1,12 +1,16 @@
 import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function NotFoundRoutePage() {
+export default async function NotFoundRoutePage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <PagePlaceholder
-      title="Not found"
-      description="Fallback route for unknown or unavailable pages."
+      title={dictionary.notFound.routeTitle}
+      description={dictionary.notFound.routeDescription}
+      eyebrow={dictionary.common.fallbackEyebrow}
       primaryHref="/landing"
-      primaryLabel="Go to landing"
+      primaryLabel={dictionary.common.goToLanding}
     />
   );
 }

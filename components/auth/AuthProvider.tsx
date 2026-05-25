@@ -15,7 +15,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "An unexpected authentication error occurred.";
+  return error instanceof Error ? error.message : "Nastala neočakávaná chyba pri prihlasovaní.";
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -24,25 +24,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const auth = getFirebaseAuth();
+    const auth = getFirebaseAuth();
 
-      return onAuthStateChanged(
-        auth,
-        (nextUser) => {
-          setFirebaseUser(nextUser);
-          setLoading(false);
-        },
-        (authError) => {
-          setError(getErrorMessage(authError));
-          setLoading(false);
-        }
-      );
-    } catch (authError) {
-      setError(getErrorMessage(authError));
-      setLoading(false);
-      return undefined;
-    }
+    return onAuthStateChanged(
+      auth,
+      (nextUser) => {
+        setFirebaseUser(nextUser);
+        setLoading(false);
+      },
+      (authError) => {
+        setError(getErrorMessage(authError));
+        setLoading(false);
+      }
+    );
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
@@ -73,7 +67,7 @@ export function useAuthContext(): AuthContextValue {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuthContext must be used within AuthProvider.");
+    throw new Error("useAuthContext musí byť použitý vo vnútri AuthProvider.");
   }
 
   return context;

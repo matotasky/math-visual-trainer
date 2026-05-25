@@ -1,11 +1,15 @@
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function ParentResultsPage() {
+export default async function ParentResultsPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <section className="py-8">
       <ParentSectionHeader
-        title="Results"
-        description="Route skeleton for paginated sessions, tests, and detailed attempt review."
+        title={dictionary.parent.results.title}
+        description={dictionary.parent.results.description}
+        eyebrow={dictionary.parent.eyebrow}
       />
     </section>
   );

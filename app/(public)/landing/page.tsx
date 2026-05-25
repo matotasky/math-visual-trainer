@@ -1,12 +1,16 @@
 import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <PagePlaceholder
-      title="Math Visual Trainer"
-      description="A zero-budget visual arithmetic learning MVP with diagnostic placement, adaptive practice, and parent insight."
+      title={dictionary.public.landingTitle}
+      description={dictionary.public.landingDescription}
+      eyebrow={dictionary.common.fallbackEyebrow}
       primaryHref="/login"
-      primaryLabel="Start"
+      primaryLabel={dictionary.public.start}
     />
   );
 }

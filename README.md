@@ -51,6 +51,7 @@ Implemented in this scaffold:
 - Project configuration
 - Documentation in `docs/`
 - App Router route skeletons
+- Slovak-first localization with English fallback support
 - Shared TypeScript domain types
 - Central level and diagnostic data definitions
 - Lazy Firebase client getters
@@ -71,3 +72,5 @@ Not implemented yet:
 ## Architecture Notes
 
 Firestore reads are planned around aggregate documents for dashboard views. Raw attempts are stored for detailed history only and must be paginated. Realtime listeners should be used sparingly and only where the UX clearly needs them.
+
+Slovak is the default UI language. English is selected automatically for likely English-speaking visitors or manually through the SK/EN switcher.

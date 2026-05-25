@@ -1,10 +1,14 @@
 import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
+import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default function RewardsPage() {
+export default async function RewardsPage() {
+  const dictionary = await getRequestDictionary();
+
   return (
     <PagePlaceholder
-      title="Rewards"
-      description="Route skeleton for daily streaks, milestones, and child-facing progress rewards."
+      title={dictionary.child.pages.rewards.title}
+      description={dictionary.child.pages.rewards.description}
+      eyebrow={dictionary.child.area}
     />
   );
 }
