@@ -24,29 +24,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const auth = getFirebaseAuth();
+    try {
+      const auth = getFirebaseAuth();
 
-    return onAuthStateChanged(
-      auth,
-      (nextUser) => {
-        setFirebaseUser(nextUser);
-        setLoading(false);
-      },
-      (authError) => {
+      return onAuthStateChanged(
+        auth,
+        (nextUser) => {
+          setFirebaseUser(nextUser);
+          setLoading(false);
+        },
+        (authError) => {
+          setError(getErrorMessage(authError));
+          setLoading(false);
+        }
+      );
+    } catch (authError) {
+      window.setTimeout(() => {
         setError(getErrorMessage(authError));
         setLoading(false);
-      }
-    );
+      }, 0);
+
+      return undefined;
+    }
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
     setError(null);
-    await signInWithPopup(getFirebaseAuth(), getGoogleAuthProvider());
+    try {
+      await signInWithPopup(getFirebaseAuth(), getGoogleAuthProvider());
+    } catch (authError) {
+      setError(getErrorMessage(authError));
+    }
   }, []);
 
   const signOut = useCallback(async () => {
     setError(null);
-    await firebaseSignOut(getFirebaseAuth());
+    try {
+      await firebaseSignOut(getFirebaseAuth());
+    } catch (authError) {
+      setError(getErrorMessage(authError));
+    }
   }, []);
 
   const value = useMemo(
