@@ -1,21 +1,15 @@
 "use client";
 
 import {
+  browserLocalPersistence,
+  getRedirectResult,
   onAuthStateChanged,
-  signInWithPopup,
+  setPersistence,
+  signInWithRedirect,
   signOut as firebaseSignOut,
-  type User,
+  type User
 } from "firebase/auth";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { getFirebaseAuth, getGoogleAuthProvider } from "@/lib/firebase";
 
 type AuthContextValue = {
@@ -33,9 +27,6 @@ function getErrorMessage(error: unknown): string {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const pathname = usePathname();
-
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,15 +35,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const auth = getFirebaseAuth();
 
+      void getRedirectResult(auth).catch((authError: unknown) => {
+        setError(getErrorMessage(authError));
+        setLoading(false);
+      });
+
       return onAuthStateChanged(
         auth,
         (nextUser) => {
           setFirebaseUser(nextUser);
           setLoading(false);
-
-          if (nextUser && pathname === "/login") {
-            router.replace("/parent/dashboard");
-          }
         },
         (authError) => {
           setError(getErrorMessage(authError));
@@ -67,36 +59,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return undefined;
     }
-  }, [pathname, router]);
+  }, []);
 
   const signInWithGoogle = useCallback(async () => {
     setError(null);
     setLoading(true);
 
     try {
-      const result = await signInWithPopup(getFirebaseAuth(), getGoogleAuthProvider());
-
-      setFirebaseUser(result.user);
-
-      if (pathname === "/login") {
-        router.replace("/");
-      }
+      const auth = getFirebaseAuth();
+      await setPersistence(auth, browserLocalPersistence);
+      await signInWithRedirect(auth, getGoogleAuthProvider());
     } catch (authError) {
       setError(getErrorMessage(authError));
-    } finally {
       setLoading(false);
     }
-  }, [pathname, router]);
+  }, []);
 
   const signOut = useCallback(async () => {
     setError(null);
+
     try {
       await firebaseSignOut(getFirebaseAuth());
-      router.replace("/login");
     } catch (authError) {
       setError(getErrorMessage(authError));
     }
-  }, [router]);
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -104,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       error,
       signInWithGoogle,
-      signOut,
+      signOut
     }),
     [error, firebaseUser, loading, signInWithGoogle, signOut]
   );

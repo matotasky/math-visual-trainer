@@ -11,3 +11,13 @@ export const AUTH_ROUTES = {
 export function getLoginRedirect(nextPath?: string): string {
   return nextPath ? `${AUTH_ROUTES.login}?next=${encodeURIComponent(nextPath)}` : AUTH_ROUTES.login;
 }
+
+export function getPostLoginRedirect(nextPath?: string | string[] | null): string {
+  const candidate = Array.isArray(nextPath) ? nextPath[0] : nextPath;
+
+  if (!candidate || !candidate.startsWith("/") || candidate.startsWith("//") || candidate.startsWith(AUTH_ROUTES.login)) {
+    return AUTH_ROUTES.parentChildren;
+  }
+
+  return candidate;
+}

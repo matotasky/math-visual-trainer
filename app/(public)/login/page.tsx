@@ -1,8 +1,17 @@
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { getPostLoginRedirect } from "@/lib/auth/redirects";
 import { getRequestDictionary } from "@/lib/i18n/server";
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{
+    next?: string | string[];
+  }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const dictionary = await getRequestDictionary();
+  const params = await searchParams;
+  const nextPath = getPostLoginRedirect(params.next);
 
   return (
     <section className="flex min-h-[60vh] flex-col justify-center gap-6">
@@ -13,7 +22,7 @@ export default async function LoginPage() {
           {dictionary.public.loginDescription}
         </p>
       </div>
-      <GoogleSignInButton label={dictionary.public.signInWithGoogle} />
+      <GoogleSignInButton label={dictionary.public.signInWithGoogle} nextPath={nextPath} />
     </section>
   );
 }
