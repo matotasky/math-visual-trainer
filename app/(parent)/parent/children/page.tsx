@@ -1,3 +1,4 @@
+import { ChildProfileManager } from "@/components/parent/ChildProfileManager";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
 import { getRequestDictionary } from "@/lib/i18n/server";
 
@@ -11,6 +12,7 @@ export default async function ParentChildrenPage() {
         description={dictionary.parent.children.description}
         eyebrow={dictionary.parent.eyebrow}
       />
+      <ChildProfileManager labels={dictionary.parent.children} />
     </section>
   );
 }

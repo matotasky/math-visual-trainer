@@ -1,17 +1,90 @@
+import { addDoc, collection, getDocs, query, where, type DocumentData } from "firebase/firestore";
+import { DEFAULT_LEVEL_ID } from "@/data/levels";
+import { getFirestoreDb } from "@/lib/firebase";
 import type { ChildProfile } from "@/types";
+import { FIRESTORE_COLLECTIONS } from "./collections";
 
 export type CreateChildProfileInput = Pick<
   ChildProfile,
   "displayName" | "birthYear" | "schoolYear" | "dailyGoalMinutes"
 >;
 
-export async function listChildProfiles(_parentUserId: string): Promise<ChildProfile[]> {
-  throw new Error("listChildProfiles will be implemented with paged Firestore reads.");
+function readOptionalNumber(value: unknown): number | undefined {
+  return typeof value === "number" ? value : undefined;
+}
+
+function readDate(value: unknown): Date {
+  if (value instanceof Date) {
+    return value;
+  }
+
+  if (typeof value === "object" && value !== null && "toDate" in value && typeof value.toDate === "function") {
+    return value.toDate() as Date;
+  }
+
+  return new Date();
+}
+
+function mapChildProfile(id: string, data: DocumentData): ChildProfile {
+  const currentLevelId =
+    typeof data.currentLevelId === "string" ? (data.currentLevelId as ChildProfile["currentLevelId"]) : DEFAULT_LEVEL_ID;
+
+  return {
+    id,
+    parentUserId: String(data.parentUserId ?? ""),
+    linkedChildUserId: typeof data.linkedChildUserId === "string" ? data.linkedChildUserId : undefined,
+    displayName: String(data.displayName ?? ""),
+    birthYear: readOptionalNumber(data.birthYear),
+    schoolYear: readOptionalNumber(data.schoolYear),
+    currentLevelId,
+    dailyGoalMinutes: typeof data.dailyGoalMinutes === "number" ? data.dailyGoalMinutes : 10,
+    diagnosticCompletedAt: data.diagnosticCompletedAt ? readDate(data.diagnosticCompletedAt) : undefined,
+    createdAt: readDate(data.createdAt),
+    updatedAt: readDate(data.updatedAt)
+  };
 }
 
 export async function createChildProfile(
-  _parentUserId: string,
-  _input: CreateChildProfileInput
+  parentUserId: string,
+  input: CreateChildProfileInput
 ): Promise<ChildProfile> {
-  throw new Error("createChildProfile will be implemented after onboarding forms are added.");
+  const db = getFirestoreDb();
+  const now = new Date();
+  const childProfileData = {
+    parentUserId,
+    displayName: input.displayName.trim(),
+    currentLevelId: DEFAULT_LEVEL_ID,
+    dailyGoalMinutes: input.dailyGoalMinutes,
+    createdAt: now,
+    updatedAt: now,
+    ...(typeof input.birthYear === "number" ? { birthYear: input.birthYear } : {}),
+    ...(typeof input.schoolYear === "number" ? { schoolYear: input.schoolYear } : {})
+  };
+
+  const childProfileRef = await addDoc(collection(db, FIRESTORE_COLLECTIONS.childProfiles), childProfileData);
+
+  await addDoc(collection(db, FIRESTORE_COLLECTIONS.parentChildLinks), {
+    parentUserId,
+    childProfileId: childProfileRef.id,
+    relationship: "parent",
+    createdAt: now
+  });
+
+  return {
+    id: childProfileRef.id,
+    ...childProfileData
+  };
+}
+
+export async function listChildProfiles(parentUserId: string): Promise<ChildProfile[]> {
+  const db = getFirestoreDb();
+  const childProfilesQuery = query(
+    collection(db, FIRESTORE_COLLECTIONS.childProfiles),
+    where("parentUserId", "==", parentUserId)
+  );
+  const snapshot = await getDocs(childProfilesQuery);
+
+  return snapshot.docs
+    .map((document) => mapChildProfile(document.id, document.data()))
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }

@@ -119,7 +119,27 @@ export const dictionaries = {
       },
       children: {
         title: "Deti",
-        description: "Základ obrazovky pre vytváranie, výber a správu lokálnych detských profilov pod rodičovským účtom."
+        description: "Vytvorte detský profil a pokračujte do diagnostiky. Dieťa v MVP nepotrebuje vlastný Google účet.",
+        createTitle: "Nový detský profil",
+        createDescription: "Stačí meno a denný cieľ. Ostatné údaje môžete doplniť neskôr.",
+        nameLabel: "Meno dieťaťa",
+        namePlaceholder: "Napríklad Ema",
+        birthYearLabel: "Rok narodenia",
+        schoolYearLabel: "Ročník",
+        dailyGoalLabel: "Denný cieľ v minútach",
+        createButton: "Vytvoriť profil a začať diagnostiku",
+        creatingButton: "Vytváram profil...",
+        existingTitle: "Detské profily",
+        emptyTitle: "Zatiaľ tu nie je žiadne dieťa",
+        emptyDescription: "Vytvorte prvý profil, aby dieťa mohlo začať priateľskou diagnostikou.",
+        currentLevelLabel: "Aktuálna úroveň",
+        dailyGoalValue: "Denný cieľ: {minutes} min",
+        continueDiagnostic: "Začať diagnostiku",
+        continueChild: "Pokračovať",
+        loadingProfiles: "Načítavam profily...",
+        loadError: "Nepodarilo sa načítať detské profily. Skúste obnoviť stránku.",
+        createError: "Profil sa nepodarilo vytvoriť. Skontrolujte pripojenie a Firebase pravidlá.",
+        nameRequired: "Zadajte meno dieťaťa."
       }
     },
     validation: {
@@ -253,7 +273,27 @@ export const dictionaries = {
       },
       children: {
         title: "Children",
-        description: "Route skeleton for creating, selecting, and managing local child profiles under the parent account."
+        description: "Create a child profile and continue to diagnostics. Children do not need their own Google account in the MVP.",
+        createTitle: "New child profile",
+        createDescription: "A name and daily goal are enough. You can fill in the rest later.",
+        nameLabel: "Child name",
+        namePlaceholder: "For example Emma",
+        birthYearLabel: "Birth year",
+        schoolYearLabel: "School year",
+        dailyGoalLabel: "Daily goal in minutes",
+        createButton: "Create profile and start diagnostics",
+        creatingButton: "Creating profile...",
+        existingTitle: "Child profiles",
+        emptyTitle: "No child profile yet",
+        emptyDescription: "Create the first profile so the child can begin with a friendly diagnostic.",
+        currentLevelLabel: "Current level",
+        dailyGoalValue: "Daily goal: {minutes} min",
+        continueDiagnostic: "Start diagnostics",
+        continueChild: "Continue",
+        loadingProfiles: "Loading profiles...",
+        loadError: "Could not load child profiles. Try refreshing the page.",
+        createError: "Could not create the profile. Check your connection and Firebase rules.",
+        nameRequired: "Enter the child's name."
       }
     },
     validation: {
