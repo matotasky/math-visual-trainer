@@ -5,8 +5,7 @@ import { FIRESTORE_COLLECTIONS } from "./collections";
 
 export async function saveAttempt(attempt: ExerciseAttempt): Promise<void> {
   const db = getFirestoreDb();
-
-  await addDoc(collection(db, FIRESTORE_COLLECTIONS.attempts), {
+  const attemptData = {
     childProfileId: attempt.childProfileId,
     sessionId: attempt.sessionId,
     topic: attempt.topic,
@@ -14,7 +13,7 @@ export async function saveAttempt(attempt: ExerciseAttempt): Promise<void> {
     mode: attempt.mode,
     questionType: attempt.questionType,
     operands: attempt.operands,
-    operator: attempt.operator,
+    ...(attempt.operator ? { operator: attempt.operator } : {}),
     correctAnswer: attempt.correctAnswer,
     givenAnswer: attempt.givenAnswer,
     isCorrect: attempt.isCorrect,
@@ -22,7 +21,9 @@ export async function saveAttempt(attempt: ExerciseAttempt): Promise<void> {
     usedHint: attempt.usedHint,
     visualModel: attempt.visualModel,
     createdAt: attempt.createdAt
-  });
+  };
+
+  await addDoc(collection(db, FIRESTORE_COLLECTIONS.attempts), attemptData);
 }
 
 export async function listAttemptsPage(
