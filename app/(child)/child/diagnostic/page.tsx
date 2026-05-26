@@ -1,8 +1,8 @@
 import { DiagnosticRunner } from "@/components/child/DiagnosticRunner";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function DiagnosticPage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
-  return <DiagnosticRunner labels={dictionary.child.diagnosticRunner} />;
+  return <DiagnosticRunner labels={dictionary.child.diagnosticRunner} locale={locale} />;
 }

@@ -1,14 +1,8 @@
-import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { LearnActivity } from "@/components/child/LearnActivity";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function LearnPage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
-  return (
-    <PagePlaceholder
-      title={dictionary.child.pages.learn.title}
-      description={dictionary.child.pages.learn.description}
-      eyebrow={dictionary.child.area}
-    />
-  );
+  return <LearnActivity labels={dictionary.child.learnRunner} locale={locale} />;
 }

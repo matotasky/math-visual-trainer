@@ -1,5 +1,5 @@
 import { LEVELS } from "@/data/levels";
-import type { Exercise, GenerateExerciseParams, LevelDefinition, MathTopic, VisualModel } from "@/types";
+import type { Exercise, GenerateExerciseParams, LevelDefinition, Locale, MathTopic, VisualModel } from "@/types";
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -21,10 +21,33 @@ function selectVisualModel(level: LevelDefinition, preferredVisualModel?: Visual
   return level.visualModels[0];
 }
 
+function promptForTopic(locale: Locale, topic: MathTopic, operands: number[]): string {
+  const [a = 0, b = 0] = operands;
+
+  if (topic === "quantity_recognition" || topic === "quantity_to_10") {
+    return locale === "sk" ? "Ko\u013eko ich vid\u00ed\u0161?" : "How many do you see?";
+  }
+
+  if (topic === "number_matching") {
+    return locale === "sk" ? "Ak\u00e9 \u010d\u00edslo patr\u00ed k obr\u00e1zku?" : "Which number matches the picture?";
+  }
+
+  if (topic === "make_10") {
+    return `${a} + ? = 10`;
+  }
+
+  if (topic === "subtraction_to_10") {
+    return `${a} - ${b} = ?`;
+  }
+
+  return `${a} + ${b} = ?`;
+}
+
 export function generateExercise(params: GenerateExerciseParams): Exercise {
   const level = LEVELS.find((candidate) => candidate.id === params.levelId) ?? LEVELS[0];
   const topic = selectTopic(level, params.topic);
   const visualModel = selectVisualModel(level, params.preferredVisualModel);
+  const locale = params.locale ?? "sk";
   const id = `${params.childProfileId}-${Date.now()}`;
 
   if (topic === "make_10") {
@@ -40,7 +63,7 @@ export function generateExercise(params: GenerateExerciseParams): Exercise {
       operator: "+",
       correctAnswer: 10 - known,
       visualModel,
-      prompt: `${known} + ? = 10`,
+      prompt: promptForTopic(locale, topic, [known]),
       timePressure: level.timePressure
     };
   }
@@ -59,7 +82,7 @@ export function generateExercise(params: GenerateExerciseParams): Exercise {
       operator: "-",
       correctAnswer: a - b,
       visualModel,
-      prompt: `${a} - ${b} = ?`,
+      prompt: promptForTopic(locale, topic, [a, b]),
       timePressure: level.timePressure
     };
   }
@@ -77,7 +100,7 @@ export function generateExercise(params: GenerateExerciseParams): Exercise {
       operands: [amount],
       correctAnswer: amount,
       visualModel,
-      prompt: "How many do you see?",
+      prompt: promptForTopic(locale, topic, [amount]),
       options: [amount, Math.max(0, amount - 1), amount + 1].sort((a, b) => a - b),
       timePressure: level.timePressure
     };
@@ -97,7 +120,7 @@ export function generateExercise(params: GenerateExerciseParams): Exercise {
     operator: "+",
     correctAnswer: a + b,
     visualModel,
-    prompt: `${a} + ${b} = ?`,
+    prompt: promptForTopic(locale, topic, [a, b]),
     timePressure: level.timePressure
   };
 }

@@ -6,10 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import { DIAGNOSTIC_STEPS } from "@/data/diagnostic";
 import { generateExercise, validateAnswer } from "@/lib/math-engine";
 import { completeChildDiagnostic, saveAttempt } from "@/lib/firestore";
-import type { Exercise, ExerciseAttempt, LevelId } from "@/types";
-import { DotModel } from "@/components/math/DotModel";
-import { NumberLine } from "@/components/math/NumberLine";
-import { TenFrame } from "@/components/math/TenFrame";
+import { getSelectedChildProfileId } from "@/lib/utils/childSelection";
+import type { Exercise, ExerciseAttempt, LevelId, Locale } from "@/types";
+import { ExerciseVisual } from "@/components/math/ExerciseVisual";
 
 type DiagnosticRunnerLabels = {
   title: string;
@@ -32,24 +31,16 @@ type DiagnosticRunnerLabels = {
 
 type DiagnosticRunnerProps = {
   labels: DiagnosticRunnerLabels;
+  locale: Locale;
 };
 
-const selectedChildStorageKey = "math-visual-trainer:selected-child-profile-id";
 const diagnosticQuestionCount = 12;
 
 const diagnosticPlan = DIAGNOSTIC_STEPS.flatMap((step) =>
   Array.from({ length: step.id === "subtraction-to-10" ? 1 : 2 }).map(() => step)
 ).slice(0, diagnosticQuestionCount);
 
-function getSelectedChildProfileId(): string | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return window.localStorage.getItem(selectedChildStorageKey);
-}
-
-function createExercise(childProfileId: string, stepIndex: number): Exercise {
+function createExercise(childProfileId: string, stepIndex: number, locale: Locale): Exercise {
   const step = diagnosticPlan[stepIndex] ?? diagnosticPlan[0];
 
   return generateExercise({
@@ -57,7 +48,8 @@ function createExercise(childProfileId: string, stepIndex: number): Exercise {
     mode: "diagnostic",
     levelId: "L0_DIAGNOSTIC",
     topic: step.topic,
-    preferredVisualModel: step.visualModel
+    preferredVisualModel: step.visualModel,
+    locale
   });
 }
 
@@ -87,21 +79,7 @@ function pickStartingLevel(attempts: ExerciseAttempt[]): LevelId {
   return "L1_QUANTITY_TO_5";
 }
 
-function renderVisualModel(exercise: Exercise) {
-  const primary = exercise.operands[0] ?? 0;
-
-  if (exercise.visualModel === "ten_frame") {
-    return <TenFrame filled={primary} />;
-  }
-
-  if (exercise.visualModel === "number_line") {
-    return <NumberLine end={exercise.correctAnswer} start={primary} />;
-  }
-
-  return <DotModel count={primary} />;
-}
-
-export function DiagnosticRunner({ labels }: DiagnosticRunnerProps) {
+export function DiagnosticRunner({ labels, locale }: DiagnosticRunnerProps) {
   const router = useRouter();
   const childProfileIdRef = useRef<string | null>(null);
   const sessionIdRef = useRef("");
@@ -123,11 +101,11 @@ export function DiagnosticRunner({ labels }: DiagnosticRunnerProps) {
 
     if (selectedChildProfileId) {
       window.setTimeout(() => {
-        setExercise(createExercise(selectedChildProfileId, 0));
+        setExercise(createExercise(selectedChildProfileId, 0, locale));
       }, 0);
       startedAtRef.current = Date.now();
     }
-  }, []);
+  }, [locale]);
 
   if (!exercise) {
     return (
@@ -218,7 +196,7 @@ export function DiagnosticRunner({ labels }: DiagnosticRunnerProps) {
     }
 
     setStepIndex(nextStepIndex);
-    setExercise(createExercise(activeChildProfileId, nextStepIndex));
+    setExercise(createExercise(activeChildProfileId, nextStepIndex, locale));
     setAnswer("");
     setFeedback(null);
     setLastAttempt(null);
@@ -250,7 +228,9 @@ export function DiagnosticRunner({ labels }: DiagnosticRunnerProps) {
         <h1 className="mt-2 text-3xl font-bold text-slate-950">{labels.title}</h1>
         <p className="mt-3 max-w-2xl text-base leading-7 text-slate-700">{labels.description}</p>
 
-        <div className="mt-8 flex min-h-64 items-center justify-center">{renderVisualModel(exercise)}</div>
+        <div className="mt-8 flex min-h-64 items-center justify-center">
+          <ExerciseVisual exercise={exercise} />
+        </div>
       </div>
 
       <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">

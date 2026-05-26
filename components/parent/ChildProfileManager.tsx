@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { createChildProfile, listChildProfiles } from "@/lib/firestore";
+import { setSelectedChildProfileId } from "@/lib/utils/childSelection";
 import type { ChildProfile } from "@/types";
 
 type ChildProfileManagerLabels = {
@@ -33,8 +34,6 @@ type ChildProfileManagerLabels = {
 type ChildProfileManagerProps = {
   labels: ChildProfileManagerLabels;
 };
-
-const selectedChildStorageKey = "math-visual-trainer:selected-child-profile-id";
 
 function optionalNumber(value: string): number | undefined {
   const trimmed = value.trim();
@@ -99,7 +98,7 @@ export function ChildProfileManager({ labels }: ChildProfileManagerProps) {
   }, [firebaseUser?.uid, labels.loadError]);
 
   function selectChild(profile: ChildProfile) {
-    window.localStorage.setItem(selectedChildStorageKey, profile.id);
+    setSelectedChildProfileId(profile.id);
     router.push(profile.diagnosticCompletedAt ? "/child" : "/child/diagnostic");
   }
 

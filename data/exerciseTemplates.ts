@@ -14,14 +14,14 @@ export const EXERCISE_TEMPLATES = [
     topic: "quantity_recognition",
     questionType: "quantity_recognition",
     visualModels: ["dots", "groups"],
-    promptTemplate: "How many do you see?"
+    promptTemplate: "Ko\u013eko ich vid\u00ed\u0161?"
   },
   {
     id: "number-matching-basic",
     topic: "number_matching",
     questionType: "number_matching",
     visualModels: ["dots", "ten_frame"],
-    promptTemplate: "Which picture matches {answer}?"
+    promptTemplate: "Ktor\u00fd obr\u00e1zok ukazuje \u010d\u00edslo {answer}?"
   },
   {
     id: "addition-to-5-basic",

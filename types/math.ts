@@ -1,3 +1,5 @@
+import type { Locale } from "./locale";
+
 export type MathTopic =
   | "quantity_recognition"
   | "number_matching"
@@ -56,6 +58,7 @@ export type GenerateExerciseParams = {
   levelId: LevelId;
   topic?: MathTopic;
   preferredVisualModel?: VisualModel;
+  locale?: Locale;
 };
 
 export type AnswerValidationResult = {

@@ -1,14 +1,8 @@
-import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { PracticeRunner } from "@/components/child/PracticeRunner";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function PracticePage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
-  return (
-    <PagePlaceholder
-      title={dictionary.child.pages.practice.title}
-      description={dictionary.child.pages.practice.description}
-      eyebrow={dictionary.child.area}
-    />
-  );
+  return <PracticeRunner labels={dictionary.child.practiceRunner} locale={locale} />;
 }
