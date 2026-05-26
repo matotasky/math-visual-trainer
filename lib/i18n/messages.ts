@@ -82,6 +82,24 @@ export const dictionaries = {
           title: "Odmeny",
           description: "Základ obrazovky pre dennú sériu, míľniky a detsky zrozumiteľný pokrok."
         }
+      },
+      diagnosticRunner: {
+        title: "Poďme zistiť, čo už vieš",
+        description: "Nie je to známkovaný test. Len sa pozrieme, ktoré obrázky a príklady sú pre teba najlepšie na začiatok.",
+        questionCount: "Otázka {current} z {total}",
+        answerLabel: "Tvoja odpoveď",
+        answerPlaceholder: "Napíš číslo",
+        checkAnswer: "Skontrolovať",
+        nextQuestion: "Ďalšia otázka",
+        finish: "Dokončiť diagnostiku",
+        saving: "Ukladám...",
+        correctFeedback: "Výborne, to sedí.",
+        tryAgainFeedback: "Ďakujem, ideme ďalej pokojne ďalej.",
+        completeTitle: "Diagnostika je hotová",
+        completeDescription: "Vybrali sme vhodný štartovací bod. Teraz môže dieťa pokračovať učením alebo precvičovaním.",
+        continueButton: "Pokračovať do detskej časti",
+        missingChild: "Najprv vyberte alebo vytvorte detský profil v rodičovskej časti.",
+        saveError: "Nepodarilo sa uložiť odpoveď. Skontrolujte pripojenie a Firebase pravidlá."
       }
     },
     parent: {
@@ -236,6 +254,24 @@ export const dictionaries = {
           title: "Rewards",
           description: "Route skeleton for daily streaks, milestones, and child-facing progress rewards."
         }
+      },
+      diagnosticRunner: {
+        title: "Let's see what you know",
+        description: "This is not a graded test. We are just finding the best pictures and exercises to start with.",
+        questionCount: "Question {current} of {total}",
+        answerLabel: "Your answer",
+        answerPlaceholder: "Type a number",
+        checkAnswer: "Check",
+        nextQuestion: "Next question",
+        finish: "Finish diagnostic",
+        saving: "Saving...",
+        correctFeedback: "Great, that matches.",
+        tryAgainFeedback: "Thanks, let's calmly keep going.",
+        completeTitle: "Diagnostic complete",
+        completeDescription: "We picked a good starting point. The child can now continue with learning or practice.",
+        continueButton: "Continue to child area",
+        missingChild: "Select or create a child profile in the parent area first.",
+        saveError: "Could not save the answer. Check your connection and Firebase rules."
       }
     },
     parent: {

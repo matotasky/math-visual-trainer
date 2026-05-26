@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, where, type DocumentData } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, updateDoc, where, type DocumentData } from "firebase/firestore";
 import { DEFAULT_LEVEL_ID } from "@/data/levels";
 import { getFirestoreDb } from "@/lib/firebase";
 import type { ChildProfile } from "@/types";
@@ -87,4 +87,15 @@ export async function listChildProfiles(parentUserId: string): Promise<ChildProf
   return snapshot.docs
     .map((document) => mapChildProfile(document.id, document.data()))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+}
+
+export async function completeChildDiagnostic(childProfileId: string, currentLevelId: ChildProfile["currentLevelId"]): Promise<void> {
+  const db = getFirestoreDb();
+  const now = new Date();
+
+  await updateDoc(doc(db, FIRESTORE_COLLECTIONS.childProfiles, childProfileId), {
+    currentLevelId,
+    diagnosticCompletedAt: now,
+    updatedAt: now
+  });
 }
