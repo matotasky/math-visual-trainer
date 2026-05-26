@@ -31,6 +31,13 @@ export const dictionaries = {
     child: {
       area: "Detská časť",
       homeTitle: "Vyber si matematickú aktivitu",
+      navigation: {
+        back: "Späť",
+        confirmTitle: "Chceš sa vrátiť?",
+        confirmDescription: "Rozpracovaný postup na tejto stránke sa stratí.",
+        stay: "Zostať tu",
+        leave: "Vrátiť sa"
+      },
       modes: {
         diagnostic: {
           label: "Diagnostika",
@@ -108,6 +115,7 @@ export const dictionaries = {
         missingChild: "Najprv vyberte dieťa v rodičovskej časti.",
         needDiagnostic: "Najprv dokončite diagnostiku, aby sme vybrali správnu úroveň.",
         selectedLevel: "Úroveň: {level}",
+        progressLabel: "Príklad {current} z {total}",
         visualHint: "Pozri sa na skupiny. Nemusíš počítať po jednom, ak vieš rozpoznať tvar alebo doplniť do 10.",
         strategyTitle: "Skús túto stratégiu",
         quantityStrategy: "Najprv hľadaj malé skupiny. Potom ich spoj do jedného čísla.",
@@ -118,6 +126,10 @@ export const dictionaries = {
         showAnswer: "Ukázať odpoveď",
         hideAnswer: "Skryť odpoveď",
         nextExample: "Ďalší príklad",
+        finishLesson: "Dokončiť učenie",
+        completeTitle: "Učenie je hotové",
+        completeDescription: "Prešli ste všetky príklady tejto krátkej lekcie. Teraz môžete pokračovať precvičovaním alebo sa vrátiť na prehľad.",
+        backToChild: "Späť na prehľad",
         goDiagnostic: "Ísť na diagnostiku"
       },
       practiceRunner: {
@@ -240,6 +252,13 @@ export const dictionaries = {
     child: {
       area: "Child area",
       homeTitle: "Choose a math activity",
+      navigation: {
+        back: "Back",
+        confirmTitle: "Go back?",
+        confirmDescription: "Progress on this page will be lost.",
+        stay: "Stay here",
+        leave: "Go back"
+      },
       modes: {
         diagnostic: {
           label: "Diagnostic",
@@ -317,6 +336,7 @@ export const dictionaries = {
         missingChild: "Select a child in the parent area first.",
         needDiagnostic: "Finish the diagnostic first so we can choose the right level.",
         selectedLevel: "Level: {level}",
+        progressLabel: "Example {current} of {total}",
         visualHint: "Look for groups. You do not need to count one by one if you can recognize the shape or complete 10.",
         strategyTitle: "Try this strategy",
         quantityStrategy: "Look for small groups first. Then combine them into one number.",
@@ -327,6 +347,10 @@ export const dictionaries = {
         showAnswer: "Show answer",
         hideAnswer: "Hide answer",
         nextExample: "Next example",
+        finishLesson: "Finish lesson",
+        completeTitle: "Lesson complete",
+        completeDescription: "You finished every example in this short lesson. You can now practice or return to the child overview.",
+        backToChild: "Back to overview",
         goDiagnostic: "Go to diagnostic"
       },
       practiceRunner: {

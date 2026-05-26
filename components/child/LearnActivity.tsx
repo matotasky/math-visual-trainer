@@ -1,6 +1,7 @@
 "use client";
 
-import { Eye, EyeOff, Loader2, RefreshCcw } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff, Loader2, RefreshCcw } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ChildStateMessage } from "@/components/child/ChildStateMessage";
 import { ExerciseVisual } from "@/components/math/ExerciseVisual";
@@ -15,6 +16,7 @@ type LearnActivityLabels = {
   missingChild: string;
   needDiagnostic: string;
   selectedLevel: string;
+  progressLabel: string;
   visualHint: string;
   strategyTitle: string;
   quantityStrategy: string;
@@ -25,6 +27,10 @@ type LearnActivityLabels = {
   showAnswer: string;
   hideAnswer: string;
   nextExample: string;
+  finishLesson: string;
+  completeTitle: string;
+  completeDescription: string;
+  backToChild: string;
   goDiagnostic: string;
 };
 
@@ -32,6 +38,8 @@ type LearnActivityProps = {
   labels: LearnActivityLabels;
   locale: Locale;
 };
+
+const lessonExampleCount = 8;
 
 function strategyForTopic(topic: MathTopic, labels: LearnActivityLabels): string {
   if (topic === "make_10" || topic === "bridge_through_10") {
@@ -53,12 +61,14 @@ export function LearnActivity({ labels, locale }: LearnActivityProps) {
   const { selectedChild, loading } = useChildProfile();
   const [exercise, setExercise] = useState<Exercise | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [exampleIndex, setExampleIndex] = useState(0);
+  const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
     async function prepareExercise() {
-      if (!selectedChild || !selectedChild.diagnosticCompletedAt) {
+      if (completed || !selectedChild || !selectedChild.diagnosticCompletedAt) {
         if (!cancelled) {
           setExercise(null);
         }
@@ -83,22 +93,20 @@ export function LearnActivity({ labels, locale }: LearnActivityProps) {
     return () => {
       cancelled = true;
     };
-  }, [locale, selectedChild]);
+  }, [completed, exampleIndex, locale, selectedChild]);
 
   function nextExample() {
     if (!selectedChild) {
       return;
     }
 
-    setExercise(
-      generateExercise({
-        childProfileId: selectedChild.id,
-        mode: "learn",
-        levelId: selectedChild.currentLevelId,
-        locale
-      })
-    );
-    setShowAnswer(false);
+    if (exampleIndex + 1 >= lessonExampleCount) {
+      setCompleted(true);
+      setShowAnswer(false);
+      return;
+    }
+
+    setExampleIndex((current) => current + 1);
   }
 
   if (loading) {
@@ -118,16 +126,43 @@ export function LearnActivity({ labels, locale }: LearnActivityProps) {
     return <ChildStateMessage actionHref="/child/diagnostic" actionLabel={labels.goDiagnostic} message={labels.needDiagnostic} />;
   }
 
+  if (completed) {
+    return (
+      <section className="rounded-lg border border-emerald-200 bg-emerald-50 p-6">
+        <CheckCircle2 aria-hidden="true" className="text-emerald-700" size={36} />
+        <h1 className="mt-4 text-3xl font-bold text-slate-950">{labels.completeTitle}</h1>
+        <p className="mt-3 max-w-2xl text-base leading-7 text-slate-700">{labels.completeDescription}</p>
+        <Link
+          className="mt-6 inline-flex min-h-12 items-center justify-center rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
+          href="/child"
+        >
+          {labels.backToChild}
+        </Link>
+      </section>
+    );
+  }
+
   if (!exercise) {
     return <ChildStateMessage message={labels.loadingChild} />;
   }
 
+  const progressLabel = labels.progressLabel
+    .replace("{current}", String(exampleIndex + 1))
+    .replace("{total}", String(lessonExampleCount));
+  const progressPercent = ((exampleIndex + 1) / lessonExampleCount) * 100;
+
   return (
     <section className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className="rounded-lg border border-sky-200 bg-white p-5 shadow-sm">
-        <p className="text-sm font-bold uppercase text-sky-700">
-          {labels.selectedLevel.replace("{level}", selectedChild.currentLevelId)}
-        </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-bold uppercase text-sky-700">
+            {labels.selectedLevel.replace("{level}", selectedChild.currentLevelId)}
+          </p>
+          <p className="text-sm font-bold text-slate-700">{progressLabel}</p>
+        </div>
+        <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
+          <div className="h-full rounded-full bg-emerald-600 transition-all" style={{ width: `${progressPercent}%` }} />
+        </div>
         <h1 className="mt-2 text-3xl font-bold text-slate-950">{labels.title}</h1>
         <p className="mt-3 max-w-2xl text-base leading-7 text-slate-700">{labels.description}</p>
 
@@ -168,7 +203,7 @@ export function LearnActivity({ labels, locale }: LearnActivityProps) {
             onClick={nextExample}
           >
             <RefreshCcw aria-hidden="true" size={18} />
-            {labels.nextExample}
+            {exampleIndex + 1 >= lessonExampleCount ? labels.finishLesson : labels.nextExample}
           </button>
         </div>
       </aside>

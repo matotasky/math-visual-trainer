@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { ChildBackNavigation } from "@/components/child/ChildBackNavigation";
 import { RouteShell } from "@/components/layout/RouteShell";
 import { getRequestDictionary } from "@/lib/i18n/server";
 
@@ -8,7 +9,10 @@ export default async function ChildLayout({ children }: { children: ReactNode })
 
   return (
     <ProtectedRoute loadingLabel={dictionary.common.loading} redirectingLabel={dictionary.common.redirecting}>
-      <RouteShell variant="child">{children}</RouteShell>
+      <RouteShell variant="child">
+        <ChildBackNavigation labels={dictionary.child.navigation} />
+        {children}
+      </RouteShell>
     </ProtectedRoute>
   );
 }
