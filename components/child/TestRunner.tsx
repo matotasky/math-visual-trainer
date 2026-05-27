@@ -10,7 +10,7 @@ import { saveAttempt } from "@/lib/firestore";
 import { generateExercise, validateAnswer } from "@/lib/math-engine";
 import type { Exercise, ExerciseAttempt, Locale } from "@/types";
 
-type PracticeRunnerLabels = {
+type TestRunnerLabels = {
   title: string;
   description: string;
   loadingChild: string;
@@ -20,12 +20,8 @@ type PracticeRunnerLabels = {
   questionCount: string;
   answerLabel: string;
   answerPlaceholder: string;
-  checkAnswer: string;
-  nextQuestion: string;
-  finishPractice: string;
+  submitAnswer: string;
   saving: string;
-  correctFeedback: string;
-  incorrectFeedback: string;
   saveError: string;
   completeTitle: string;
   completeDescription: string;
@@ -33,23 +29,22 @@ type PracticeRunnerLabels = {
   goDiagnostic: string;
 };
 
-type PracticeRunnerProps = {
-  labels: PracticeRunnerLabels;
+type TestRunnerProps = {
+  labels: TestRunnerLabels;
   locale: Locale;
 };
 
-const practiceTaskCount = 10;
+const testTaskCount = 10;
 
-export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
+export function TestRunner({ labels, locale }: TestRunnerProps) {
   const { selectedChild, loading } = useChildProfile();
   const [exercise, setExercise] = useState<Exercise | null>(null);
   const [answer, setAnswer] = useState("");
-  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [attemptCount, setAttemptCount] = useState(1);
+  const [taskIndex, setTaskIndex] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const sessionIdRef = useRef("");
   const startedAtRef = useRef(0);
 
@@ -67,13 +62,13 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
       const now = Date.now();
       const nextExercise = generateExercise({
         childProfileId: selectedChild.id,
-        mode: "practice",
+        mode: "test",
         levelId: selectedChild.currentLevelId,
         locale
       });
 
       if (!cancelled) {
-        sessionIdRef.current = sessionIdRef.current || `practice-${now}`;
+        sessionIdRef.current = sessionIdRef.current || `test-${now}`;
         startedAtRef.current = now;
         setExercise(nextExercise);
       }
@@ -86,30 +81,19 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
     };
   }, [completed, locale, selectedChild]);
 
-  function nextExercise() {
+  function createNextExercise() {
     if (!selectedChild) {
-      return;
-    }
-
-    if (attemptCount >= practiceTaskCount) {
-      setCompleted(true);
-      setAnswer("");
-      setFeedback(null);
       return;
     }
 
     setExercise(
       generateExercise({
         childProfileId: selectedChild.id,
-        mode: "practice",
+        mode: "test",
         levelId: selectedChild.currentLevelId,
         locale
       })
     );
-    setAnswer("");
-    setFeedback(null);
-    setError(null);
-    setAttemptCount((current) => current + 1);
     startedAtRef.current = Date.now();
   }
 
@@ -119,13 +103,14 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
     }
 
     const validation = validateAnswer(exercise, answer);
+    const nextCorrectCount = correctCount + (validation.isCorrect ? 1 : 0);
     const attempt: ExerciseAttempt = {
       id: exercise.id,
       childProfileId: selectedChild.id,
       sessionId: sessionIdRef.current,
       topic: exercise.topic,
       levelId: exercise.levelId,
-      mode: "practice",
+      mode: "test",
       questionType: exercise.questionType,
       operands: exercise.operands,
       operator: exercise.operator,
@@ -143,8 +128,17 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
 
     try {
       await saveAttempt(attempt);
-      setFeedback(validation.isCorrect ? "correct" : "incorrect");
-      setCorrectCount((current) => (validation.isCorrect ? current + 1 : current));
+      setCorrectCount(nextCorrectCount);
+
+      if (taskIndex + 1 >= testTaskCount) {
+        setCompleted(true);
+        setAnswer("");
+        return;
+      }
+
+      setTaskIndex((current) => current + 1);
+      setAnswer("");
+      createNextExercise();
     } catch {
       setError(labels.saveError);
     } finally {
@@ -177,7 +171,7 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
         <p className="mt-3 max-w-2xl text-base leading-7 text-slate-700">
           {labels.completeDescription
             .replace("{correct}", String(correctCount))
-            .replace("{total}", String(practiceTaskCount))}
+            .replace("{total}", String(testTaskCount))}
         </p>
         <Link
           className="mt-6 inline-flex min-h-12 items-center justify-center rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
@@ -194,9 +188,9 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
   }
 
   const progressLabel = labels.questionCount
-    .replace("{current}", String(attemptCount))
-    .replace("{total}", String(practiceTaskCount));
-  const progressPercent = (attemptCount / practiceTaskCount) * 100;
+    .replace("{current}", String(taskIndex + 1))
+    .replace("{total}", String(testTaskCount));
+  const progressPercent = ((taskIndex + 1) / testTaskCount) * 100;
 
   return (
     <section className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -229,49 +223,21 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
             inputMode="numeric"
             placeholder={labels.answerPlaceholder}
             value={answer}
-            onChange={(event) => {
-              setAnswer(event.target.value);
-              setFeedback(null);
-            }}
+            onChange={(event) => setAnswer(event.target.value)}
           />
         </label>
 
-        {feedback ? (
-          <p
-            className={
-              feedback === "correct"
-                ? "mt-4 inline-flex items-center gap-2 font-semibold text-emerald-700"
-                : "mt-4 font-semibold text-sky-700"
-            }
-          >
-            {feedback === "correct" ? <CheckCircle2 aria-hidden="true" size={18} /> : null}
-            {feedback === "correct" ? labels.correctFeedback : labels.incorrectFeedback}
-          </p>
-        ) : null}
-
         {error ? <p className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">{error}</p> : null}
 
-        <div className="mt-6 grid gap-3">
-          {!feedback ? (
-            <button
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={saving || !answer.trim()}
-              type="button"
-              onClick={() => void submitAnswer()}
-            >
-              {saving ? <Loader2 aria-hidden="true" className="animate-spin" size={18} /> : null}
-              {saving ? labels.saving : labels.checkAnswer}
-            </button>
-          ) : (
-            <button
-              className="inline-flex min-h-12 items-center justify-center rounded-md bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-              type="button"
-              onClick={nextExercise}
-            >
-              {attemptCount >= practiceTaskCount ? labels.finishPractice : labels.nextQuestion}
-            </button>
-          )}
-        </div>
+        <button
+          className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={saving || !answer.trim()}
+          type="button"
+          onClick={() => void submitAnswer()}
+        >
+          {saving ? <Loader2 aria-hidden="true" className="animate-spin" size={18} /> : null}
+          {saving ? labels.saving : labels.submitAnswer}
+        </button>
       </aside>
     </section>
   );

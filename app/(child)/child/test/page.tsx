@@ -1,14 +1,8 @@
-import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { TestRunner } from "@/components/child/TestRunner";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function TestPage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
-  return (
-    <PagePlaceholder
-      title={dictionary.child.pages.test.title}
-      description={dictionary.child.pages.test.description}
-      eyebrow={dictionary.child.area}
-    />
-  );
+  return <TestRunner labels={dictionary.child.testRunner} locale={locale} />;
 }
