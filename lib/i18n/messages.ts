@@ -31,6 +31,63 @@ export const dictionaries = {
     child: {
       area: "Detská časť",
       homeTitle: "Vyber si matematickú aktivitu",
+      home: {
+        area: "Detská časť",
+        homeTitle: "Tvoj dnešný matematický plán",
+        loadingChild: "Načítavam vybrané dieťa...",
+        loadingProgress: "Načítavam posledný postup...",
+        missingChild: "Najprv vyberte alebo vytvorte detský profil v rodičovskej časti.",
+        parentArea: "Rodič",
+        parentAreaDescription: "Rodičovská časť je chránená PINom.",
+        dailyGoalTitle: "Denný cieľ",
+        dailyGoalProgress: "{minutes} z {goal} minút dnes",
+        dailyGoalComplete: "Cieľ splnený",
+        currentLevel: "Úroveň: {level}",
+        todayAccuracy: "Dnešná presnosť: {accuracy}%",
+        attemptsToday: "Dnešné odpovede: {count}",
+        nextFocusTitle: "Čo teraz?",
+        nextFocusDiagnostic: "Začni diagnostikou, aby sme vybrali správnu úroveň.",
+        nextFocusLearn: "Daj si ešte krátke učenie a posilni vizuálnu stratégiu.",
+        nextFocusPractice: "Najlepšie bude krátke precvičovanie.",
+        nextFocusTest: "Precvičovanie máš rozbehnuté. Skús krátky test.",
+        nextFocusRewards: "Denný cieľ je hotový. Pozri si odmeny alebo si daj ďalšie učenie.",
+        statuses: {
+          startHere: "Začni tu",
+          ready: "Pripravené",
+          recommended: "Odporúčané",
+          done: "Dokončené",
+          locked: "Najprv diagnostika",
+          todayCount: "{count} z {total} dnes",
+          score: "{correct} z {total} naposledy",
+          goal: "{minutes} z {goal} min"
+        },
+        modes: {
+          diagnostic: {
+            label: "Diagnostika",
+            description: "Nájdeme najlepší štartovací bod."
+          },
+          learn: {
+            label: "Učenie",
+            description: "Najprv budujeme vizuálne stratégie."
+          },
+          practice: {
+            label: "Precvičovanie",
+            description: "Rozvíjame plynulosť s priateľskou spätnou väzbou."
+          },
+          test: {
+            label: "Test",
+            description: "Overíme zvládnutie bez pomocníkov."
+          },
+          challenge: {
+            label: "Výzva",
+            description: "Krátke rýchlostné kolá až po zvládnutí učiva."
+          },
+          rewards: {
+            label: "Odmeny",
+            description: "Pozri si sériu dní a pokrok."
+          }
+        }
+      },
       navigation: {
         back: "Späť",
         confirmTitle: "Chceš sa vrátiť?",
@@ -177,7 +234,27 @@ export const dictionaries = {
       eyebrow: "Rodičovská časť",
       pin: {
         title: "Rodičovský PIN",
-        description: "Základ obrazovky pre overenie hashovaného PINu, sledovanie neúspešných pokusov a dočasné uzamknutie."
+        description: "Zadajte alebo nastavte PIN, aby sa otvorila rodičovská časť."
+      },
+      pinGate: {
+        title: "Rodičovský PIN",
+        description: "Rodičovská časť je oddelená od detskej časti krátkym PINom.",
+        setupTitle: "Nastavte rodičovský PIN",
+        setupDescription: "PIN slúži ako detská bariéra. Skutočná bezpečnostná vrstva je Google prihlásenie a Firebase pravidlá.",
+        enterTitle: "Zadajte rodičovský PIN",
+        enterDescription: "Po overení sa otvorí rodičovský prehľad.",
+        pinLabel: "PIN",
+        pinPlaceholder: "4 až 8 číslic",
+        confirmPinLabel: "Potvrdiť PIN",
+        unlockButton: "Odomknúť",
+        createButton: "Vytvoriť PIN",
+        loading: "Načítavam PIN nastavenia...",
+        saving: "Overujem...",
+        pinRequired: "PIN musí mať 4 až 8 číslic.",
+        pinMismatch: "PIN a potvrdenie PINu sa musia zhodovať.",
+        invalidPin: "Nesprávny PIN. Zostáva pokusov: {remaining}.",
+        lockedMessage: "Príliš veľa pokusov. Skúste znova po {time}.",
+        loadError: "PIN sa nepodarilo overiť. Skontrolujte pripojenie a Firebase pravidlá."
       },
       dashboard: {
         title: "Prehľad",
@@ -274,6 +351,63 @@ export const dictionaries = {
     child: {
       area: "Child area",
       homeTitle: "Choose a math activity",
+      home: {
+        area: "Child area",
+        homeTitle: "Your math plan today",
+        loadingChild: "Loading the selected child...",
+        loadingProgress: "Loading recent progress...",
+        missingChild: "Select or create a child profile in the parent area first.",
+        parentArea: "Parent",
+        parentAreaDescription: "The parent area is protected by a PIN.",
+        dailyGoalTitle: "Daily goal",
+        dailyGoalProgress: "{minutes} of {goal} minutes today",
+        dailyGoalComplete: "Goal complete",
+        currentLevel: "Level: {level}",
+        todayAccuracy: "Today's accuracy: {accuracy}%",
+        attemptsToday: "Answers today: {count}",
+        nextFocusTitle: "What now?",
+        nextFocusDiagnostic: "Start with the diagnostic so we can choose the right level.",
+        nextFocusLearn: "Try a short learning round to strengthen the visual strategy.",
+        nextFocusPractice: "A short practice round is the best next step.",
+        nextFocusTest: "Practice is underway. Try a short test.",
+        nextFocusRewards: "The daily goal is complete. Check rewards or do more learning.",
+        statuses: {
+          startHere: "Start here",
+          ready: "Ready",
+          recommended: "Recommended",
+          done: "Done",
+          locked: "Diagnostic first",
+          todayCount: "{count} of {total} today",
+          score: "{correct} of {total} last time",
+          goal: "{minutes} of {goal} min"
+        },
+        modes: {
+          diagnostic: {
+            label: "Diagnostic",
+            description: "Find the best starting point."
+          },
+          learn: {
+            label: "Learn",
+            description: "Build visual strategies first."
+          },
+          practice: {
+            label: "Practice",
+            description: "Grow fluency with friendly feedback."
+          },
+          test: {
+            label: "Test",
+            description: "Check mastery without hints."
+          },
+          challenge: {
+            label: "Challenge",
+            description: "Short speed rounds after mastery."
+          },
+          rewards: {
+            label: "Rewards",
+            description: "See streak and progress rewards."
+          }
+        }
+      },
       navigation: {
         back: "Back",
         confirmTitle: "Go back?",
@@ -420,7 +554,27 @@ export const dictionaries = {
       eyebrow: "Parent area",
       pin: {
         title: "Parent PIN",
-        description: "Route skeleton for hashed PIN verification, failed attempt tracking, and temporary lockout."
+        description: "Enter or set a PIN to open the parent area."
+      },
+      pinGate: {
+        title: "Parent PIN",
+        description: "The parent area is separated from the child area by a short PIN.",
+        setupTitle: "Set parent PIN",
+        setupDescription: "The PIN is a child barrier. Google sign-in and Firebase rules are the real security layer.",
+        enterTitle: "Enter parent PIN",
+        enterDescription: "After verification, the parent dashboard will open.",
+        pinLabel: "PIN",
+        pinPlaceholder: "4 to 8 digits",
+        confirmPinLabel: "Confirm PIN",
+        unlockButton: "Unlock",
+        createButton: "Create PIN",
+        loading: "Loading PIN settings...",
+        saving: "Checking...",
+        pinRequired: "PIN must be 4 to 8 digits.",
+        pinMismatch: "PIN and confirmation must match.",
+        invalidPin: "Incorrect PIN. Remaining attempts: {remaining}.",
+        lockedMessage: "Too many attempts. Try again after {time}.",
+        loadError: "Could not verify the PIN. Check your connection and Firebase rules."
       },
       dashboard: {
         title: "Dashboard",

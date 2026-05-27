@@ -1,3 +1,4 @@
+import { ParentPinGate } from "@/components/parent/ParentPinGate";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
 import { getRequestDictionary } from "@/lib/i18n/server";
 
@@ -11,6 +12,9 @@ export default async function ParentPinPage() {
         description={dictionary.parent.pin.description}
         eyebrow={dictionary.parent.eyebrow}
       />
+      <div className="mt-8">
+        <ParentPinGate labels={dictionary.parent.pinGate} />
+      </div>
     </section>
   );
 }

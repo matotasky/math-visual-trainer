@@ -9,5 +9,6 @@ export type PinSettings = {
 
 export type PinVerificationResult =
   | { status: "success" }
+  | { status: "missing" }
   | { status: "invalid"; remainingAttempts: number }
   | { status: "locked"; lockedUntil: Date };

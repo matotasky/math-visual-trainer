@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { RouteShell } from "@/components/layout/RouteShell";
+import { ParentPinBoundary } from "@/components/parent/ParentPinBoundary";
 import { getRequestDictionary } from "@/lib/i18n/server";
 
 export default async function ParentLayout({ children }: { children: ReactNode }) {
@@ -8,7 +9,9 @@ export default async function ParentLayout({ children }: { children: ReactNode }
 
   return (
     <ProtectedRoute loadingLabel={dictionary.common.loading} redirectingLabel={dictionary.common.redirecting}>
-      <RouteShell variant="parent">{children}</RouteShell>
+      <ParentPinBoundary redirectingLabel={dictionary.common.redirecting}>
+        <RouteShell variant="parent">{children}</RouteShell>
+      </ParentPinBoundary>
     </ProtectedRoute>
   );
 }
