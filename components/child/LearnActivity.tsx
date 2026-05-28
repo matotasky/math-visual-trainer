@@ -7,6 +7,7 @@ import { ChildStateMessage } from "@/components/child/ChildStateMessage";
 import { ExerciseVisual } from "@/components/math/ExerciseVisual";
 import { useChildProfile } from "@/hooks/useChildProfile";
 import { generateExercise } from "@/lib/math-engine";
+import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import type { Exercise, Locale, MathTopic } from "@/types";
 
 type LearnActivityLabels = {
@@ -150,13 +151,14 @@ export function LearnActivity({ labels, locale }: LearnActivityProps) {
     .replace("{current}", String(exampleIndex + 1))
     .replace("{total}", String(lessonExampleCount));
   const progressPercent = ((exampleIndex + 1) / lessonExampleCount) * 100;
+  const currentLevelName = getLevelDisplayName(selectedChild.currentLevelId, locale);
 
   return (
     <section className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className="rounded-lg border border-sky-200 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm font-bold uppercase text-sky-700">
-            {labels.selectedLevel.replace("{level}", selectedChild.currentLevelId)}
+            {labels.selectedLevel.replace("{level}", currentLevelName)}
           </p>
           <p className="text-sm font-bold text-slate-700">{progressLabel}</p>
         </div>

@@ -7,8 +7,9 @@ import { ChildModeCard } from "@/components/child/ChildModeCard";
 import { ChildStateMessage } from "@/components/child/ChildStateMessage";
 import { useChildProfile } from "@/hooks/useChildProfile";
 import { listAttemptsPage } from "@/lib/firestore";
+import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import { toLocalDateKey } from "@/lib/utils/date";
-import type { ExerciseAttempt, ExerciseMode } from "@/types";
+import type { ExerciseAttempt, ExerciseMode, Locale } from "@/types";
 
 type ChildHomeModeKey = "diagnostic" | "learn" | "practice" | "test" | "challenge" | "rewards";
 
@@ -47,6 +48,7 @@ type ChildHomeDashboardLabels = {
 
 type ChildHomeDashboardProps = {
   labels: ChildHomeDashboardLabels;
+  locale: Locale;
 };
 
 const modeConfig = [
@@ -96,7 +98,7 @@ function calculateActiveMinutes(attempts: ExerciseAttempt[]): number {
   return Math.max(1, Math.ceil(totalResponseTimeMs / 60000));
 }
 
-export function ChildHomeDashboard({ labels }: ChildHomeDashboardProps) {
+export function ChildHomeDashboard({ labels, locale }: ChildHomeDashboardProps) {
   const { selectedChild, loading } = useChildProfile();
   const [recentAttempts, setRecentAttempts] = useState<ExerciseAttempt[]>([]);
   const [progressLoading, setProgressLoading] = useState(false);
@@ -160,6 +162,7 @@ export function ChildHomeDashboard({ labels }: ChildHomeDashboardProps) {
   }
 
   const activeChild = selectedChild;
+  const currentLevelName = getLevelDisplayName(activeChild.currentLevelId, locale);
   const activeMinutes = calculateActiveMinutes(todayAttempts);
   const dailyGoalMinutes = Math.max(1, activeChild.dailyGoalMinutes);
   const dailyGoalPercent = Math.min(100, (activeMinutes / dailyGoalMinutes) * 100);
@@ -234,7 +237,7 @@ export function ChildHomeDashboard({ labels }: ChildHomeDashboardProps) {
           <p className="text-sm font-semibold uppercase text-sky-700">{labels.area}</p>
           <h1 className="mt-2 text-3xl font-bold text-slate-950">{labels.homeTitle}</h1>
           <p className="mt-2 text-sm font-semibold text-slate-600">
-            {activeChild.displayName} - {labels.currentLevel.replace("{level}", activeChild.currentLevelId)}
+            {activeChild.displayName} - {labels.currentLevel.replace("{level}", currentLevelName)}
           </p>
         </div>
         <Link

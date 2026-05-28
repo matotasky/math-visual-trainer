@@ -232,6 +232,15 @@ export const dictionaries = {
     },
     parent: {
       eyebrow: "Rodičovská časť",
+      navigation: {
+        childArea: "Detská časť",
+        dashboard: "Prehľad",
+        children: "Deti",
+        results: "Výsledky",
+        mistakes: "Chyby",
+        progress: "Pokrok",
+        settings: "Nastavenia"
+      },
       pin: {
         title: "Rodičovský PIN",
         description: "Zadajte alebo nastavte PIN, aby sa otvorila rodičovská časť."
@@ -557,6 +566,15 @@ export const dictionaries = {
     },
     parent: {
       eyebrow: "Parent area",
+      navigation: {
+        childArea: "Child area",
+        dashboard: "Dashboard",
+        children: "Children",
+        results: "Results",
+        mistakes: "Mistakes",
+        progress: "Progress",
+        settings: "Settings"
+      },
       pin: {
         title: "Parent PIN",
         description: "Enter or set a PIN to open the parent area."

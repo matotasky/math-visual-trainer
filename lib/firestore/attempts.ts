@@ -3,6 +3,34 @@ import { getFirestoreDb } from "@/lib/firebase";
 import type { ExerciseAttempt } from "@/types";
 import { FIRESTORE_COLLECTIONS } from "./collections";
 
+function mapAttemptDocument(id: string, data: Record<string, unknown>): ExerciseAttempt {
+  return {
+    id,
+    childProfileId: String(data.childProfileId),
+    sessionId: String(data.sessionId),
+    topic: data.topic as ExerciseAttempt["topic"],
+    levelId: String(data.levelId),
+    mode: data.mode as ExerciseAttempt["mode"],
+    questionType: String(data.questionType),
+    operands: Array.isArray(data.operands) ? data.operands.map(Number) : [],
+    operator: data.operator === "+" || data.operator === "-" ? data.operator : undefined,
+    correctAnswer: Number(data.correctAnswer),
+    givenAnswer: data.givenAnswer === null ? null : Number(data.givenAnswer),
+    isCorrect: Boolean(data.isCorrect),
+    responseTimeMs: Number(data.responseTimeMs),
+    usedHint: Boolean(data.usedHint),
+    visualModel: data.visualModel as ExerciseAttempt["visualModel"],
+    createdAt:
+      typeof (data.createdAt as { toDate?: unknown } | undefined)?.toDate === "function"
+        ? ((data.createdAt as { toDate: () => Date }).toDate())
+        : new Date()
+  };
+}
+
+function sortAttemptsByNewest(attempts: ExerciseAttempt[]): ExerciseAttempt[] {
+  return [...attempts].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+}
+
 export async function saveAttempt(attempt: ExerciseAttempt): Promise<void> {
   const db = getFirestoreDb();
   const attemptData = {
@@ -31,34 +59,25 @@ export async function listAttemptsPage(
   pageSize: number
 ): Promise<ExerciseAttempt[]> {
   const db = getFirestoreDb();
-  const attemptsQuery = query(
-    collection(db, FIRESTORE_COLLECTIONS.attempts),
-    where("childProfileId", "==", childProfileId),
-    orderBy("createdAt", "desc"),
-    limit(pageSize)
-  );
-  const snapshot = await getDocs(attemptsQuery);
 
-  return snapshot.docs.map((document) => {
-    const data = document.data();
+  try {
+    const attemptsQuery = query(
+      collection(db, FIRESTORE_COLLECTIONS.attempts),
+      where("childProfileId", "==", childProfileId),
+      orderBy("createdAt", "desc"),
+      limit(pageSize)
+    );
+    const snapshot = await getDocs(attemptsQuery);
 
-    return {
-      id: document.id,
-      childProfileId: String(data.childProfileId),
-      sessionId: String(data.sessionId),
-      topic: data.topic,
-      levelId: String(data.levelId),
-      mode: data.mode,
-      questionType: String(data.questionType),
-      operands: Array.isArray(data.operands) ? data.operands.map(Number) : [],
-      operator: data.operator,
-      correctAnswer: Number(data.correctAnswer),
-      givenAnswer: data.givenAnswer === null ? null : Number(data.givenAnswer),
-      isCorrect: Boolean(data.isCorrect),
-      responseTimeMs: Number(data.responseTimeMs),
-      usedHint: Boolean(data.usedHint),
-      visualModel: data.visualModel,
-      createdAt: typeof data.createdAt?.toDate === "function" ? data.createdAt.toDate() : new Date()
-    };
-  });
+    return snapshot.docs.map((document) => mapAttemptDocument(document.id, document.data()));
+  } catch {
+    const fallbackQuery = query(
+      collection(db, FIRESTORE_COLLECTIONS.attempts),
+      where("childProfileId", "==", childProfileId),
+      limit(Math.max(pageSize, 120))
+    );
+    const snapshot = await getDocs(fallbackQuery);
+
+    return sortAttemptsByNewest(snapshot.docs.map((document) => mapAttemptDocument(document.id, document.data()))).slice(0, pageSize);
+  }
 }

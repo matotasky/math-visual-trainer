@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { createChildProfile, listChildProfiles } from "@/lib/firestore";
+import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import { setSelectedChildProfileId } from "@/lib/utils/childSelection";
-import type { ChildProfile } from "@/types";
+import type { ChildProfile, Locale } from "@/types";
 
 type ChildProfileManagerLabels = {
   createTitle: string;
@@ -33,6 +34,7 @@ type ChildProfileManagerLabels = {
 
 type ChildProfileManagerProps = {
   labels: ChildProfileManagerLabels;
+  locale: Locale;
 };
 
 function optionalNumber(value: string): number | undefined {
@@ -47,7 +49,7 @@ function optionalNumber(value: string): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
-export function ChildProfileManager({ labels }: ChildProfileManagerProps) {
+export function ChildProfileManager({ labels, locale }: ChildProfileManagerProps) {
   const router = useRouter();
   const { firebaseUser } = useAuth();
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
@@ -166,7 +168,7 @@ export function ChildProfileManager({ labels }: ChildProfileManagerProps) {
                   <div>
                     <h3 className="text-lg font-bold text-slate-950">{profile.displayName}</h3>
                     <p className="mt-1 text-sm text-slate-600">
-                      {labels.currentLevelLabel}: {profile.currentLevelId}
+                      {labels.currentLevelLabel}: {getLevelDisplayName(profile.currentLevelId, locale)}
                     </p>
                     <p className="mt-1 text-sm text-slate-600">
                       {labels.dailyGoalValue.replace("{minutes}", String(profile.dailyGoalMinutes))}
