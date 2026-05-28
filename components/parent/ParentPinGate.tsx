@@ -4,7 +4,7 @@ import { KeyRound, Loader2, Lock } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { createPinSettings, getPinSettings, verifyParentPin } from "@/lib/firestore";
+import { createPinSettings, getPinSettings, resetPinSettings, verifyParentPin } from "@/lib/firestore";
 import { setActivePinSession } from "@/lib/pin/session";
 
 type ParentPinGateLabels = {
@@ -14,11 +14,16 @@ type ParentPinGateLabels = {
   setupDescription: string;
   enterTitle: string;
   enterDescription: string;
+  resetTitle: string;
+  resetDescription: string;
   pinLabel: string;
   pinPlaceholder: string;
   confirmPinLabel: string;
   unlockButton: string;
   createButton: string;
+  resetButton: string;
+  forgotPin: string;
+  cancelReset: string;
   loading: string;
   saving: string;
   pinRequired: string;
@@ -57,8 +62,10 @@ export function ParentPinGate({ labels }: ParentPinGateProps) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resetMode, setResetMode] = useState(false);
 
   const nextPath = safeNextPath(searchParams.get("next"));
+  const settingPin = !hasPin || resetMode;
 
   useEffect(() => {
     let cancelled = false;
@@ -116,13 +123,18 @@ export function ParentPinGate({ labels }: ParentPinGateProps) {
     setError(null);
 
     try {
-      if (!hasPin) {
+      if (settingPin) {
         if (pin !== confirmPin) {
           setError(labels.pinMismatch);
           return;
         }
 
-        await createPinSettings(firebaseUser.uid, pin);
+        if (resetMode) {
+          await resetPinSettings(firebaseUser.uid, pin);
+        } else {
+          await createPinSettings(firebaseUser.uid, pin);
+        }
+
         setActivePinSession(firebaseUser.uid);
         router.replace(nextPath);
         return;
@@ -163,10 +175,14 @@ export function ParentPinGate({ labels }: ParentPinGateProps) {
   return (
     <section className="mx-auto max-w-md rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <div className="grid h-12 w-12 place-items-center rounded-md bg-slate-100 text-slate-800">
-        {hasPin ? <Lock aria-hidden="true" size={24} /> : <KeyRound aria-hidden="true" size={24} />}
+        {hasPin && !resetMode ? <Lock aria-hidden="true" size={24} /> : <KeyRound aria-hidden="true" size={24} />}
       </div>
-      <h2 className="mt-4 text-2xl font-bold text-slate-950">{hasPin ? labels.enterTitle : labels.setupTitle}</h2>
-      <p className="mt-2 text-sm leading-6 text-slate-600">{hasPin ? labels.enterDescription : labels.setupDescription}</p>
+      <h2 className="mt-4 text-2xl font-bold text-slate-950">
+        {resetMode ? labels.resetTitle : hasPin ? labels.enterTitle : labels.setupTitle}
+      </h2>
+      <p className="mt-2 text-sm leading-6 text-slate-600">
+        {resetMode ? labels.resetDescription : hasPin ? labels.enterDescription : labels.setupDescription}
+      </p>
 
       <form className="mt-5 grid gap-4" onSubmit={(event) => void handleSubmit(event)}>
         <label className="grid gap-2 text-sm font-semibold text-slate-800">
@@ -178,11 +194,14 @@ export function ParentPinGate({ labels }: ParentPinGateProps) {
             placeholder={labels.pinPlaceholder}
             type="password"
             value={pin}
-            onChange={(event) => setPin(event.target.value)}
+            onChange={(event) => {
+              setPin(event.target.value);
+              setError(null);
+            }}
           />
         </label>
 
-        {!hasPin ? (
+        {settingPin ? (
           <label className="grid gap-2 text-sm font-semibold text-slate-800">
             {labels.confirmPinLabel}
             <input
@@ -192,7 +211,10 @@ export function ParentPinGate({ labels }: ParentPinGateProps) {
               placeholder={labels.pinPlaceholder}
               type="password"
               value={confirmPin}
-              onChange={(event) => setConfirmPin(event.target.value)}
+              onChange={(event) => {
+                setConfirmPin(event.target.value);
+                setError(null);
+              }}
             />
           </label>
         ) : null}
@@ -207,8 +229,23 @@ export function ParentPinGate({ labels }: ParentPinGateProps) {
           type="submit"
         >
           {saving ? <Loader2 aria-hidden="true" className="animate-spin" size={18} /> : null}
-          {saving ? labels.saving : hasPin ? labels.unlockButton : labels.createButton}
+          {saving ? labels.saving : resetMode ? labels.resetButton : hasPin ? labels.unlockButton : labels.createButton}
         </button>
+
+        {hasPin ? (
+          <button
+            className="text-sm font-semibold text-slate-700 underline-offset-4 hover:underline"
+            type="button"
+            onClick={() => {
+              setResetMode((current) => !current);
+              setPin("");
+              setConfirmPin("");
+              setError(null);
+            }}
+          >
+            {resetMode ? labels.cancelReset : labels.forgotPin}
+          </button>
+        ) : null}
       </form>
     </section>
   );

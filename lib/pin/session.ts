@@ -1,4 +1,5 @@
 const pinSessionPrefix = "math-visual-trainer:pin-session";
+export const pinSessionChangedEventName = "math-visual-trainer:pin-session-changed";
 
 export function getPinSessionKey(parentUserId: string): string {
   return `${pinSessionPrefix}:${parentUserId}`;
@@ -18,6 +19,7 @@ export function setActivePinSession(parentUserId: string): void {
   }
 
   window.sessionStorage.setItem(getPinSessionKey(parentUserId), "unlocked");
+  window.dispatchEvent(new Event(pinSessionChangedEventName));
 }
 
 export function clearActivePinSession(parentUserId: string): void {
@@ -26,4 +28,5 @@ export function clearActivePinSession(parentUserId: string): void {
   }
 
   window.sessionStorage.removeItem(getPinSessionKey(parentUserId));
+  window.dispatchEvent(new Event(pinSessionChangedEventName));
 }

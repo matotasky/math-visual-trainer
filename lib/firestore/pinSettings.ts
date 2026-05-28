@@ -71,6 +71,25 @@ export async function createPinSettings(parentUserId: string, pin: string): Prom
   };
 }
 
+export async function resetPinSettings(parentUserId: string, pin: string): Promise<void> {
+  const settings = await getPinSettings(parentUserId);
+
+  if (!settings) {
+    await createPinSettings(parentUserId, pin);
+    return;
+  }
+
+  const db = getFirestoreDb();
+  const now = new Date();
+
+  await updateDoc(doc(db, FIRESTORE_COLLECTIONS.pinSettings, settings.id), {
+    pinHash: await hashPin(pin, parentUserId),
+    pinUpdatedAt: now,
+    failedAttempts: 0,
+    lockedUntil: deleteField()
+  });
+}
+
 export async function verifyParentPin(parentUserId: string, pin: string): Promise<PinVerificationResult> {
   const settings = await getPinSettings(parentUserId);
 
