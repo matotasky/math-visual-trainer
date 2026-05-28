@@ -88,16 +88,6 @@ function attemptsForMode(attempts: ExerciseAttempt[], mode: ExerciseMode): Exerc
   return attempts.filter((attempt) => attempt.mode === mode);
 }
 
-function calculateActiveMinutes(attempts: ExerciseAttempt[]): number {
-  if (attempts.length === 0) {
-    return 0;
-  }
-
-  const totalResponseTimeMs = attempts.reduce((total, attempt) => total + attempt.responseTimeMs, 0);
-
-  return Math.max(1, Math.ceil(totalResponseTimeMs / 60000));
-}
-
 export function ChildHomeDashboard({ labels, locale }: ChildHomeDashboardProps) {
   const { selectedChild, loading } = useChildProfile();
   const [recentAttempts, setRecentAttempts] = useState<ExerciseAttempt[]>([]);
@@ -163,9 +153,9 @@ export function ChildHomeDashboard({ labels, locale }: ChildHomeDashboardProps) 
 
   const activeChild = selectedChild;
   const currentLevelName = getLevelDisplayName(activeChild.currentLevelId, locale);
-  const activeMinutes = calculateActiveMinutes(todayAttempts);
-  const dailyGoalMinutes = Math.max(1, activeChild.dailyGoalMinutes);
-  const dailyGoalPercent = Math.min(100, (activeMinutes / dailyGoalMinutes) * 100);
+  const completedTasks = todayAttempts.length;
+  const dailyGoalTasks = Math.max(1, activeChild.dailyGoalMinutes);
+  const dailyGoalPercent = Math.min(100, (completedTasks / dailyGoalTasks) * 100);
   const correctToday = todayAttempts.filter((attempt) => attempt.isCorrect).length;
   const accuracyToday = todayAttempts.length === 0 ? 0 : Math.round((correctToday / todayAttempts.length) * 100);
   const practiceToday = attemptsForMode(todayAttempts, "practice");
@@ -180,7 +170,7 @@ export function ChildHomeDashboard({ labels, locale }: ChildHomeDashboardProps) 
       ? labels.nextFocusPractice
       : testAttempts.length === 0
         ? labels.nextFocusTest
-        : activeMinutes < dailyGoalMinutes
+        : completedTasks < dailyGoalTasks
           ? labels.nextFocusLearn
           : labels.nextFocusRewards;
 
@@ -194,7 +184,7 @@ export function ChildHomeDashboard({ labels, locale }: ChildHomeDashboardProps) 
     }
 
     if (mode === "learn") {
-      return activeMinutes < dailyGoalMinutes ? labels.statuses.recommended : labels.statuses.ready;
+      return completedTasks < dailyGoalTasks ? labels.statuses.recommended : labels.statuses.ready;
     }
 
     if (mode === "practice") {
@@ -208,10 +198,10 @@ export function ChildHomeDashboard({ labels, locale }: ChildHomeDashboardProps) 
     }
 
     if (mode === "challenge") {
-      return labels.statuses.locked;
+      return labels.statuses.ready;
     }
 
-    return labels.statuses.goal.replace("{minutes}", String(activeMinutes)).replace("{goal}", String(dailyGoalMinutes));
+    return labels.statuses.goal.replace("{completed}", String(completedTasks)).replace("{goal}", String(dailyGoalTasks));
   }
 
   function toneForMode(mode: ChildHomeModeKey): "default" | "recommended" | "locked" {
@@ -255,7 +245,7 @@ export function ChildHomeDashboard({ labels, locale }: ChildHomeDashboardProps) 
             <div>
               <h2 className="text-xl font-bold text-slate-950">{labels.dailyGoalTitle}</h2>
               <p className="mt-1 text-sm leading-6 text-slate-600">
-                {labels.dailyGoalProgress.replace("{minutes}", String(activeMinutes)).replace("{goal}", String(dailyGoalMinutes))}
+                {labels.dailyGoalProgress.replace("{completed}", String(completedTasks)).replace("{goal}", String(dailyGoalTasks))}
               </p>
             </div>
             <p className="text-sm font-bold text-emerald-700">

@@ -1,14 +1,8 @@
-import { PagePlaceholder } from "@/components/ui/PagePlaceholder";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { ChallengeRunner } from "@/components/child/ChallengeRunner";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function ChallengePage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
-  return (
-    <PagePlaceholder
-      title={dictionary.child.pages.challenge.title}
-      description={dictionary.child.pages.challenge.description}
-      eyebrow={dictionary.child.area}
-    />
-  );
+  return <ChallengeRunner labels={dictionary.child.challengeRunner} locale={locale} />;
 }

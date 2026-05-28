@@ -40,11 +40,11 @@ export const dictionaries = {
         parentArea: "Rodič",
         parentAreaDescription: "Rodičovská časť je chránená PINom.",
         dailyGoalTitle: "Denný cieľ",
-        dailyGoalProgress: "{minutes} z {goal} minút dnes",
+        dailyGoalProgress: "{completed} z {goal} úloh dnes",
         dailyGoalComplete: "Cieľ splnený",
         currentLevel: "Úroveň: {level}",
         todayAccuracy: "Dnešná presnosť: {accuracy}%",
-        attemptsToday: "Dnešné odpovede: {count}",
+        attemptsToday: "Dnešné úlohy: {count}",
         nextFocusTitle: "Čo teraz?",
         nextFocusDiagnostic: "Začni diagnostikou, aby sme vybrali správnu úroveň.",
         nextFocusLearn: "Daj si ešte krátke učenie a posilni vizuálnu stratégiu.",
@@ -59,7 +59,7 @@ export const dictionaries = {
           locked: "Najprv diagnostika",
           todayCount: "{count} z {total} dnes",
           score: "{correct} z {total} naposledy",
-          goal: "{minutes} z {goal} min"
+          goal: "{completed} z {goal} úloh"
         },
         modes: {
           diagnostic: {
@@ -132,7 +132,7 @@ export const dictionaries = {
         },
         practice: {
           title: "Precvičovanie",
-          description: "Základ obrazovky pre adaptívne precvičovanie s meraním času, spätnou väzbou, ukladaním pokusov a aktualizáciou súhrnov."
+          description: "Základ obrazovky pre adaptívne precvičovanie s meraním času, spätnou väzbou, ukladaním úloh a aktualizáciou súhrnov."
         },
         test: {
           title: "Test",
@@ -196,7 +196,7 @@ export const dictionaries = {
         missingChild: "Najprv vyberte dieťa v rodičovskej časti.",
         needDiagnostic: "Najprv dokončite diagnostiku, potom začne precvičovanie na správnej úrovni.",
         selectedLevel: "Úroveň: {level}",
-        questionCount: "Pokus {current} z {total}",
+        questionCount: "Úloha {current} z {total}",
         answerLabel: "Tvoja odpoveď",
         answerPlaceholder: "Napíš číslo",
         checkAnswer: "Skontrolovať",
@@ -207,7 +207,7 @@ export const dictionaries = {
         incorrectFeedback: "Dobrá práca, ideme ďalej a ešte to posilníme.",
         saveError: "Nepodarilo sa uložiť odpoveď. Skontrolujte pripojenie a Firebase pravidlá.",
         completeTitle: "Precvičovanie je hotové",
-        completeDescription: "Dokončili ste krátku sériu. Správne odpovede: {correct} z {total}.",
+        completeDescription: "Dokončili ste krátku sériu úloh. Správne odpovede: {correct} z {total}.",
         backToChild: "Späť na prehľad",
         goDiagnostic: "Ísť na diagnostiku"
       },
@@ -226,6 +226,26 @@ export const dictionaries = {
         saveError: "Nepodarilo sa uložiť odpoveď. Skontrolujte pripojenie a Firebase pravidlá.",
         completeTitle: "Test je hotový",
         completeDescription: "Výsledok testu: {correct} z {total} správne.",
+        backToChild: "Späť na prehľad",
+        goDiagnostic: "Ísť na diagnostiku"
+      },
+      challengeRunner: {
+        title: "Výzva",
+        description: "Krátke časované kolo. Snaž sa pokojne a zbieraj XP za každú úlohu.",
+        loadingChild: "Načítavam vybrané dieťa...",
+        missingChild: "Najprv vyberte dieťa v rodičovskej časti.",
+        needDiagnostic: "Najprv dokončite diagnostiku, potom sa otvorí výzva na správnej úrovni.",
+        selectedLevel: "Úroveň: {level}",
+        questionCount: "Úloha {current} z {total}",
+        timeLeft: "Zostáva {seconds} s",
+        scoreLabel: "{score} XP",
+        answerLabel: "Tvoja odpoveď",
+        answerPlaceholder: "Napíš číslo",
+        submitAnswer: "Odoslať",
+        saving: "Ukladám...",
+        saveError: "Nepodarilo sa uložiť odpoveď. Skontrolujte pripojenie a Firebase pravidlá.",
+        completeTitle: "Výzva je hotová",
+        completeDescription: "Skóre: {score} XP. Správne úlohy: {correct} z {total}.",
         backToChild: "Späť na prehľad",
         goDiagnostic: "Ísť na diagnostiku"
       }
@@ -278,9 +298,9 @@ export const dictionaries = {
       },
       results: {
         title: "Výsledky",
-        description: "Základ obrazovky pre stránkované sedenia, testy a detailný prehľad pokusov.",
+        description: "Základ obrazovky pre stránkované sedenia, testy a detailný prehľad úloh.",
         detailTitle: "Detail výsledku",
-        detailDescription: "Základ obrazovky pre stránkované detaily pokusov v sedení {sessionId}."
+        detailDescription: "Základ obrazovky pre stránkované detaily úloh v sedení {sessionId}."
       },
       mistakes: {
         title: "Chyby",
@@ -289,7 +309,7 @@ export const dictionaries = {
       progress: {
         title: "Pokrok",
         description: "Základ obrazovky pre trendy pokroku, poslednú aktivitu, sériu dní a posun úrovní.",
-        attemptsPerDay: "Pokusy za deň",
+        attemptsPerDay: "Úlohy za deň",
         responseTime: "Čas odpovede",
         masteryByTopic: "Zvládnutie podľa témy"
       },
@@ -306,14 +326,14 @@ export const dictionaries = {
         namePlaceholder: "Napríklad Ema",
         birthYearLabel: "Rok narodenia",
         schoolYearLabel: "Ročník",
-        dailyGoalLabel: "Denný cieľ v minútach",
+        dailyGoalLabel: "Denný cieľ v úlohách",
         createButton: "Vytvoriť profil a začať diagnostiku",
         creatingButton: "Vytváram profil...",
         existingTitle: "Detské profily",
         emptyTitle: "Zatiaľ tu nie je žiadne dieťa",
         emptyDescription: "Vytvorte prvý profil, aby dieťa mohlo začať priateľskou diagnostikou.",
         currentLevelLabel: "Aktuálna úroveň",
-        dailyGoalValue: "Denný cieľ: {minutes} min",
+        dailyGoalValue: "Denný cieľ: {tasks} úloh",
         continueDiagnostic: "Začať diagnostiku",
         continueChild: "Pokračovať",
         loadingProfiles: "Načítavam profily...",
@@ -374,11 +394,11 @@ export const dictionaries = {
         parentArea: "Parent",
         parentAreaDescription: "The parent area is protected by a PIN.",
         dailyGoalTitle: "Daily goal",
-        dailyGoalProgress: "{minutes} of {goal} minutes today",
+        dailyGoalProgress: "{completed} of {goal} tasks today",
         dailyGoalComplete: "Goal complete",
         currentLevel: "Level: {level}",
         todayAccuracy: "Today's accuracy: {accuracy}%",
-        attemptsToday: "Answers today: {count}",
+        attemptsToday: "Tasks today: {count}",
         nextFocusTitle: "What now?",
         nextFocusDiagnostic: "Start with the diagnostic so we can choose the right level.",
         nextFocusLearn: "Try a short learning round to strengthen the visual strategy.",
@@ -393,7 +413,7 @@ export const dictionaries = {
           locked: "Diagnostic first",
           todayCount: "{count} of {total} today",
           score: "{correct} of {total} last time",
-          goal: "{minutes} of {goal} min"
+          goal: "{completed} of {goal} tasks"
         },
         modes: {
           diagnostic: {
@@ -530,7 +550,7 @@ export const dictionaries = {
         missingChild: "Select a child in the parent area first.",
         needDiagnostic: "Finish the diagnostic first, then practice starts at the right level.",
         selectedLevel: "Level: {level}",
-        questionCount: "Attempt {current} of {total}",
+        questionCount: "Task {current} of {total}",
         answerLabel: "Your answer",
         answerPlaceholder: "Type a number",
         checkAnswer: "Check",
@@ -541,7 +561,7 @@ export const dictionaries = {
         incorrectFeedback: "Good work, let's keep strengthening it.",
         saveError: "Could not save the answer. Check your connection and Firebase rules.",
         completeTitle: "Practice complete",
-        completeDescription: "You finished the short practice set. Correct answers: {correct} of {total}.",
+        completeDescription: "You finished the short task set. Correct answers: {correct} of {total}.",
         backToChild: "Back to overview",
         goDiagnostic: "Go to diagnostic"
       },
@@ -560,6 +580,26 @@ export const dictionaries = {
         saveError: "Could not save the answer. Check your connection and Firebase rules.",
         completeTitle: "Test complete",
         completeDescription: "Test score: {correct} of {total} correct.",
+        backToChild: "Back to overview",
+        goDiagnostic: "Go to diagnostic"
+      },
+      challengeRunner: {
+        title: "Challenge",
+        description: "A short timed round. Stay calm and collect XP for each task.",
+        loadingChild: "Loading the selected child...",
+        missingChild: "Select a child in the parent area first.",
+        needDiagnostic: "Finish the diagnostic first, then the challenge opens at the right level.",
+        selectedLevel: "Level: {level}",
+        questionCount: "Task {current} of {total}",
+        timeLeft: "{seconds}s left",
+        scoreLabel: "{score} XP",
+        answerLabel: "Your answer",
+        answerPlaceholder: "Type a number",
+        submitAnswer: "Submit",
+        saving: "Saving...",
+        saveError: "Could not save the answer. Check your connection and Firebase rules.",
+        completeTitle: "Challenge complete",
+        completeDescription: "Score: {score} XP. Correct tasks: {correct} of {total}.",
         backToChild: "Back to overview",
         goDiagnostic: "Go to diagnostic"
       }
@@ -623,7 +663,7 @@ export const dictionaries = {
       progress: {
         title: "Progress",
         description: "Route skeleton for progress trends, recent activity, streaks, and level advancement.",
-        attemptsPerDay: "Attempts per day",
+        attemptsPerDay: "Tasks per day",
         responseTime: "Response time",
         masteryByTopic: "Mastery by topic"
       },
@@ -640,14 +680,14 @@ export const dictionaries = {
         namePlaceholder: "For example Emma",
         birthYearLabel: "Birth year",
         schoolYearLabel: "School year",
-        dailyGoalLabel: "Daily goal in minutes",
+        dailyGoalLabel: "Daily goal in tasks",
         createButton: "Create profile and start diagnostics",
         creatingButton: "Creating profile...",
         existingTitle: "Child profiles",
         emptyTitle: "No child profile yet",
         emptyDescription: "Create the first profile so the child can begin with a friendly diagnostic.",
         currentLevelLabel: "Current level",
-        dailyGoalValue: "Daily goal: {minutes} min",
+        dailyGoalValue: "Daily goal: {tasks} tasks",
         continueDiagnostic: "Start diagnostics",
         continueChild: "Continue",
         loadingProfiles: "Loading profiles...",

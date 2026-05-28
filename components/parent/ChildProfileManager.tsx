@@ -56,7 +56,7 @@ export function ChildProfileManager({ labels, locale }: ChildProfileManagerProps
   const [displayName, setDisplayName] = useState("");
   const [birthYear, setBirthYear] = useState("");
   const [schoolYear, setSchoolYear] = useState("");
-  const [dailyGoalMinutes, setDailyGoalMinutes] = useState("10");
+  const [dailyGoalTasks, setDailyGoalTasks] = useState("10");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -124,14 +124,14 @@ export function ChildProfileManager({ labels, locale }: ChildProfileManagerProps
         displayName,
         birthYear: optionalNumber(birthYear),
         schoolYear: optionalNumber(schoolYear),
-        dailyGoalMinutes: optionalNumber(dailyGoalMinutes) ?? 10
+        dailyGoalMinutes: optionalNumber(dailyGoalTasks) ?? 10
       });
 
       setProfiles((currentProfiles) => [profile, ...currentProfiles]);
       setDisplayName("");
       setBirthYear("");
       setSchoolYear("");
-      setDailyGoalMinutes("10");
+      setDailyGoalTasks("10");
       selectChild(profile);
     } catch {
       setError(labels.createError);
@@ -171,7 +171,7 @@ export function ChildProfileManager({ labels, locale }: ChildProfileManagerProps
                       {labels.currentLevelLabel}: {getLevelDisplayName(profile.currentLevelId, locale)}
                     </p>
                     <p className="mt-1 text-sm text-slate-600">
-                      {labels.dailyGoalValue.replace("{minutes}", String(profile.dailyGoalMinutes))}
+                      {labels.dailyGoalValue.replace("{tasks}", String(profile.dailyGoalMinutes))}
                     </p>
                   </div>
                   <button
@@ -231,8 +231,8 @@ export function ChildProfileManager({ labels, locale }: ChildProfileManagerProps
             <input
               className="min-h-11 rounded-md border border-slate-300 px-3 text-base font-normal outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
               inputMode="numeric"
-              value={dailyGoalMinutes}
-              onChange={(event) => setDailyGoalMinutes(event.target.value)}
+              value={dailyGoalTasks}
+              onChange={(event) => setDailyGoalTasks(event.target.value)}
             />
           </label>
 
