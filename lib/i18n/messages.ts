@@ -362,9 +362,89 @@ export const dictionaries = {
       },
       dashboard: {
         title: "Prehľad",
-        description: "Základ obrazovky pre rodičovskú analytiku čítanú najmä zo súhrnných dokumentov: denné štatistiky, zvládnutie tém, chyby a séria dní.",
+        description: "Rýchly rodičovský pohľad na dennú aktivitu, presnosť, tempo, chyby a ďalší najlepší krok.",
         accuracyChart: "Presnosť v čase",
-        masteryChart: "Zvládnutie tém"
+        masteryChart: "Zvládnutie tém",
+        loadingProfiles: "Načítavam detské profily...",
+        loadingDashboard: "Načítavam rodičovský prehľad...",
+        loadError: "Prehľad sa nepodarilo načítať. Skontrolujte pripojenie a Firebase pravidlá.",
+        noChildrenTitle: "Najprv vytvorte detský profil",
+        noChildrenDescription: "Dashboard potrebuje aspoň jedno dieťa, aby mohol zobraziť pokrok, chyby a odporúčania.",
+        createChildButton: "Vytvoriť dieťa",
+        childSelectorLabel: "Aktívne dieťa",
+        currentLevel: "Aktuálna úroveň: {level}",
+        lastActivity: "Posledná aktivita",
+        noActivity: "Zatiaľ žiadna aktivita",
+        recentWindow: "Zobrazuje posledné uložené úlohy a posledných 14 dní",
+        dataNote: "Free-tier poznámka: dashboard číta obmedzenú stránku posledných úloh. Súhrnné dokumenty môžeme napojiť v ďalšom kroku.",
+        cards: {
+          dailyStreak: "Séria dní",
+          overallAccuracy: "Celková presnosť",
+          averageResponseTime: "Priemerný čas",
+          practiceMinutes: "Aktívne minúty",
+          tasksToday: "Dnešný cieľ",
+          currentLevel: "Úroveň"
+        },
+        charts: {
+          accuracy: "Presnosť za 14 dní",
+          responseTime: "Čas odpovede za 14 dní",
+          attempts: "Úlohy za deň",
+          topicMastery: "Zvládnutie podľa témy"
+        },
+        sections: {
+          recommendedFocus: "Odporúčaný ďalší krok",
+          topicMastery: "Témy",
+          commonMistakes: "Najčastejšie chyby",
+          recentTests: "Posledné testy"
+        },
+        emptyStates: {
+          noAttempts: "Zatiaľ nie sú uložené žiadne úlohy. Nech dieťa začne diagnostikou alebo krátkym precvičovaním.",
+          noMistakes: "Z posledných uložených úloh nevidím opakovanú chybu.",
+          noTests: "Zatiaľ tu nie je dokončený test."
+        },
+        table: {
+          topic: "Téma",
+          accuracy: "Presnosť",
+          averageTime: "Priemerný čas",
+          tasks: "Úlohy",
+          example: "Príklad",
+          mistakes: "Chyby",
+          errorRate: "Chybovosť",
+          result: "Výsledok",
+          date: "Dátum"
+        },
+        recommendations: {
+          diagnostic: "Dokončite najprv diagnostiku. Bez nej by aplikácia hádala nesprávnu úroveň.",
+          startPractice: "Začnite krátkym precvičovaním. Potrebujeme prvé uložené úlohy, aby sa ukázal vzor.",
+          accuracy: "Presnosť je zatiaľ pod 80 %. Vráťte sa na učenie a vizuálne modely bez tlaku na rýchlosť.",
+          make10: "Vidím náznak slabšieho dopĺňania do 10. Pomôže učenie s ten-frame a úlohy typu 8+2, 7+3, 6+4.",
+          slowTopic: "Presnosť je dobrá, ale téma {topic} je pomalšia. Dajte krátke pokojné precvičovanie bez tlaku.",
+          dailyGoal: "Dnes ešte nie je hotový denný rytmus. Stačí krátka séria úloh, nie dlhé sedenie.",
+          challenge: "Dieťa má dnes stabilný výkon. Môže skúsiť krátku výzvu alebo ľahký test."
+        },
+        insights: {
+          make10Issue: "Časté chyby pri dopĺňaní do 10 naznačujú slabšie make-10 porozumenie.",
+          weakPairIssue: "Opakovaná chyba pri tomto páre naznačuje, že kombinácia ešte nie je stabilná.",
+          slowButCorrect: "Odpovede bývajú správne, ale pomalšie. To skôr znamená pomalé uvažovanie než nepochopenie."
+        },
+        topics: {
+          quantity_recognition: "Rozpoznávanie množstva",
+          number_matching: "Priraďovanie čísla",
+          addition_to_5: "Sčítanie do 5",
+          quantity_to_10: "Množstvá do 10",
+          make_10: "Dopĺňanie do 10",
+          addition_to_10: "Sčítanie do 10",
+          subtraction_to_10: "Odčítanie do 10",
+          addition_to_20: "Sčítanie do 20",
+          bridge_through_10: "Prechod cez 10"
+        },
+        modes: {
+          diagnostic: "Diagnostika",
+          learn: "Učenie",
+          practice: "Precvičovanie",
+          test: "Test",
+          challenge: "Výzva"
+        }
       },
       results: {
         title: "Výsledky",
@@ -786,9 +866,89 @@ export const dictionaries = {
       },
       dashboard: {
         title: "Dashboard",
-        description: "Route skeleton for aggregate-first parent analytics using daily stats, topic mastery, mistake stats, and streaks.",
+        description: "A quick parent view of daily activity, accuracy, pacing, mistakes, and the next best step.",
         accuracyChart: "Accuracy over time",
-        masteryChart: "Topic mastery"
+        masteryChart: "Topic mastery",
+        loadingProfiles: "Loading child profiles...",
+        loadingDashboard: "Loading parent dashboard...",
+        loadError: "Could not load the dashboard. Check your connection and Firebase rules.",
+        noChildrenTitle: "Create a child profile first",
+        noChildrenDescription: "The dashboard needs at least one child before it can show progress, mistakes, and recommendations.",
+        createChildButton: "Create child",
+        childSelectorLabel: "Active child",
+        currentLevel: "Current level: {level}",
+        lastActivity: "Last activity",
+        noActivity: "No activity yet",
+        recentWindow: "Showing recent saved tasks and the last 14 days",
+        dataNote: "Free-tier note: this dashboard reads a limited page of recent tasks. Aggregate documents can be wired in the next pass.",
+        cards: {
+          dailyStreak: "Day streak",
+          overallAccuracy: "Overall accuracy",
+          averageResponseTime: "Average time",
+          practiceMinutes: "Active minutes",
+          tasksToday: "Daily goal",
+          currentLevel: "Level"
+        },
+        charts: {
+          accuracy: "14-day accuracy",
+          responseTime: "14-day response time",
+          attempts: "Tasks per day",
+          topicMastery: "Mastery by topic"
+        },
+        sections: {
+          recommendedFocus: "Recommended next step",
+          topicMastery: "Topics",
+          commonMistakes: "Most common mistakes",
+          recentTests: "Recent tests"
+        },
+        emptyStates: {
+          noAttempts: "No saved tasks yet. Have the child start with the diagnostic or a short practice round.",
+          noMistakes: "No repeated mistake appears in the recent saved tasks.",
+          noTests: "No completed test yet."
+        },
+        table: {
+          topic: "Topic",
+          accuracy: "Accuracy",
+          averageTime: "Average time",
+          tasks: "Tasks",
+          example: "Example",
+          mistakes: "Mistakes",
+          errorRate: "Error rate",
+          result: "Result",
+          date: "Date"
+        },
+        recommendations: {
+          diagnostic: "Finish the diagnostic first. Without it, the app would be guessing the child's level.",
+          startPractice: "Start with a short practice round. We need the first saved tasks before patterns appear.",
+          accuracy: "Accuracy is below 80%. Return to learning and visual models without speed pressure.",
+          make10: "There are signs of weak make-10 understanding. Ten-frame learning and tasks like 8+2, 7+3, and 6+4 will help.",
+          slowTopic: "Accuracy is good, but {topic} is slower. Try short calm practice without time pressure.",
+          dailyGoal: "Today's rhythm is not finished yet. A short task set is enough, not a long session.",
+          challenge: "Performance looks stable today. A short challenge or light test is appropriate."
+        },
+        insights: {
+          make10Issue: "Frequent complement-to-10 mistakes suggest weak make-10 understanding.",
+          weakPairIssue: "Repeated mistakes on this pair suggest the combination is not stable yet.",
+          slowButCorrect: "Answers are often correct but slower. That suggests slow thinking rather than lack of understanding."
+        },
+        topics: {
+          quantity_recognition: "Quantity recognition",
+          number_matching: "Number matching",
+          addition_to_5: "Addition to 5",
+          quantity_to_10: "Quantities to 10",
+          make_10: "Make 10",
+          addition_to_10: "Addition to 10",
+          subtraction_to_10: "Subtraction to 10",
+          addition_to_20: "Addition to 20",
+          bridge_through_10: "Bridge through 10"
+        },
+        modes: {
+          diagnostic: "Diagnostic",
+          learn: "Learn",
+          practice: "Practice",
+          test: "Test",
+          challenge: "Challenge"
+        }
       },
       results: {
         title: "Results",

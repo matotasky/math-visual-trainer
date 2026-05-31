@@ -1,9 +1,9 @@
-import { ChartPlaceholder } from "@/components/charts/ChartPlaceholder";
+import { ParentDashboard } from "@/components/parent/ParentDashboard";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function ParentDashboardPage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
   return (
     <section className="py-8">
@@ -12,10 +12,7 @@ export default async function ParentDashboardPage() {
         description={dictionary.parent.dashboard.description}
         eyebrow={dictionary.parent.eyebrow}
       />
-      <div className="grid gap-4 lg:grid-cols-2">
-        <ChartPlaceholder label={dictionary.parent.dashboard.accuracyChart} />
-        <ChartPlaceholder label={dictionary.parent.dashboard.masteryChart} />
-      </div>
+      <ParentDashboard labels={dictionary.parent.dashboard} locale={locale} />
     </section>
   );
 }
