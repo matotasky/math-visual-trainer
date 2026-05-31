@@ -248,6 +248,76 @@ export const dictionaries = {
         completeDescription: "Skóre: {score} XP. Správne úlohy: {correct} z {total}.",
         backToChild: "Späť na prehľad",
         goDiagnostic: "Ísť na diagnostiku"
+      },
+      rewardsDashboard: {
+        title: "Odmeny",
+        description: "Pozri sa, čo sa ti podarilo. Odmeny ukazujú pokojný pokrok, nie len rýchlosť.",
+        loadingChild: "Načítavam vybrané dieťa...",
+        loadingRewards: "Načítavam odmeny...",
+        missingChild: "Najprv vyberte dieťa v rodičovskej časti.",
+        loadError: "Odmeny sa nepodarilo načítať. Skontrolujte pripojenie a Firebase pravidlá.",
+        currentLevel: "Úroveň: {level}",
+        rewardPoints: "Body odmeny",
+        currentStreak: "Séria dní",
+        longestStreak: "Najdlhšia séria",
+        tasksToday: "Dnešné úlohy: {count}",
+        accuracyToday: "Dnešná presnosť",
+        dailyGoalTitle: "Denný cieľ",
+        dailyGoalProgress: "{completed} z {goal} úloh dnes",
+        dailyGoalComplete: "Cieľ splnený",
+        keepGoingTitle: "Chceš získať ďalšiu odmenu?",
+        keepGoingDescription: "Najistejšia cesta je krátke precvičovanie. Presnosť je dôležitejšia ako ponáhľanie.",
+        emptyTitle: "Odmeny čakajú na prvý krok",
+        emptyDescription: "Začni diagnostikou a potom sa odomknú prvé odznaky za úlohy, cieľ a sériu dní.",
+        badgesTitle: "Odznaky",
+        badgesDescription: "Odznaky sa odomykajú za pravidelné učenie, presnosť a dokončené úlohy.",
+        unlocked: "Získané",
+        locked: "Čaká",
+        backToChild: "Späť na prehľad",
+        practiceButton: "Pokračovať precvičovaním",
+        diagnosticButton: "Začať diagnostiku",
+        badges: {
+          diagnostic: {
+            title: "Prieskumník",
+            description: "Dokonči diagnostiku a nájdi správny štart.",
+            progress: "{current} z {target}"
+          },
+          firstTask: {
+            title: "Prvá úloha",
+            description: "Vyrieš svoju prvú uloženú úlohu.",
+            progress: "{current} z {target}"
+          },
+          dailyGoal: {
+            title: "Denný cieľ",
+            description: "Splň dnešný cieľ v úlohách.",
+            progress: "{current} z {target}"
+          },
+          accuracyDay: {
+            title: "Presný deň",
+            description: "Udrž aspoň 80 % presnosť pri piatich úlohách.",
+            progress: "Presnosť {accuracy}% pri {current} z {target} úloh"
+          },
+          streak3: {
+            title: "Tri dni po sebe",
+            description: "Precvičuj v troch dňoch za sebou.",
+            progress: "{current} z {target} dní"
+          },
+          challenge: {
+            title: "Výzva prijatá",
+            description: "Dokonči aspoň jednu úlohu vo výzve.",
+            progress: "{current} z {target}"
+          },
+          testComplete: {
+            title: "Testový hrdina",
+            description: "Dokonči aspoň jeden test.",
+            progress: "{current} z {target}"
+          },
+          hundredTasks: {
+            title: "100 úloh",
+            description: "Nazbieraj sto uložených úloh.",
+            progress: "{current} z {target}"
+          }
+        }
       }
     },
     parent: {
@@ -602,6 +672,76 @@ export const dictionaries = {
         completeDescription: "Score: {score} XP. Correct tasks: {correct} of {total}.",
         backToChild: "Back to overview",
         goDiagnostic: "Go to diagnostic"
+      },
+      rewardsDashboard: {
+        title: "Rewards",
+        description: "See what went well. Rewards celebrate calm progress, not only speed.",
+        loadingChild: "Loading the selected child...",
+        loadingRewards: "Loading rewards...",
+        missingChild: "Select a child in the parent area first.",
+        loadError: "Could not load rewards. Check your connection and Firebase rules.",
+        currentLevel: "Level: {level}",
+        rewardPoints: "Reward points",
+        currentStreak: "Day streak",
+        longestStreak: "Best streak",
+        tasksToday: "Tasks today: {count}",
+        accuracyToday: "Today's accuracy",
+        dailyGoalTitle: "Daily goal",
+        dailyGoalProgress: "{completed} of {goal} tasks today",
+        dailyGoalComplete: "Goal complete",
+        keepGoingTitle: "Want another reward?",
+        keepGoingDescription: "The best next step is short practice. Accuracy matters more than rushing.",
+        emptyTitle: "Rewards are waiting for the first step",
+        emptyDescription: "Start with the diagnostic, then badges unlock for tasks, goals, and day streaks.",
+        badgesTitle: "Badges",
+        badgesDescription: "Badges unlock through steady learning, accuracy, and completed tasks.",
+        unlocked: "Earned",
+        locked: "Waiting",
+        backToChild: "Back to overview",
+        practiceButton: "Continue practice",
+        diagnosticButton: "Start diagnostic",
+        badges: {
+          diagnostic: {
+            title: "Explorer",
+            description: "Finish the diagnostic and find the right starting point.",
+            progress: "{current} of {target}"
+          },
+          firstTask: {
+            title: "First task",
+            description: "Solve your first saved task.",
+            progress: "{current} of {target}"
+          },
+          dailyGoal: {
+            title: "Daily goal",
+            description: "Complete today's task goal.",
+            progress: "{current} of {target}"
+          },
+          accuracyDay: {
+            title: "Accurate day",
+            description: "Keep at least 80% accuracy across five tasks.",
+            progress: "{accuracy}% accuracy with {current} of {target} tasks"
+          },
+          streak3: {
+            title: "Three days in a row",
+            description: "Practice on three days in a row.",
+            progress: "{current} of {target} days"
+          },
+          challenge: {
+            title: "Challenge accepted",
+            description: "Complete at least one challenge task.",
+            progress: "{current} of {target}"
+          },
+          testComplete: {
+            title: "Test hero",
+            description: "Complete at least one test.",
+            progress: "{current} of {target}"
+          },
+          hundredTasks: {
+            title: "100 tasks",
+            description: "Collect one hundred saved tasks.",
+            progress: "{current} of {target}"
+          }
+        }
       }
     },
     parent: {
