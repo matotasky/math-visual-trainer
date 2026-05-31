@@ -48,6 +48,8 @@ export function TestRunner({ labels, locale }: TestRunnerProps) {
   const [error, setError] = useState<string | null>(null);
   const sessionIdRef = useRef("");
   const startedAtRef = useRef(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const submittingRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,6 +84,12 @@ export function TestRunner({ labels, locale }: TestRunnerProps) {
     };
   }, [completed, locale, selectedChild]);
 
+  useEffect(() => {
+    if (!completed && exercise) {
+      inputRef.current?.focus();
+    }
+  }, [completed, exercise]);
+
   function createNextExercise() {
     if (!selectedChild) {
       return;
@@ -99,7 +107,7 @@ export function TestRunner({ labels, locale }: TestRunnerProps) {
   }
 
   async function submitAnswer() {
-    if (!exercise || !selectedChild || saving) {
+    if (!exercise || !selectedChild || saving || submittingRef.current || !answer.trim()) {
       return;
     }
 
@@ -124,6 +132,7 @@ export function TestRunner({ labels, locale }: TestRunnerProps) {
       createdAt: new Date()
     };
 
+    submittingRef.current = true;
     setSaving(true);
     setError(null);
 
@@ -143,6 +152,7 @@ export function TestRunner({ labels, locale }: TestRunnerProps) {
     } catch {
       setError(labels.saveError);
     } finally {
+      submittingRef.current = false;
       setSaving(false);
     }
   }
@@ -214,13 +224,21 @@ export function TestRunner({ labels, locale }: TestRunnerProps) {
         </div>
       </div>
 
-      <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <form
+        className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void submitAnswer();
+        }}
+      >
         <p className="text-sm font-bold uppercase text-slate-500">{progressLabel}</p>
         <p className="mt-3 text-lg font-bold text-slate-950">{exercise.prompt}</p>
 
         <label className="mt-5 grid gap-2 text-sm font-semibold text-slate-800">
           {labels.answerLabel}
           <input
+            ref={inputRef}
+            autoFocus
             className="min-h-14 rounded-md border border-slate-300 px-4 text-2xl font-bold outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
             inputMode="numeric"
             placeholder={labels.answerPlaceholder}
@@ -234,13 +252,12 @@ export function TestRunner({ labels, locale }: TestRunnerProps) {
         <button
           className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={saving || !answer.trim()}
-          type="button"
-          onClick={() => void submitAnswer()}
+          type="submit"
         >
           {saving ? <Loader2 aria-hidden="true" className="animate-spin" size={18} /> : null}
           {saving ? labels.saving : labels.submitAnswer}
         </button>
-      </aside>
+      </form>
     </section>
   );
 }
