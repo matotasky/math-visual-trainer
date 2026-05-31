@@ -3,7 +3,9 @@
 import {
   Activity,
   AlertTriangle,
+  ArrowDown,
   ArrowRight,
+  ArrowUp,
   BarChart3,
   CalendarDays,
   CheckCircle2,
@@ -27,13 +29,14 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import { LEVELS } from "@/data/levels";
 import { useAuth } from "@/hooks/useAuth";
-import { listAttemptsPage, listChildProfiles } from "@/lib/firestore";
-import { getOperandKey } from "@/lib/math-engine";
+import { listAttemptsPage, listChildProfiles, updateChildLevel } from "@/lib/firestore";
+import { getOperandKey, recommendLevelAdjustment } from "@/lib/math-engine";
 import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import { getSelectedChildProfileId, setSelectedChildProfileId } from "@/lib/utils/childSelection";
 import { toLocalDateKey } from "@/lib/utils/date";
-import type { ChildProfile, ExerciseAttempt, ExerciseMode, Locale, MathTopic } from "@/types";
+import type { ChildProfile, ExerciseAttempt, ExerciseMode, LevelId, Locale, MathTopic } from "@/types";
 
 type ParentDashboardLabels = {
   title: string;
@@ -68,6 +71,7 @@ type ParentDashboardLabels = {
   };
   sections: {
     recommendedFocus: string;
+    levelControl: string;
     topicMastery: string;
     commonMistakes: string;
     recentTests: string;
@@ -101,6 +105,31 @@ type ParentDashboardLabels = {
     make10Issue: string;
     weakPairIssue: string;
     slowButCorrect: string;
+  };
+  levelControl: {
+    title: string;
+    description: string;
+    appRecommendation: string;
+    recommendedLevel: string;
+    currentLevel: string;
+    manualSelectLabel: string;
+    applyRecommendation: string;
+    lowerLevel: string;
+    raiseLevel: string;
+    saving: string;
+    saveError: string;
+    actionLabels: Record<"keep" | "raise" | "lower", string>;
+    reasons: Record<
+      | "needs_diagnostic"
+      | "not_enough_data"
+      | "ready_to_raise"
+      | "accuracy_low_lower"
+      | "accuracy_low_practice"
+      | "slow_but_correct"
+      | "keep_building",
+      string
+    >;
+    stats: string;
   };
   topics: Record<MathTopic, string>;
   modes: Record<ExerciseMode, string>;
@@ -208,6 +237,16 @@ function fillTemplate(template: string, values: Record<string, string | number>)
     (current, [key, value]) => current.replace(`{${key}}`, String(value)),
     template
   );
+}
+
+function isLevelId(value: string): value is LevelId {
+  return LEVELS.some((level) => level.id === value);
+}
+
+function getLevelIndex(levelId: string): number {
+  const index = LEVELS.findIndex((level) => level.id === levelId);
+
+  return index >= 0 ? index : 0;
 }
 
 function calculateDailyRows(attempts: ExerciseAttempt[]): DailyChartRow[] {
@@ -368,6 +407,8 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   const [loadingProfiles, setLoadingProfiles] = useState(true);
   const [loadingAttempts, setLoadingAttempts] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [levelSaving, setLevelSaving] = useState(false);
+  const [levelError, setLevelError] = useState(false);
 
   useEffect(() => {
     const parentUserId = firebaseUser?.uid;
@@ -467,6 +508,9 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   const currentStreak = calculateCurrentStreak(attempts);
   const dailyGoalTasks = selectedChild ? Math.max(1, selectedChild.dailyGoalMinutes) : 1;
   const currentLevelName = selectedChild ? getLevelDisplayName(selectedChild.currentLevelId, locale) : "";
+  const currentLevelIndex = selectedChild ? getLevelIndex(selectedChild.currentLevelId) : 0;
+  const previousLevel = LEVELS[currentLevelIndex - 1];
+  const nextLevel = LEVELS[currentLevelIndex + 1];
   const lastActivity = attempts[0]?.createdAt;
 
   const dailyRows = useMemo(() => calculateDailyRows(attempts), [attempts]);
@@ -486,11 +530,46 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
       labels
     )
     : "";
+  const levelRecommendation = selectedChild
+    ? recommendLevelAdjustment({ childProfile: selectedChild, attempts })
+    : null;
+  const recommendedLevelName = levelRecommendation
+    ? getLevelDisplayName(levelRecommendation.recommendedLevelId, locale)
+    : "";
 
   function selectChild(childProfileId: string) {
     setSelectedChildId(childProfileId);
     setSelectedChildProfileId(childProfileId);
     setAttempts([]);
+    setLevelError(false);
+  }
+
+  async function changeLevel(nextLevelId: LevelId) {
+    if (!selectedChild || levelSaving || nextLevelId === selectedChild.currentLevelId) {
+      return;
+    }
+
+    setLevelSaving(true);
+    setLevelError(false);
+
+    try {
+      await updateChildLevel(selectedChild.id, nextLevelId);
+      setProfiles((currentProfiles) =>
+        currentProfiles.map((profile) =>
+          profile.id === selectedChild.id
+            ? {
+              ...profile,
+              currentLevelId: nextLevelId,
+              updatedAt: new Date()
+            }
+            : profile
+        )
+      );
+    } catch {
+      setLevelError(true);
+    } finally {
+      setLevelSaving(false);
+    }
   }
 
   if (authLoading || loadingProfiles) {
@@ -588,6 +667,107 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
           </div>
         </div>
       </section>
+
+      {selectedChild && levelRecommendation ? (
+        <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-sm font-bold uppercase text-sky-700">{labels.sections.levelControl}</p>
+              <h2 className="mt-2 text-xl font-bold text-slate-950">{labels.levelControl.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{labels.levelControl.description}</p>
+
+              <div className="mt-4 grid gap-3 rounded-md border border-sky-200 bg-sky-50 p-4">
+                <p className="text-sm font-bold text-sky-950">
+                  {labels.levelControl.appRecommendation}: {labels.levelControl.actionLabels[levelRecommendation.action]}
+                </p>
+                <p className="text-sm leading-6 text-slate-700">
+                  {labels.levelControl.recommendedLevel.replace("{level}", recommendedLevelName)}
+                </p>
+                <p className="text-sm leading-6 text-slate-700">
+                  {labels.levelControl.reasons[levelRecommendation.reason]}
+                </p>
+                <p className="text-xs font-bold uppercase text-slate-500">
+                  {fillTemplate(labels.levelControl.stats, {
+                    accuracy: Math.round(levelRecommendation.accuracy * 100),
+                    attempts: levelRecommendation.attemptsCount,
+                    time: formatResponseTime(levelRecommendation.averageResponseTimeMs)
+                  })}
+                </p>
+              </div>
+            </div>
+
+            <div className="w-full max-w-md rounded-md border border-slate-200 p-4">
+              <p className="text-sm font-bold text-slate-950">
+                {labels.levelControl.currentLevel.replace("{level}", currentLevelName)}
+              </p>
+
+              <label className="mt-4 grid gap-2 text-sm font-semibold text-slate-800">
+                {labels.levelControl.manualSelectLabel}
+                <select
+                  className="min-h-11 rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+                  disabled={levelSaving}
+                  value={selectedChild.currentLevelId}
+                  onChange={(event) => {
+                    if (isLevelId(event.target.value)) {
+                      void changeLevel(event.target.value);
+                    }
+                  }}
+                >
+                  {LEVELS.map((level) => (
+                    <option key={level.id} value={level.id}>
+                      {getLevelDisplayName(level.id, locale)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              {levelError ? (
+                <p className="mt-3 rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">
+                  {labels.levelControl.saveError}
+                </p>
+              ) : null}
+
+              <div className="mt-4 grid gap-2">
+                <button
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={levelSaving || !previousLevel}
+                  type="button"
+                  onClick={() => {
+                    if (previousLevel) {
+                      void changeLevel(previousLevel.id);
+                    }
+                  }}
+                >
+                  <ArrowDown aria-hidden="true" size={16} />
+                  {labels.levelControl.lowerLevel}
+                </button>
+                <button
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={levelSaving || !nextLevel}
+                  type="button"
+                  onClick={() => {
+                    if (nextLevel) {
+                      void changeLevel(nextLevel.id);
+                    }
+                  }}
+                >
+                  <ArrowUp aria-hidden="true" size={16} />
+                  {labels.levelControl.raiseLevel}
+                </button>
+                <button
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={levelSaving || levelRecommendation.recommendedLevelId === selectedChild.currentLevelId}
+                  type="button"
+                  onClick={() => void changeLevel(levelRecommendation.recommendedLevelId)}
+                >
+                  {levelSaving ? <Loader2 aria-hidden="true" className="animate-spin" size={16} /> : <CheckCircle2 aria-hidden="true" size={16} />}
+                  {levelSaving ? labels.levelControl.saving : labels.levelControl.applyRecommendation}
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <div className="grid gap-4 xl:grid-cols-2">
         <ChartPanel title={labels.charts.accuracy}>

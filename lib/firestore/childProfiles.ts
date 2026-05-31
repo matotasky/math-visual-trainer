@@ -110,3 +110,12 @@ export async function completeChildDiagnostic(childProfileId: string, currentLev
     updatedAt: now
   });
 }
+
+export async function updateChildLevel(childProfileId: string, currentLevelId: ChildProfile["currentLevelId"]): Promise<void> {
+  const db = getFirestoreDb();
+
+  await updateDoc(doc(db, FIRESTORE_COLLECTIONS.childProfiles, childProfileId), {
+    currentLevelId,
+    updatedAt: new Date()
+  });
+}

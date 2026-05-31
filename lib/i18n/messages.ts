@@ -393,6 +393,7 @@ export const dictionaries = {
         },
         sections: {
           recommendedFocus: "Odporúčaný ďalší krok",
+          levelControl: "Kontrola úrovne",
           topicMastery: "Témy",
           commonMistakes: "Najčastejšie chyby",
           recentTests: "Posledné testy"
@@ -426,6 +427,34 @@ export const dictionaries = {
           make10Issue: "Časté chyby pri dopĺňaní do 10 naznačujú slabšie make-10 porozumenie.",
           weakPairIssue: "Opakovaná chyba pri tomto páre naznačuje, že kombinácia ešte nie je stabilná.",
           slowButCorrect: "Odpovede bývajú správne, ale pomalšie. To skôr znamená pomalé uvažovanie než nepochopenie."
+        },
+        levelControl: {
+          title: "Rodičovská kontrola úrovne",
+          description: "Aplikácia odporučí úroveň podľa posledných úloh, ale rodič ju môže zvýšiť alebo znížiť podľa toho, čo vidí doma.",
+          appRecommendation: "Odporúčanie aplikácie",
+          recommendedLevel: "Odporúčaná úroveň: {level}",
+          currentLevel: "Aktuálne nastavené: {level}",
+          manualSelectLabel: "Nastaviť úroveň ručne",
+          applyRecommendation: "Použiť odporúčanie",
+          lowerLevel: "Znížiť o level",
+          raiseLevel: "Zvýšiť o level",
+          saving: "Ukladám...",
+          saveError: "Úroveň sa nepodarilo uložiť. Skontrolujte pripojenie a Firebase pravidlá.",
+          actionLabels: {
+            keep: "Ponechať aktuálnu úroveň",
+            raise: "Zvýšiť úroveň",
+            lower: "Znížiť úroveň"
+          },
+          reasons: {
+            needs_diagnostic: "Najprv je potrebné dokončiť diagnostiku. Bez nej by odporúčanie stálo na slabých dátach.",
+            not_enough_data: "Zatiaľ je málo uložených úloh. Ponechajte úroveň a nazbierajte ešte krátku sériu.",
+            ready_to_raise: "Presnosť, tempo aj počet úloh vyzerajú stabilne. Dieťa môže skúsiť vyššiu úroveň.",
+            accuracy_low_lower: "Presnosť je nízka. Nižšia úroveň pomôže obnoviť porozumenie bez frustrácie.",
+            accuracy_low_practice: "Presnosť ešte nie je stabilná. Najlepšie je zostať a precvičiť vizuálne stratégie.",
+            slow_but_correct: "Dieťa odpovedá väčšinou správne, ale pomalšie. Rýchlosť ešte netlačme, úroveň ponechajme.",
+            keep_building: "Výkon sa buduje. Aktuálna úroveň je zatiaľ vhodná."
+          },
+          stats: "Presnosť {accuracy}% · úlohy {attempts} · priemerný čas {time}"
         },
         topics: {
           quantity_recognition: "Rozpoznávanie množstva",
@@ -897,6 +926,7 @@ export const dictionaries = {
         },
         sections: {
           recommendedFocus: "Recommended next step",
+          levelControl: "Level control",
           topicMastery: "Topics",
           commonMistakes: "Most common mistakes",
           recentTests: "Recent tests"
@@ -930,6 +960,34 @@ export const dictionaries = {
           make10Issue: "Frequent complement-to-10 mistakes suggest weak make-10 understanding.",
           weakPairIssue: "Repeated mistakes on this pair suggest the combination is not stable yet.",
           slowButCorrect: "Answers are often correct but slower. That suggests slow thinking rather than lack of understanding."
+        },
+        levelControl: {
+          title: "Parent level control",
+          description: "The app recommends a level from recent tasks, but the parent can raise or lower it based on what they see at home.",
+          appRecommendation: "App recommendation",
+          recommendedLevel: "Recommended level: {level}",
+          currentLevel: "Currently set: {level}",
+          manualSelectLabel: "Set level manually",
+          applyRecommendation: "Apply recommendation",
+          lowerLevel: "Lower one level",
+          raiseLevel: "Raise one level",
+          saving: "Saving...",
+          saveError: "Could not save the level. Check your connection and Firebase rules.",
+          actionLabels: {
+            keep: "Keep current level",
+            raise: "Raise level",
+            lower: "Lower level"
+          },
+          reasons: {
+            needs_diagnostic: "Finish the diagnostic first. Without it, the recommendation would be based on weak data.",
+            not_enough_data: "There are not enough saved tasks yet. Keep the level and collect one short task set.",
+            ready_to_raise: "Accuracy, pace, and task count look stable. The child can try a higher level.",
+            accuracy_low_lower: "Accuracy is low. A lower level can rebuild understanding without frustration.",
+            accuracy_low_practice: "Accuracy is not stable yet. Stay here and practice visual strategies.",
+            slow_but_correct: "The child is mostly correct but slower. Do not push speed yet; keep the level.",
+            keep_building: "Performance is still building. The current level is appropriate for now."
+          },
+          stats: "Accuracy {accuracy}% · tasks {attempts} · average time {time}"
         },
         topics: {
           quantity_recognition: "Quantity recognition",
