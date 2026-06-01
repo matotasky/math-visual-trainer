@@ -12,6 +12,7 @@ import {
   Clock3,
   Loader2,
   Target,
+  Trash2,
   TrendingUp
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -31,7 +32,7 @@ import {
 } from "recharts";
 import { LEVELS } from "@/data/levels";
 import { useAuth } from "@/hooks/useAuth";
-import { listAttemptsPage, listChildProfiles, updateChildLevel } from "@/lib/firestore";
+import { deleteAttemptsForLevel, listAttemptsPage, listChildProfiles, updateChildLevel } from "@/lib/firestore";
 import { getOperandKey, recommendLevelAdjustment } from "@/lib/math-engine";
 import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import { getSelectedChildProfileId, setSelectedChildProfileId } from "@/lib/utils/childSelection";
@@ -130,6 +131,19 @@ type ParentDashboardLabels = {
       string
     >;
     stats: string;
+  };
+  levelReset: {
+    title: string;
+    description: string;
+    selectLabel: string;
+    deleteButton: string;
+    confirmTitle: string;
+    confirmDescription: string;
+    cancelButton: string;
+    confirmButton: string;
+    saving: string;
+    success: string;
+    saveError: string;
   };
   topics: Record<MathTopic, string>;
   modes: Record<ExerciseMode, string>;
@@ -409,6 +423,11 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   const [loadError, setLoadError] = useState(false);
   const [levelSaving, setLevelSaving] = useState(false);
   const [levelError, setLevelError] = useState(false);
+  const [resetLevelId, setResetLevelId] = useState<LevelId>("L0_DIAGNOSTIC");
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [resetSaving, setResetSaving] = useState(false);
+  const [resetError, setResetError] = useState(false);
+  const [lastResetCount, setLastResetCount] = useState<number | null>(null);
 
   useEffect(() => {
     const parentUserId = firebaseUser?.uid;
@@ -432,6 +451,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
         if (!cancelled) {
           setProfiles(nextProfiles);
           setSelectedChildId(nextSelectedChild?.id ?? "");
+          setResetLevelId(nextSelectedChild?.currentLevelId ?? "L0_DIAGNOSTIC");
 
           if (nextSelectedChild) {
             setSelectedChildProfileId(nextSelectedChild.id);
@@ -536,12 +556,19 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   const recommendedLevelName = levelRecommendation
     ? getLevelDisplayName(levelRecommendation.recommendedLevelId, locale)
     : "";
+  const resetLevelName = getLevelDisplayName(resetLevelId, locale);
 
   function selectChild(childProfileId: string) {
+    const nextSelectedChild = profiles.find((profile) => profile.id === childProfileId);
+
     setSelectedChildId(childProfileId);
     setSelectedChildProfileId(childProfileId);
+    setResetLevelId(nextSelectedChild?.currentLevelId ?? "L0_DIAGNOSTIC");
     setAttempts([]);
     setLevelError(false);
+    setResetError(false);
+    setResetConfirmOpen(false);
+    setLastResetCount(null);
   }
 
   async function changeLevel(nextLevelId: LevelId) {
@@ -569,6 +596,28 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
       setLevelError(true);
     } finally {
       setLevelSaving(false);
+    }
+  }
+
+  async function resetLevelProgress() {
+    if (!selectedChild || resetSaving) {
+      return;
+    }
+
+    setResetSaving(true);
+    setResetError(false);
+    setLastResetCount(null);
+
+    try {
+      const deletedCount = await deleteAttemptsForLevel(selectedChild.id, resetLevelId);
+
+      setAttempts((currentAttempts) => currentAttempts.filter((attempt) => attempt.levelId !== resetLevelId));
+      setLastResetCount(deletedCount);
+      setResetConfirmOpen(false);
+    } catch {
+      setResetError(true);
+    } finally {
+      setResetSaving(false);
     }
   }
 
@@ -764,6 +813,92 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
                   {levelSaving ? labels.levelControl.saving : labels.levelControl.applyRecommendation}
                 </button>
               </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {selectedChild ? (
+        <section className="rounded-lg border border-amber-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-sm font-bold uppercase text-amber-700">{labels.levelReset.title}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{labels.levelReset.description}</p>
+            </div>
+
+            <div className="w-full max-w-md rounded-md border border-slate-200 p-4">
+              <label className="grid gap-2 text-sm font-semibold text-slate-800">
+                {labels.levelReset.selectLabel}
+                <select
+                  className="min-h-11 rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+                  disabled={resetSaving}
+                  value={resetLevelId}
+                  onChange={(event) => {
+                    if (isLevelId(event.target.value)) {
+                      setResetLevelId(event.target.value);
+                      setResetConfirmOpen(false);
+                      setResetError(false);
+                      setLastResetCount(null);
+                    }
+                  }}
+                >
+                  {LEVELS.map((level) => (
+                    <option key={level.id} value={level.id}>
+                      {getLevelDisplayName(level.id, locale)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              {resetError ? (
+                <p className="mt-3 rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">
+                  {labels.levelReset.saveError}
+                </p>
+              ) : null}
+
+              {lastResetCount !== null ? (
+                <p className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-900">
+                  {fillTemplate(labels.levelReset.success, { count: lastResetCount })}
+                </p>
+              ) : null}
+
+              {resetConfirmOpen ? (
+                <div className="mt-4 rounded-md border border-amber-300 bg-amber-50 p-4">
+                  <h3 className="font-bold text-slate-950">{labels.levelReset.confirmTitle}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-700">
+                    {fillTemplate(labels.levelReset.confirmDescription, { level: resetLevelName })}
+                  </p>
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                    <button
+                      className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={resetSaving}
+                      type="button"
+                      onClick={() => setResetConfirmOpen(false)}
+                    >
+                      {labels.levelReset.cancelButton}
+                    </button>
+                    <button
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-red-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-60"
+                      disabled={resetSaving}
+                      type="button"
+                      onClick={() => void resetLevelProgress()}
+                    >
+                      {resetSaving ? <Loader2 aria-hidden="true" className="animate-spin" size={16} /> : <Trash2 aria-hidden="true" size={16} />}
+                      {resetSaving ? labels.levelReset.saving : labels.levelReset.confirmButton}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-red-300 px-4 py-2 text-sm font-semibold text-red-800 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={resetSaving}
+                  type="button"
+                  onClick={() => setResetConfirmOpen(true)}
+                >
+                  <Trash2 aria-hidden="true" size={16} />
+                  {labels.levelReset.deleteButton}
+                </button>
+              )}
             </div>
           </div>
         </section>

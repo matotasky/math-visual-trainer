@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, limit, orderBy, query, where, writeBatch } from "firebase/firestore";
 import { getFirestoreDb } from "@/lib/firebase";
 import type { ExerciseAttempt } from "@/types";
 import { FIRESTORE_COLLECTIONS } from "./collections";
@@ -80,4 +80,28 @@ export async function listAttemptsPage(
 
     return sortAttemptsByNewest(snapshot.docs.map((document) => mapAttemptDocument(document.id, document.data()))).slice(0, pageSize);
   }
+}
+
+export async function deleteAttemptsForLevel(childProfileId: string, levelId: string): Promise<number> {
+  const db = getFirestoreDb();
+  const attemptsQuery = query(
+    collection(db, FIRESTORE_COLLECTIONS.attempts),
+    where("childProfileId", "==", childProfileId),
+    where("levelId", "==", levelId)
+  );
+  const snapshot = await getDocs(attemptsQuery);
+  const documents = snapshot.docs;
+  const batchSize = 450;
+
+  for (let index = 0; index < documents.length; index += batchSize) {
+    const batch = writeBatch(db);
+
+    for (const document of documents.slice(index, index + batchSize)) {
+      batch.delete(document.ref);
+    }
+
+    await batch.commit();
+  }
+
+  return documents.length;
 }

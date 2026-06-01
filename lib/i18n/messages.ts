@@ -456,6 +456,19 @@ export const dictionaries = {
           },
           stats: "Presnosť {accuracy}% · úlohy {attempts} · priemerný čas {time}"
         },
+        levelReset: {
+          title: "Vymazať postup levelu",
+          description: "Vyberte konkrétnu úroveň a vymažte uložené úlohy iba z nej. Profil dieťaťa ani aktuálne nastavená úroveň sa nezmažú.",
+          selectLabel: "Level, ktorý chcete vyčistiť",
+          deleteButton: "Vymazať postup levelu",
+          confirmTitle: "Naozaj vymazať tento postup?",
+          confirmDescription: "Z levelu {level} sa odstránia uložené úlohy a prehľad sa prepočíta. Tento krok sa nedá vrátiť späť.",
+          cancelButton: "Zrušiť",
+          confirmButton: "Áno, vymazať",
+          saving: "Mažem...",
+          success: "Vymazané úlohy: {count}.",
+          saveError: "Postup levelu sa nepodarilo vymazať. Skontrolujte pripojenie a Firebase pravidlá."
+        },
         topics: {
           quantity_recognition: "Rozpoznávanie množstva",
           number_matching: "Priraďovanie čísla",
@@ -988,6 +1001,19 @@ export const dictionaries = {
             keep_building: "Performance is still building. The current level is appropriate for now."
           },
           stats: "Accuracy {accuracy}% · tasks {attempts} · average time {time}"
+        },
+        levelReset: {
+          title: "Delete level progress",
+          description: "Select a specific level and remove saved tasks only from that level. The child profile and currently assigned level are not deleted.",
+          selectLabel: "Level to clear",
+          deleteButton: "Delete level progress",
+          confirmTitle: "Delete this progress?",
+          confirmDescription: "Saved tasks from {level} will be removed and the dashboard will recalculate. This cannot be undone.",
+          cancelButton: "Cancel",
+          confirmButton: "Yes, delete",
+          saving: "Deleting...",
+          success: "Deleted tasks: {count}.",
+          saveError: "Could not delete level progress. Check your connection and Firebase rules."
         },
         topics: {
           quantity_recognition: "Quantity recognition",
