@@ -1,5 +1,6 @@
+import { ParentResultDetail } from "@/components/parent/ParentResultDetail";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 type ResultsDetailPageProps = {
   params: Promise<{
@@ -9,7 +10,7 @@ type ResultsDetailPageProps = {
 
 export default async function ResultsDetailPage({ params }: ResultsDetailPageProps) {
   const { sessionId } = await params;
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
   return (
     <section className="py-8">
@@ -18,6 +19,7 @@ export default async function ResultsDetailPage({ params }: ResultsDetailPagePro
         description={dictionary.parent.results.detailDescription.replace("{sessionId}", sessionId)}
         eyebrow={dictionary.parent.eyebrow}
       />
+      <ParentResultDetail labels={dictionary.parent.results} locale={locale} sessionId={sessionId} />
     </section>
   );
 }

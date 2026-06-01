@@ -1,8 +1,9 @@
+import { ParentResults } from "@/components/parent/ParentResults";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function ParentResultsPage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
   return (
     <section className="py-8">
@@ -11,6 +12,7 @@ export default async function ParentResultsPage() {
         description={dictionary.parent.results.description}
         eyebrow={dictionary.parent.eyebrow}
       />
+      <ParentResults labels={dictionary.parent.results} locale={locale} />
     </section>
   );
 }
