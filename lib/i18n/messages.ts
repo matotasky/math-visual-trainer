@@ -579,7 +579,80 @@ export const dictionaries = {
       },
       mistakes: {
         title: "Chyby",
-        description: "Základ obrazovky pre najčastejšie nesprávne príklady, vysvetlenie pravdepodobnej príčiny a odporúčané precvičenie."
+        description: "Najčastejšie nesprávne príklady, slabé témy, pomalé správne odpovede a odporúčané precvičenie.",
+        loadingProfiles: "Načítavam detské profily...",
+        loadingMistakes: "Načítavam chyby...",
+        loadError: "Chyby sa nepodarilo načítať. Skontrolujte pripojenie a Firebase pravidlá.",
+        noChildrenTitle: "Najprv vytvorte detský profil",
+        noChildrenDescription: "Analýza chýb potrebuje aspoň jedno dieťa s uloženými úlohami.",
+        createChildButton: "Vytvoriť dieťa",
+        childSelectorLabel: "Aktívne dieťa",
+        filtersTitle: "Filtre chýb",
+        topicFilterLabel: "Téma",
+        dateFilterLabel: "Obdobie",
+        allTopics: "Všetky témy",
+        allDates: "Celá načítaná história",
+        last7Days: "Posledných 7 dní",
+        last14Days: "Posledných 14 dní",
+        last30Days: "Posledných 30 dní",
+        noAnswer: "Bez odpovede",
+        dataNote: "Free-tier poznámka: stránka analyzuje obmedzenú stránku posledných uložených úloh. Agregované mistakeStats napojíme v ďalšom kroku.",
+        emptyTitle: "Nevidím opakovanú chybu",
+        emptyDescription: "V aktuálnom výbere nie sú opakované nesprávne odpovede. Ak dieťa ešte necvičilo, výsledky sa zobrazia po prvých uložených úlohách.",
+        primaryInsightTitle: "Najpravdepodobnejšie vysvetlenie",
+        cards: {
+          totalMistakes: "Chybné úlohy",
+          errorRate: "Chybovosť",
+          repeatedExamples: "Opakované príklady",
+          fastGuesses: "Rýchle tipovanie",
+          slowCorrect: "Pomalé správne"
+        },
+        sections: {
+          frequentMistakes: "Najčastejšie nesprávne príklady",
+          weakestTopics: "Najslabšie témy",
+          slowTopics: "Pomalé, ale správne témy"
+        },
+        table: {
+          example: "Príklad",
+          topic: "Téma",
+          level: "Level",
+          mistakes: "Chyby",
+          attempts: "Úlohy",
+          errorRate: "Chybovosť",
+          commonWrongAnswers: "Časté odpovede",
+          lastMistake: "Posledná chyba",
+          averageWrongTime: "Priemerný čas",
+          suggestion: "Odporúčanie"
+        },
+        insights: {
+          weak_quantity_recognition: "Chyby pri rozpoznávaní množstva naznačujú, že dieťa ešte nemusí stabilne vidieť počet bez počítania po jednom.",
+          wrong_pair_combination: "Opakovaná chyba pri rovnakom príklade naznačuje nestabilnú číselnú kombináciu.",
+          weak_make_10: "Chyby pri pároch ako 8+2, 7+3 alebo 6+4 naznačujú slabšie dopĺňanie do 10.",
+          counting_by_one_dependency: "Výkon môže naznačovať závislosť od počítania po jednom namiesto použitia stratégie.",
+          fast_guessing: "Veľmi rýchle nesprávne odpovede vyzerajú skôr ako tipovanie než premyslený postup.",
+          slow_but_correct: "Dieťa často odpovie správne, ale pomaly. To skôr znamená neistú automatizáciu než nepochopenie.",
+          unknown: "Zatiaľ nevidím dosť silný vzor. Pomôže ešte krátke precvičovanie."
+        },
+        remediations: {
+          weak_quantity_recognition: "Vráťte sa k bodkám, skupinám a pokojnej otázke „koľko vidíš?“ bez tlaku na čas.",
+          wrong_pair_combination: "Dajte krátke cielené precvičovanie presne týchto príkladov s vizuálnym modelom.",
+          weak_make_10: "Použite ten-frame a dopĺňanie do 10. Najprv nech dieťa ukáže, čo chýba do plnej desiatky.",
+          counting_by_one_dependency: "Podporujte rozklad čísla a skupiny. Rýchlosť zatiaľ netlačte.",
+          fast_guessing: "Spomaľte výzvy a testy. Uprednostnite presnosť a vysvetlenie pred rýchlym odoslaním odpovede.",
+          slow_but_correct: "Nechajte rovnakú úroveň a pridajte krátke stabilizačné série. Cieľ je istota, nie skok na ťažší level.",
+          unknown: "Nazbierajte ešte niekoľko úloh v precvičovaní, aby sa ukázal spoľahlivejší vzor."
+        },
+        topics: {
+          quantity_recognition: "Rozpoznávanie množstva",
+          number_matching: "Priraďovanie čísla",
+          addition_to_5: "Sčítanie do 5",
+          quantity_to_10: "Množstvá do 10",
+          make_10: "Dopĺňanie do 10",
+          addition_to_10: "Sčítanie do 10",
+          subtraction_to_10: "Odčítanie do 10",
+          addition_to_20: "Sčítanie do 20",
+          bridge_through_10: "Prechod cez 10"
+        }
       },
       progress: {
         title: "Pokrok",
@@ -1208,7 +1281,80 @@ export const dictionaries = {
       },
       mistakes: {
         title: "Mistakes",
-        description: "Route skeleton for frequent wrong examples, likely issue explanations, and suggested remediation."
+        description: "Frequent wrong examples, weak topics, slow correct answers, and recommended remediation.",
+        loadingProfiles: "Loading child profiles...",
+        loadingMistakes: "Loading mistakes...",
+        loadError: "Could not load mistakes. Check your connection and Firebase rules.",
+        noChildrenTitle: "Create a child profile first",
+        noChildrenDescription: "Mistake analysis needs at least one child with saved tasks.",
+        createChildButton: "Create child",
+        childSelectorLabel: "Active child",
+        filtersTitle: "Mistake filters",
+        topicFilterLabel: "Topic",
+        dateFilterLabel: "Date range",
+        allTopics: "All topics",
+        allDates: "All loaded history",
+        last7Days: "Last 7 days",
+        last14Days: "Last 14 days",
+        last30Days: "Last 30 days",
+        noAnswer: "No answer",
+        dataNote: "Free-tier note: this page analyzes a limited page of recent saved tasks. Aggregate mistakeStats can be wired in the next pass.",
+        emptyTitle: "No repeated mistake found",
+        emptyDescription: "There are no repeated wrong answers in the current selection. If the child has not practiced yet, results will appear after saved tasks.",
+        primaryInsightTitle: "Most likely explanation",
+        cards: {
+          totalMistakes: "Wrong tasks",
+          errorRate: "Error rate",
+          repeatedExamples: "Repeated examples",
+          fastGuesses: "Fast guesses",
+          slowCorrect: "Slow correct"
+        },
+        sections: {
+          frequentMistakes: "Most frequent wrong examples",
+          weakestTopics: "Weakest topics",
+          slowTopics: "Slow but correct topics"
+        },
+        table: {
+          example: "Example",
+          topic: "Topic",
+          level: "Level",
+          mistakes: "Mistakes",
+          attempts: "Tasks",
+          errorRate: "Error rate",
+          commonWrongAnswers: "Common answers",
+          lastMistake: "Last mistake",
+          averageWrongTime: "Average time",
+          suggestion: "Suggestion"
+        },
+        insights: {
+          weak_quantity_recognition: "Quantity-recognition mistakes suggest the child may not yet see quantities without counting one by one.",
+          wrong_pair_combination: "Repeated mistakes on the same example suggest an unstable number pair.",
+          weak_make_10: "Mistakes on pairs like 8+2, 7+3, or 6+4 suggest weak make-10 understanding.",
+          counting_by_one_dependency: "Performance may suggest dependence on counting by one instead of using a strategy.",
+          fast_guessing: "Very fast wrong answers look more like guessing than thoughtful work.",
+          slow_but_correct: "The child often answers correctly but slowly. This suggests unstable automaticity rather than lack of understanding.",
+          unknown: "There is not a strong pattern yet. A short practice round will help."
+        },
+        remediations: {
+          weak_quantity_recognition: "Return to dots, groups, and calm “how many?” questions without time pressure.",
+          wrong_pair_combination: "Use short targeted practice for these exact examples with a visual model.",
+          weak_make_10: "Use ten-frames and complements to 10. First ask the child to show what is missing to fill ten.",
+          counting_by_one_dependency: "Encourage decomposing numbers and seeing groups. Do not push speed yet.",
+          fast_guessing: "Slow down challenges and tests. Prioritize accuracy and explanation before quick submission.",
+          slow_but_correct: "Keep the same level and add short stabilization sets. The goal is confidence, not jumping ahead.",
+          unknown: "Collect a few more practice tasks so a more reliable pattern can emerge."
+        },
+        topics: {
+          quantity_recognition: "Quantity recognition",
+          number_matching: "Number matching",
+          addition_to_5: "Addition to 5",
+          quantity_to_10: "Quantities to 10",
+          make_10: "Make 10",
+          addition_to_10: "Addition to 10",
+          subtraction_to_10: "Subtraction to 10",
+          addition_to_20: "Addition to 20",
+          bridge_through_10: "Bridge through 10"
+        }
       },
       progress: {
         title: "Progress",

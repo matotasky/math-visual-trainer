@@ -1,8 +1,9 @@
+import { ParentMistakes } from "@/components/parent/ParentMistakes";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function ParentMistakesPage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
   return (
     <section className="py-8">
@@ -11,6 +12,7 @@ export default async function ParentMistakesPage() {
         description={dictionary.parent.mistakes.description}
         eyebrow={dictionary.parent.eyebrow}
       />
+      <ParentMistakes labels={dictionary.parent.mistakes} locale={locale} />
     </section>
   );
 }
