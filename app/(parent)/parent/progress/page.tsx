@@ -1,9 +1,9 @@
-import { ChartPlaceholder } from "@/components/charts/ChartPlaceholder";
+import { ParentProgress } from "@/components/parent/ParentProgress";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function ParentProgressPage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
   return (
     <section className="py-8">
@@ -12,11 +12,7 @@ export default async function ParentProgressPage() {
         description={dictionary.parent.progress.description}
         eyebrow={dictionary.parent.eyebrow}
       />
-      <div className="grid gap-4 lg:grid-cols-3">
-        <ChartPlaceholder label={dictionary.parent.progress.attemptsPerDay} />
-        <ChartPlaceholder label={dictionary.parent.progress.responseTime} />
-        <ChartPlaceholder label={dictionary.parent.progress.masteryByTopic} />
-      </div>
+      <ParentProgress labels={dictionary.parent.progress} locale={locale} />
     </section>
   );
 }

@@ -656,10 +656,89 @@ export const dictionaries = {
       },
       progress: {
         title: "Pokrok",
-        description: "Základ obrazovky pre trendy pokroku, poslednú aktivitu, sériu dní a posun úrovní.",
-        attemptsPerDay: "Úlohy za deň",
-        responseTime: "Čas odpovede",
-        masteryByTopic: "Zvládnutie podľa témy"
+        description: "Trendy aktivity, presnosti, tempa, série dní, zvládnutia tém a postupu cez levely.",
+        loadingProfiles: "Načítavam detské profily...",
+        loadingProgress: "Načítavam pokrok...",
+        loadError: "Pokrok sa nepodarilo načítať. Skontrolujte pripojenie a Firebase pravidlá.",
+        noChildrenTitle: "Najprv vytvorte detský profil",
+        noChildrenDescription: "Pokrok potrebuje aspoň jedno dieťa s uloženými úlohami.",
+        createChildButton: "Vytvoriť dieťa",
+        childSelectorLabel: "Aktívne dieťa",
+        dateFilterLabel: "Obdobie",
+        allDates: "Celá načítaná história",
+        last7Days: "Posledných 7 dní",
+        last14Days: "Posledných 14 dní",
+        last30Days: "Posledných 30 dní",
+        currentBadge: "Aktuálne",
+        currentLevel: "Aktuálna úroveň: {level}",
+        lastActivity: "Posledná aktivita",
+        noActivity: "Zatiaľ žiadna aktivita",
+        dataNote: "Zobrazuje sa posledná načítaná aktivita, aby stránka zostala rýchla aj pri dlhšej histórii.",
+        emptyTitle: "Pokrok čaká na prvé úlohy",
+        emptyDescription: "Keď dieťa dokončí diagnostiku, učenie, precvičovanie, test alebo výzvu, trendy sa zobrazia tu.",
+        cards: {
+          currentStreak: "Aktuálna séria",
+          longestStreak: "Najdlhšia séria",
+          activeDays: "Aktívne dni",
+          totalTasks: "Úlohy",
+          overallAccuracy: "Presnosť",
+          averageResponseTime: "Priemerný čas",
+          currentLevel: "Level"
+        },
+        charts: {
+          attemptsPerDay: "Úlohy za deň",
+          accuracyOverTime: "Presnosť v čase",
+          responseTime: "Čas odpovede",
+          masteryByTopic: "Zvládnutie podľa témy"
+        },
+        sections: {
+          recommendation: "Odporúčanie",
+          levelProgress: "Postup cez levely",
+          topicProgress: "Zvládnutie tém",
+          dailyActivity: "Denná aktivita"
+        },
+        table: {
+          date: "Dátum",
+          tasks: "Úlohy",
+          accuracy: "Presnosť",
+          correct: "Správne",
+          averageTime: "Priemerný čas",
+          topic: "Téma",
+          mastery: "Zvládnutie",
+          level: "Level"
+        },
+        levelRecommendation: {
+          title: "Čo hovorí aplikácia o ďalšom leveli",
+          currentLevel: "Aktuálne nastavené: {level}",
+          recommendedLevel: "Odporúčaná úroveň: {level}",
+          appRecommendation: "Odporúčanie aplikácie",
+          stats: "Presnosť {accuracy}% | úlohy {attempts} | priemerný čas {time}",
+          actionLabels: {
+            keep: "Ponechať aktuálnu úroveň",
+            raise: "Zvýšiť úroveň",
+            lower: "Znížiť úroveň"
+          },
+          reasons: {
+            needs_diagnostic: "Najprv je potrebné dokončiť diagnostiku. Bez nej by odporúčanie stálo na slabých dátach.",
+            not_enough_data: "Zatiaľ je málo uložených úloh. Nechajte dieťa dokončiť ešte krátku sériu.",
+            ready_to_raise: "Presnosť, tempo aj počet úloh vyzerajú stabilne. Dieťa môže skúsiť vyššiu úroveň.",
+            accuracy_low_lower: "Presnosť je nízka. Nižšia úroveň pomôže obnoviť porozumenie bez frustrácie.",
+            accuracy_low_practice: "Presnosť ešte nie je stabilná. Najlepšie je zostať a precvičiť vizuálne stratégie.",
+            slow_but_correct: "Dieťa odpovedá väčšinou správne, ale pomalšie. Rýchlosť ešte netlačme, úroveň ponechajme.",
+            keep_building: "Výkon sa buduje. Aktuálna úroveň je zatiaľ vhodná."
+          }
+        },
+        topics: {
+          quantity_recognition: "Rozpoznávanie množstva",
+          number_matching: "Priraďovanie čísla",
+          addition_to_5: "Sčítanie do 5",
+          quantity_to_10: "Množstvá do 10",
+          make_10: "Dopĺňanie do 10",
+          addition_to_10: "Sčítanie do 10",
+          subtraction_to_10: "Odčítanie do 10",
+          addition_to_20: "Sčítanie do 20",
+          bridge_through_10: "Prechod cez 10"
+        }
       },
       settings: {
         title: "Nastavenia",
@@ -1358,10 +1437,89 @@ export const dictionaries = {
       },
       progress: {
         title: "Progress",
-        description: "Route skeleton for progress trends, recent activity, streaks, and level advancement.",
-        attemptsPerDay: "Tasks per day",
-        responseTime: "Response time",
-        masteryByTopic: "Mastery by topic"
+        description: "Activity, accuracy, pacing, streak, topic mastery, and level progression trends.",
+        loadingProfiles: "Loading child profiles...",
+        loadingProgress: "Loading progress...",
+        loadError: "Could not load progress. Check your connection and Firebase rules.",
+        noChildrenTitle: "Create a child profile first",
+        noChildrenDescription: "Progress needs at least one child with saved tasks.",
+        createChildButton: "Create child",
+        childSelectorLabel: "Active child",
+        dateFilterLabel: "Date range",
+        allDates: "All loaded history",
+        last7Days: "Last 7 days",
+        last14Days: "Last 14 days",
+        last30Days: "Last 30 days",
+        currentBadge: "Current",
+        currentLevel: "Current level: {level}",
+        lastActivity: "Last activity",
+        noActivity: "No activity yet",
+        dataNote: "Shows the latest loaded activity so the page stays fast even with longer history.",
+        emptyTitle: "Progress is waiting for the first tasks",
+        emptyDescription: "When the child completes diagnostics, learning, practice, tests, or challenges, trends will appear here.",
+        cards: {
+          currentStreak: "Current streak",
+          longestStreak: "Longest streak",
+          activeDays: "Active days",
+          totalTasks: "Tasks",
+          overallAccuracy: "Accuracy",
+          averageResponseTime: "Average time",
+          currentLevel: "Level"
+        },
+        charts: {
+          attemptsPerDay: "Tasks per day",
+          accuracyOverTime: "Accuracy over time",
+          responseTime: "Response time",
+          masteryByTopic: "Mastery by topic"
+        },
+        sections: {
+          recommendation: "Recommendation",
+          levelProgress: "Level progress",
+          topicProgress: "Topic mastery",
+          dailyActivity: "Daily activity"
+        },
+        table: {
+          date: "Date",
+          tasks: "Tasks",
+          accuracy: "Accuracy",
+          correct: "Correct",
+          averageTime: "Average time",
+          topic: "Topic",
+          mastery: "Mastery",
+          level: "Level"
+        },
+        levelRecommendation: {
+          title: "What the app says about the next level",
+          currentLevel: "Currently set: {level}",
+          recommendedLevel: "Recommended level: {level}",
+          appRecommendation: "App recommendation",
+          stats: "Accuracy {accuracy}% | tasks {attempts} | average time {time}",
+          actionLabels: {
+            keep: "Keep current level",
+            raise: "Raise level",
+            lower: "Lower level"
+          },
+          reasons: {
+            needs_diagnostic: "Finish the diagnostic first. Without it, the recommendation would be based on weak data.",
+            not_enough_data: "There are not enough saved tasks yet. Let the child finish one more short set.",
+            ready_to_raise: "Accuracy, pace, and task count look stable. The child can try a higher level.",
+            accuracy_low_lower: "Accuracy is low. A lower level can rebuild understanding without frustration.",
+            accuracy_low_practice: "Accuracy is not stable yet. Stay here and practice visual strategies.",
+            slow_but_correct: "The child is mostly correct but slower. Do not push speed yet; keep the level.",
+            keep_building: "Performance is still building. The current level is appropriate for now."
+          }
+        },
+        topics: {
+          quantity_recognition: "Quantity recognition",
+          number_matching: "Number matching",
+          addition_to_5: "Addition to 5",
+          quantity_to_10: "Quantities to 10",
+          make_10: "Make 10",
+          addition_to_10: "Addition to 10",
+          subtraction_to_10: "Subtraction to 10",
+          addition_to_20: "Addition to 20",
+          bridge_through_10: "Bridge through 10"
+        }
       },
       settings: {
         title: "Settings",
