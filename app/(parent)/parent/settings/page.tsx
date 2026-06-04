@@ -1,8 +1,9 @@
+import { ParentSettings } from "@/components/parent/ParentSettings";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
-import { getRequestDictionary } from "@/lib/i18n/server";
+import { getRequestDictionary, getRequestLocale } from "@/lib/i18n/server";
 
 export default async function ParentSettingsPage() {
-  const dictionary = await getRequestDictionary();
+  const [dictionary, locale] = await Promise.all([getRequestDictionary(), getRequestLocale()]);
 
   return (
     <section className="py-8">
@@ -11,6 +12,7 @@ export default async function ParentSettingsPage() {
         description={dictionary.parent.settings.description}
         eyebrow={dictionary.parent.eyebrow}
       />
+      <ParentSettings labels={dictionary.parent.settings} locale={locale} />
     </section>
   );
 }

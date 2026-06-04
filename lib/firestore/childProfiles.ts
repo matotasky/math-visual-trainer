@@ -1,7 +1,19 @@
-import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where, type DocumentData } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteField,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  type DocumentData,
+  type FieldValue
+} from "firebase/firestore";
 import { DEFAULT_LEVEL_ID } from "@/data/levels";
 import { getFirestoreDb } from "@/lib/firebase";
-import type { ChildProfile } from "@/types";
+import type { ChildProfile, TimePressure } from "@/types";
 import { FIRESTORE_COLLECTIONS } from "./collections";
 
 export type CreateChildProfileInput = Pick<
@@ -9,8 +21,19 @@ export type CreateChildProfileInput = Pick<
   "displayName" | "birthYear" | "schoolYear" | "dailyGoalMinutes"
 >;
 
+export type UpdateChildProfileSettingsInput = {
+  dailyGoalMinutes: number;
+  timePressurePreference?: TimePressure | null;
+};
+
+const timePressureValues = ["none", "soft", "medium", "high"] satisfies TimePressure[];
+
 function readOptionalNumber(value: unknown): number | undefined {
   return typeof value === "number" ? value : undefined;
+}
+
+function readTimePressurePreference(value: unknown): TimePressure | undefined {
+  return timePressureValues.find((timePressure) => timePressure === value);
 }
 
 function readDate(value: unknown): Date {
@@ -38,6 +61,7 @@ function mapChildProfile(id: string, data: DocumentData): ChildProfile {
     schoolYear: readOptionalNumber(data.schoolYear),
     currentLevelId,
     dailyGoalMinutes: typeof data.dailyGoalMinutes === "number" ? data.dailyGoalMinutes : 10,
+    timePressurePreference: readTimePressurePreference(data.timePressurePreference),
     diagnosticCompletedAt: data.diagnosticCompletedAt ? readDate(data.diagnosticCompletedAt) : undefined,
     createdAt: readDate(data.createdAt),
     updatedAt: readDate(data.updatedAt)
@@ -118,4 +142,27 @@ export async function updateChildLevel(childProfileId: string, currentLevelId: C
     currentLevelId,
     updatedAt: new Date()
   });
+}
+
+export async function updateChildProfileSettings(
+  childProfileId: string,
+  input: UpdateChildProfileSettingsInput
+): Promise<void> {
+  const db = getFirestoreDb();
+  const updateData: {
+    dailyGoalMinutes: number;
+    timePressurePreference?: TimePressure | FieldValue;
+    updatedAt: Date;
+  } = {
+    dailyGoalMinutes: input.dailyGoalMinutes,
+    updatedAt: new Date()
+  };
+
+  if (input.timePressurePreference === null) {
+    updateData.timePressurePreference = deleteField();
+  } else if (input.timePressurePreference) {
+    updateData.timePressurePreference = input.timePressurePreference;
+  }
+
+  await updateDoc(doc(db, FIRESTORE_COLLECTIONS.childProfiles, childProfileId), updateData);
 }
