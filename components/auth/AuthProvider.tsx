@@ -5,6 +5,7 @@ import {
   getRedirectResult,
   onAuthStateChanged,
   setPersistence,
+  signInWithPopup,
   signInWithRedirect,
   signOut as firebaseSignOut,
   type User
@@ -22,8 +23,37 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const authErrorMessages: Record<string, string> = {
+  "auth/popup-closed-by-user": "Prihlasovacie okno bolo zavreté pred dokončením prihlasenia.",
+  "auth/cancelled-popup-request": "Prihlásenie už prebieha v inom okne.",
+  "auth/unauthorized-domain": "Táto doména nie je povolená vo Firebase Authentication.",
+  "auth/web-storage-unsupported": "Prehliadač nepovoľuje uloženie prihlásenia. Skúste povoliť cookies a lokálne úložisko."
+};
+
+function getAuthErrorCode(error: unknown): string | null {
+  if (typeof error !== "object" || error === null || !("code" in error)) {
+    return null;
+  }
+
+  const { code } = error as { code?: unknown };
+
+  return typeof code === "string" ? code : null;
+}
+
 function getErrorMessage(error: unknown): string {
+  const code = getAuthErrorCode(error);
+
+  if (code && authErrorMessages[code]) {
+    return authErrorMessages[code];
+  }
+
   return error instanceof Error ? error.message : "Nastala neočakávaná chyba pri prihlasovaní.";
+}
+
+function shouldFallbackToRedirect(error: unknown): boolean {
+  const code = getAuthErrorCode(error);
+
+  return code === "auth/popup-blocked" || code === "auth/operation-not-supported-in-this-environment";
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -34,23 +64,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const auth = getFirebaseAuth();
+      let cancelled = false;
+      let redirectSettled = false;
+      let authStateSettled = false;
 
-      void getRedirectResult(auth).catch((authError: unknown) => {
-        setError(getErrorMessage(authError));
-        setLoading(false);
-      });
-
-      return onAuthStateChanged(
-        auth,
-        (nextUser) => {
-          setFirebaseUser(nextUser);
-          setLoading(false);
-        },
-        (authError) => {
-          setError(getErrorMessage(authError));
+      function markReady() {
+        if (!cancelled && redirectSettled && authStateSettled) {
           setLoading(false);
         }
+      }
+
+      void getRedirectResult(auth)
+        .then((result) => {
+          if (!cancelled && result?.user) {
+            setFirebaseUser(result.user);
+          }
+        })
+        .catch((authError: unknown) => {
+          if (!cancelled) {
+            setError(getErrorMessage(authError));
+          }
+        })
+        .finally(() => {
+          redirectSettled = true;
+          markReady();
+        });
+
+      const unsubscribe = onAuthStateChanged(
+        auth,
+        (nextUser) => {
+          if (!cancelled) {
+            setFirebaseUser(nextUser);
+            authStateSettled = true;
+            markReady();
+          }
+        },
+        (authError) => {
+          if (!cancelled) {
+            setError(getErrorMessage(authError));
+            authStateSettled = true;
+            markReady();
+          }
+        }
       );
+
+      return () => {
+        cancelled = true;
+        unsubscribe();
+      };
     } catch (authError) {
       window.setTimeout(() => {
         setError(getErrorMessage(authError));
@@ -67,8 +128,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const auth = getFirebaseAuth();
+      const provider = getGoogleAuthProvider();
+
       await setPersistence(auth, browserLocalPersistence);
-      await signInWithRedirect(auth, getGoogleAuthProvider());
+
+      try {
+        const result = await signInWithPopup(auth, provider);
+        setFirebaseUser(result.user);
+        setLoading(false);
+      } catch (popupError) {
+        if (shouldFallbackToRedirect(popupError)) {
+          await signInWithRedirect(auth, provider);
+          return;
+        }
+
+        throw popupError;
+      }
     } catch (authError) {
       setError(getErrorMessage(authError));
       setLoading(false);
