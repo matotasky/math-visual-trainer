@@ -1,5 +1,5 @@
 import { LEVELS } from "@/data/levels";
-import type { Exercise, GenerateExerciseParams, LevelDefinition, Locale, MathTopic, VisualModel } from "@/types";
+import type { Exercise, ExerciseMode, GenerateExerciseParams, LevelDefinition, Locale, MathTopic, VisualModel } from "@/types";
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -13,9 +13,28 @@ function selectTopic(level: LevelDefinition, preferredTopic?: MathTopic): MathTo
   return level.topics[0];
 }
 
-function selectVisualModel(level: LevelDefinition, preferredVisualModel?: VisualModel): VisualModel {
+function isQuantityTopic(topic: MathTopic): boolean {
+  return topic === "quantity_recognition" || topic === "quantity_to_10" || topic === "number_matching";
+}
+
+function selectVisualModel(
+  level: LevelDefinition,
+  topic: MathTopic,
+  mode: ExerciseMode,
+  preferredVisualModel?: VisualModel
+): VisualModel {
   if (preferredVisualModel && level.visualModels.includes(preferredVisualModel)) {
     return preferredVisualModel;
+  }
+
+  if (!isQuantityTopic(topic) && level.visualModels.includes("none")) {
+    if (mode === "test" || mode === "challenge") {
+      return "none";
+    }
+
+    if (mode === "practice" && (level.timePressure === "medium" || level.timePressure === "high")) {
+      return "none";
+    }
   }
 
   return level.visualModels[0];
@@ -46,7 +65,7 @@ function promptForTopic(locale: Locale, topic: MathTopic, operands: number[]): s
 export function generateExercise(params: GenerateExerciseParams): Exercise {
   const level = LEVELS.find((candidate) => candidate.id === params.levelId) ?? LEVELS[0];
   const topic = selectTopic(level, params.topic);
-  const visualModel = selectVisualModel(level, params.preferredVisualModel);
+  const visualModel = selectVisualModel(level, topic, params.mode, params.preferredVisualModel);
   const locale = params.locale ?? "sk";
   const id = `${params.childProfileId}-${Date.now()}`;
 

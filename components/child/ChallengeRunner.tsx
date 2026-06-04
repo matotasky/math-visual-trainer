@@ -4,6 +4,7 @@ import { CheckCircle2, Loader2, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ChildStateMessage } from "@/components/child/ChildStateMessage";
+import { AnswerPad } from "@/components/math/AnswerPad";
 import { ExerciseVisual } from "@/components/math/ExerciseVisual";
 import { useChildProfile } from "@/hooks/useChildProfile";
 import { saveAttempt } from "@/lib/firestore";
@@ -23,6 +24,7 @@ type ChallengeRunnerLabels = {
   scoreLabel: string;
   answerLabel: string;
   answerPlaceholder: string;
+  clearAnswer: string;
   submitAnswer: string;
   saving: string;
   saveError: string;
@@ -53,7 +55,6 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
   const [error, setError] = useState<string | null>(null);
   const sessionIdRef = useRef("");
   const startedAtRef = useRef(0);
-  const inputRef = useRef<HTMLInputElement>(null);
   const submittingRef = useRef(false);
 
   useEffect(() => {
@@ -111,12 +112,6 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
     };
   }, [completed, exercise]);
 
-  useEffect(() => {
-    if (!completed && exercise) {
-      inputRef.current?.focus();
-    }
-  }, [completed, exercise]);
-
   function createNextExercise() {
     if (!selectedChild) {
       return;
@@ -133,12 +128,12 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
     startedAtRef.current = Date.now();
   }
 
-  async function submitAnswer() {
-    if (!exercise || !selectedChild || saving || completed || submittingRef.current || !answer.trim()) {
+  async function submitAnswer(answerValue = answer) {
+    if (!exercise || !selectedChild || saving || completed || submittingRef.current || !answerValue.trim()) {
       return;
     }
 
-    const validation = validateAnswer(exercise, answer);
+    const validation = validateAnswer(exercise, answerValue);
     const nextCorrectCount = correctCount + (validation.isCorrect ? 1 : 0);
     const earnedXp = validation.isCorrect ? 10 : 2;
     const attempt: ExerciseAttempt = {
@@ -274,29 +269,21 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
         <p className="text-sm font-bold uppercase text-slate-500">{progressLabel}</p>
         <p className="mt-3 text-lg font-bold text-slate-950">{exercise.prompt}</p>
 
-        <label className="mt-5 grid gap-2 text-sm font-semibold text-slate-800">
-          {labels.answerLabel}
-          <input
-            ref={inputRef}
-            autoFocus
-            className="min-h-14 rounded-md border border-slate-300 px-4 text-2xl font-bold outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
-            inputMode="numeric"
-            placeholder={labels.answerPlaceholder}
-            value={answer}
-            onChange={(event) => setAnswer(event.target.value)}
-          />
-        </label>
+        <AnswerPad
+          clearLabel={labels.clearAnswer}
+          disabled={saving || completed}
+          exercise={exercise}
+          helperText={labels.answerPlaceholder}
+          label={labels.answerLabel}
+          saving={saving}
+          savingLabel={labels.saving}
+          submitLabel={labels.submitAnswer}
+          value={answer}
+          onChange={setAnswer}
+          onSubmit={(nextAnswer) => void submitAnswer(nextAnswer)}
+        />
 
         {error ? <p className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">{error}</p> : null}
-
-        <button
-          className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={saving || !answer.trim()}
-          type="submit"
-        >
-          {saving ? <Loader2 aria-hidden="true" className="animate-spin" size={18} /> : null}
-          {saving ? labels.saving : labels.submitAnswer}
-        </button>
       </form>
     </section>
   );
