@@ -8,6 +8,7 @@ import {
   signInWithPopup,
   signInWithRedirect,
   signOut as firebaseSignOut,
+  type Auth,
   type User
 } from "firebase/auth";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
@@ -56,6 +57,21 @@ function shouldFallbackToRedirect(error: unknown): boolean {
   return code === "auth/popup-blocked" || code === "auth/operation-not-supported-in-this-environment";
 }
 
+function shouldUseRedirectSignIn(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const userAgent = window.navigator.userAgent;
+  const isTouchMac = userAgent.includes("Macintosh") && window.navigator.maxTouchPoints > 1;
+
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(userAgent) || isTouchMac;
+}
+
+function keepLocalPersistence(auth: Auth) {
+  void setPersistence(auth, browserLocalPersistence).catch(() => undefined);
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -73,6 +89,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setLoading(false);
         }
       }
+
+      void setPersistence(auth, browserLocalPersistence).catch((authError: unknown) => {
+        if (!cancelled) {
+          setError(getErrorMessage(authError));
+        }
+      });
 
       void getRedirectResult(auth)
         .then((result) => {
@@ -130,7 +152,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const auth = getFirebaseAuth();
       const provider = getGoogleAuthProvider();
 
-      await setPersistence(auth, browserLocalPersistence);
+      if (shouldUseRedirectSignIn()) {
+        keepLocalPersistence(auth);
+        await signInWithRedirect(auth, provider);
+        return;
+      }
 
       try {
         const result = await signInWithPopup(auth, provider);
@@ -138,6 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       } catch (popupError) {
         if (shouldFallbackToRedirect(popupError)) {
+          keepLocalPersistence(auth);
           await signInWithRedirect(auth, provider);
           return;
         }
