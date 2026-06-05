@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  browserLocalPersistence,
-  getRedirectResult,
-  onAuthStateChanged,
-  setPersistence,
-  signInWithPopup,
-  signInWithRedirect,
-  signOut as firebaseSignOut,
-  type Auth,
-  type User
-} from "firebase/auth";
+import { getRedirectResult, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut as firebaseSignOut, type User } from "firebase/auth";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { getFirebaseAuth, getGoogleAuthProvider } from "@/lib/firebase";
 
@@ -23,6 +13,9 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const redirectAttemptKey = "math-visual-trainer:google-redirect-attempt";
+const incompleteRedirectMessage =
+  "Prihlásenie cez Google sa nedokončilo. Skúste to znova, prípadne povoľte cookies a vyskakovacie okná pre túto stránku.";
 
 const authErrorMessages: Record<string, string> = {
   "auth/popup-closed-by-user": "Prihlasovacie okno bolo zavreté pred dokončením prihlasenia.",
@@ -57,19 +50,23 @@ function shouldFallbackToRedirect(error: unknown): boolean {
   return code === "auth/popup-blocked" || code === "auth/operation-not-supported-in-this-environment";
 }
 
-function shouldUseRedirectSignIn(): boolean {
-  if (typeof window === "undefined") {
-    return false;
+function markRedirectAttempt() {
+  try {
+    window.localStorage.setItem(redirectAttemptKey, Date.now().toString());
+  } catch {
+    // Login can still continue when localStorage is restricted.
   }
-
-  const userAgent = window.navigator.userAgent;
-  const isTouchMac = userAgent.includes("Macintosh") && window.navigator.maxTouchPoints > 1;
-
-  return /Android|iPhone|iPad|iPod|Mobile/i.test(userAgent) || isTouchMac;
 }
 
-function keepLocalPersistence(auth: Auth) {
-  void setPersistence(auth, browserLocalPersistence).catch(() => undefined);
+function consumeRedirectAttempt(): boolean {
+  try {
+    const storedAt = window.localStorage.getItem(redirectAttemptKey);
+    window.localStorage.removeItem(redirectAttemptKey);
+
+    return Boolean(storedAt);
+  } catch {
+    return false;
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -86,24 +83,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       function markReady() {
         if (!cancelled && redirectSettled && authStateSettled) {
+          if (!auth.currentUser && consumeRedirectAttempt()) {
+            setError(incompleteRedirectMessage);
+          }
+
           setLoading(false);
         }
       }
 
-      void setPersistence(auth, browserLocalPersistence).catch((authError: unknown) => {
-        if (!cancelled) {
-          setError(getErrorMessage(authError));
-        }
-      });
-
       void getRedirectResult(auth)
         .then((result) => {
           if (!cancelled && result?.user) {
+            consumeRedirectAttempt();
             setFirebaseUser(result.user);
           }
         })
         .catch((authError: unknown) => {
           if (!cancelled) {
+            consumeRedirectAttempt();
             setError(getErrorMessage(authError));
           }
         })
@@ -116,6 +113,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         auth,
         (nextUser) => {
           if (!cancelled) {
+            if (nextUser) {
+              consumeRedirectAttempt();
+            }
+
             setFirebaseUser(nextUser);
             authStateSettled = true;
             markReady();
@@ -152,19 +153,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const auth = getFirebaseAuth();
       const provider = getGoogleAuthProvider();
 
-      if (shouldUseRedirectSignIn()) {
-        keepLocalPersistence(auth);
-        await signInWithRedirect(auth, provider);
-        return;
-      }
-
       try {
         const result = await signInWithPopup(auth, provider);
+        consumeRedirectAttempt();
         setFirebaseUser(result.user);
         setLoading(false);
       } catch (popupError) {
         if (shouldFallbackToRedirect(popupError)) {
-          keepLocalPersistence(auth);
+          markRedirectAttempt();
           await signInWithRedirect(auth, provider);
           return;
         }

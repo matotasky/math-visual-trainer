@@ -1,5 +1,14 @@
 import { getApps, initializeApp, type FirebaseApp, type FirebaseOptions } from "firebase/app";
-import { getAuth, GoogleAuthProvider, type Auth } from "firebase/auth";
+import {
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
+  browserSessionPersistence,
+  getAuth,
+  GoogleAuthProvider,
+  indexedDBLocalPersistence,
+  initializeAuth,
+  type Auth
+} from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 
 let firebaseApp: FirebaseApp | null = null;
@@ -40,7 +49,16 @@ export function getFirebaseApp(): FirebaseApp {
 
 export function getFirebaseAuth(): Auth {
   if (!firebaseAuth) {
-    firebaseAuth = getAuth(getFirebaseApp());
+    const app = getFirebaseApp();
+
+    try {
+      firebaseAuth = initializeAuth(app, {
+        persistence: [indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence],
+        popupRedirectResolver: browserPopupRedirectResolver
+      });
+    } catch {
+      firebaseAuth = getAuth(app);
+    }
   }
 
   return firebaseAuth;
