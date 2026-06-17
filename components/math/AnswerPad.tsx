@@ -19,7 +19,24 @@ type AnswerPadProps = {
 };
 
 function getMaxAnswerValue(exercise: Exercise): number {
-  if (exercise.topic === "addition_to_20" || exercise.topic === "bridge_through_10") {
+  if (
+    exercise.topic === "three_digit_addition_strategies" ||
+    exercise.topic === "three_digit_subtraction_strategies"
+  ) {
+    return 999;
+  }
+
+  if (
+    exercise.topic === "tens_to_100" ||
+    exercise.topic === "two_digit_addition_no_regroup" ||
+    exercise.topic === "two_digit_subtraction_no_regroup" ||
+    exercise.topic === "two_digit_addition_with_regroup" ||
+    exercise.topic === "two_digit_subtraction_with_regroup"
+  ) {
+    return 100;
+  }
+
+  if (exercise.topic === "addition_to_20" || exercise.topic === "subtraction_to_20" || exercise.topic === "bridge_through_10") {
     return 20;
   }
 
@@ -41,6 +58,10 @@ function appendDigit(currentValue: string, digit: string, maxValue: number): str
   return nextValue;
 }
 
+const answerButtonClass =
+  "min-h-14 rounded-md border border-slate-200 bg-white text-2xl font-black text-slate-950 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60";
+const keypadDigits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+
 export function AnswerPad({
   clearLabel,
   disabled,
@@ -56,7 +77,8 @@ export function AnswerPad({
 }: AnswerPadProps) {
   const padRef = useRef<HTMLDivElement>(null);
   const maxValue = getMaxAnswerValue(exercise);
-  const choices = useMemo(() => Array.from({ length: maxValue + 1 }, (_, index) => index), [maxValue]);
+  const choices = useMemo(() => Array.from({ length: Math.min(maxValue, 20) + 1 }, (_, index) => index), [maxValue]);
+  const usesChoicePad = maxValue <= 20;
   const canSubmitTypedValue = value.trim().length > 0 && Number(value) <= maxValue;
 
   useEffect(() => {
@@ -117,19 +139,35 @@ export function AnswerPad({
         {value || "?"}
       </div>
 
-      <div className="grid grid-cols-4 gap-2">
-        {choices.map((choice) => (
-          <button
-            key={choice}
-            className="min-h-14 rounded-md border border-slate-200 bg-white text-2xl font-black text-slate-950 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={disabled || saving}
-            type="button"
-            onClick={() => chooseAnswer(choice)}
-          >
-            {choice}
-          </button>
-        ))}
-      </div>
+      {usesChoicePad ? (
+        <div className="grid grid-cols-4 gap-2">
+          {choices.map((choice) => (
+            <button
+              key={choice}
+              className={answerButtonClass}
+              disabled={disabled || saving}
+              type="button"
+              onClick={() => chooseAnswer(choice)}
+            >
+              {choice}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-2">
+          {keypadDigits.map((digit) => (
+            <button
+              key={digit}
+              className={digit === 0 ? `col-start-2 ${answerButtonClass}` : answerButtonClass}
+              disabled={disabled || saving}
+              type="button"
+              onClick={() => onChange(appendDigit(value, String(digit), maxValue))}
+            >
+              {digit}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="grid grid-cols-[64px_1fr] gap-2">
         <button

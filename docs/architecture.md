@@ -92,10 +92,12 @@ Realtime listeners are not used by default. One-time reads are preferred for das
 - `notificationSettings` is documented for phase 2 but not required for MVP.
 - Exercise generation is centralized so new visual models can be added without route rewrites.
 - Mastery logic is deterministic and testable outside React.
+- Curriculum levels use stable code IDs and a legacy mapping so existing child profiles created under the original low-number path can move into the newer fluency path without a Firestore migration.
 
 ## Ambiguities Resolved
 
 - The scaffold uses root `app/` instead of `src/app/` to match the requested folder structure.
 - The MVP uses client Firebase SDKs. Server-side admin SDK is avoided to keep setup simple and zero-budget.
 - Parent dashboard route skeletons are present now, but charts are deferred until services and aggregate documents are implemented.
+- Low-number tasks are diagnostic/remedial support, not the default path for a third-grade learner. The main progression starts with addition/subtraction to 10 and moves through two-digit and three-digit fluency.
 - No paid monitoring, email, SMS, payment, or AI service is included.

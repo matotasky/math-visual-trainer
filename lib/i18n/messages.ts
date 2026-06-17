@@ -481,7 +481,15 @@ export const dictionaries = {
           addition_to_10: "Sčítanie do 10",
           subtraction_to_10: "Odčítanie do 10",
           addition_to_20: "Sčítanie do 20",
-          bridge_through_10: "Prechod cez 10"
+          subtraction_to_20: "Odčítanie do 20",
+          bridge_through_10: "Prechod cez 10",
+          tens_to_100: "Desiatky do 100",
+          two_digit_addition_no_regroup: "Dvojciferné sčítanie bez prechodu",
+          two_digit_subtraction_no_regroup: "Dvojciferné odčítanie bez prechodu",
+          two_digit_addition_with_regroup: "Dvojciferné sčítanie s prechodom",
+          two_digit_subtraction_with_regroup: "Dvojciferné odčítanie s prechodom",
+          three_digit_addition_strategies: "Trojciferné sčítanie cez stratégie",
+          three_digit_subtraction_strategies: "Trojciferné odčítanie cez stratégie"
         },
         modes: {
           diagnostic: "Diagnostika",
@@ -563,7 +571,15 @@ export const dictionaries = {
           addition_to_10: "Sčítanie do 10",
           subtraction_to_10: "Odčítanie do 10",
           addition_to_20: "Sčítanie do 20",
-          bridge_through_10: "Prechod cez 10"
+          subtraction_to_20: "Odčítanie do 20",
+          bridge_through_10: "Prechod cez 10",
+          tens_to_100: "Desiatky do 100",
+          two_digit_addition_no_regroup: "Dvojciferné sčítanie bez prechodu",
+          two_digit_subtraction_no_regroup: "Dvojciferné odčítanie bez prechodu",
+          two_digit_addition_with_regroup: "Dvojciferné sčítanie s prechodom",
+          two_digit_subtraction_with_regroup: "Dvojciferné odčítanie s prechodom",
+          three_digit_addition_strategies: "Trojciferné sčítanie cez stratégie",
+          three_digit_subtraction_strategies: "Trojciferné odčítanie cez stratégie"
         },
         modes: {
           diagnostic: "Diagnostika",
@@ -654,7 +670,15 @@ export const dictionaries = {
           addition_to_10: "Sčítanie do 10",
           subtraction_to_10: "Odčítanie do 10",
           addition_to_20: "Sčítanie do 20",
-          bridge_through_10: "Prechod cez 10"
+          subtraction_to_20: "Odčítanie do 20",
+          bridge_through_10: "Prechod cez 10",
+          tens_to_100: "Desiatky do 100",
+          two_digit_addition_no_regroup: "Dvojciferné sčítanie bez prechodu",
+          two_digit_subtraction_no_regroup: "Dvojciferné odčítanie bez prechodu",
+          two_digit_addition_with_regroup: "Dvojciferné sčítanie s prechodom",
+          two_digit_subtraction_with_regroup: "Dvojciferné odčítanie s prechodom",
+          three_digit_addition_strategies: "Trojciferné sčítanie cez stratégie",
+          three_digit_subtraction_strategies: "Trojciferné odčítanie cez stratégie"
         }
       },
       progress: {
@@ -740,7 +764,15 @@ export const dictionaries = {
           addition_to_10: "Sčítanie do 10",
           subtraction_to_10: "Odčítanie do 10",
           addition_to_20: "Sčítanie do 20",
-          bridge_through_10: "Prechod cez 10"
+          subtraction_to_20: "Odčítanie do 20",
+          bridge_through_10: "Prechod cez 10",
+          tens_to_100: "Desiatky do 100",
+          two_digit_addition_no_regroup: "Dvojciferné sčítanie bez prechodu",
+          two_digit_subtraction_no_regroup: "Dvojciferné odčítanie bez prechodu",
+          two_digit_addition_with_regroup: "Dvojciferné sčítanie s prechodom",
+          two_digit_subtraction_with_regroup: "Dvojciferné odčítanie s prechodom",
+          three_digit_addition_strategies: "Trojciferné sčítanie cez stratégie",
+          three_digit_subtraction_strategies: "Trojciferné odčítanie cez stratégie"
         }
       },
       settings: {
@@ -1311,7 +1343,15 @@ export const dictionaries = {
           addition_to_10: "Addition to 10",
           subtraction_to_10: "Subtraction to 10",
           addition_to_20: "Addition to 20",
-          bridge_through_10: "Bridge through 10"
+          subtraction_to_20: "Subtraction to 20",
+          bridge_through_10: "Bridge through 10",
+          tens_to_100: "Tens to 100",
+          two_digit_addition_no_regroup: "Two-digit addition without regrouping",
+          two_digit_subtraction_no_regroup: "Two-digit subtraction without regrouping",
+          two_digit_addition_with_regroup: "Two-digit addition with regrouping",
+          two_digit_subtraction_with_regroup: "Two-digit subtraction with regrouping",
+          three_digit_addition_strategies: "Three-digit addition strategies",
+          three_digit_subtraction_strategies: "Three-digit subtraction strategies"
         },
         modes: {
           diagnostic: "Diagnostic",
@@ -1393,7 +1433,15 @@ export const dictionaries = {
           addition_to_10: "Addition to 10",
           subtraction_to_10: "Subtraction to 10",
           addition_to_20: "Addition to 20",
-          bridge_through_10: "Bridge through 10"
+          subtraction_to_20: "Subtraction to 20",
+          bridge_through_10: "Bridge through 10",
+          tens_to_100: "Tens to 100",
+          two_digit_addition_no_regroup: "Two-digit addition without regrouping",
+          two_digit_subtraction_no_regroup: "Two-digit subtraction without regrouping",
+          two_digit_addition_with_regroup: "Two-digit addition with regrouping",
+          two_digit_subtraction_with_regroup: "Two-digit subtraction with regrouping",
+          three_digit_addition_strategies: "Three-digit addition strategies",
+          three_digit_subtraction_strategies: "Three-digit subtraction strategies"
         },
         modes: {
           diagnostic: "Diagnostic",
@@ -1484,7 +1532,15 @@ export const dictionaries = {
           addition_to_10: "Addition to 10",
           subtraction_to_10: "Subtraction to 10",
           addition_to_20: "Addition to 20",
-          bridge_through_10: "Bridge through 10"
+          subtraction_to_20: "Subtraction to 20",
+          bridge_through_10: "Bridge through 10",
+          tens_to_100: "Tens to 100",
+          two_digit_addition_no_regroup: "Two-digit addition without regrouping",
+          two_digit_subtraction_no_regroup: "Two-digit subtraction without regrouping",
+          two_digit_addition_with_regroup: "Two-digit addition with regrouping",
+          two_digit_subtraction_with_regroup: "Two-digit subtraction with regrouping",
+          three_digit_addition_strategies: "Three-digit addition strategies",
+          three_digit_subtraction_strategies: "Three-digit subtraction strategies"
         }
       },
       progress: {
@@ -1570,7 +1626,15 @@ export const dictionaries = {
           addition_to_10: "Addition to 10",
           subtraction_to_10: "Subtraction to 10",
           addition_to_20: "Addition to 20",
-          bridge_through_10: "Bridge through 10"
+          subtraction_to_20: "Subtraction to 20",
+          bridge_through_10: "Bridge through 10",
+          tens_to_100: "Tens to 100",
+          two_digit_addition_no_regroup: "Two-digit addition without regrouping",
+          two_digit_subtraction_no_regroup: "Two-digit subtraction without regrouping",
+          two_digit_addition_with_regroup: "Two-digit addition with regrouping",
+          two_digit_subtraction_with_regroup: "Two-digit subtraction with regrouping",
+          three_digit_addition_strategies: "Three-digit addition strategies",
+          three_digit_subtraction_strategies: "Three-digit subtraction strategies"
         }
       },
       settings: {

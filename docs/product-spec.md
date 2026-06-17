@@ -24,13 +24,15 @@ Secondary user: a parent who manages child profiles and reviews progress, mistak
 
 Diagnostic mode determines a child's starting level with friendly, low-pressure tasks:
 
-- Quantity recognition up to 5
-- Quantity recognition up to 10
-- Number matching
-- Addition to 5
-- Addition to 10
+- Quantity recognition and number matching as a quick foundation check
+- Addition and subtraction to 10
 - Make 10
-- Basic subtraction to 10 when appropriate
+- Bridge through 10
+- Addition and subtraction to 20
+- Whole tens to 100
+- Simple two-digit arithmetic without regrouping
+
+Low-number tasks are retained for remediation, but the default training path for an older child starts with addition and subtraction to 10 rather than counting to 5.
 
 Learn mode teaches with visual explanations, hints, and retries without time pressure.
 

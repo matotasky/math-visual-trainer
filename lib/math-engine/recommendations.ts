@@ -1,4 +1,4 @@
-import { LEVELS } from "@/data/levels";
+import { getLevelDefinition, getLevelIndex, LEVELS } from "@/data/levels";
 import type { ChildProfile, MistakeStats, RecommendedActivity, TopicMastery } from "@/types";
 
 export function recommendNextActivity(
@@ -28,7 +28,7 @@ export function recommendNextActivity(
     };
   }
 
-  const currentLevel = LEVELS.find((level) => level.id === childProfile.currentLevelId) ?? LEVELS[0];
+  const currentLevel = getLevelDefinition(childProfile.currentLevelId);
 
   return {
     mode: childProfile.diagnosticCompletedAt ? "practice" : "diagnostic",
@@ -39,7 +39,7 @@ export function recommendNextActivity(
 }
 
 export function getAvailableLevels(childProfile: ChildProfile, topicMastery: TopicMastery[]) {
-  const currentIndex = LEVELS.findIndex((level) => level.id === childProfile.currentLevelId);
+  const currentIndex = getLevelIndex(childProfile.currentLevelId);
 
   return LEVELS.filter((level, index) => {
     if (index <= currentIndex) {

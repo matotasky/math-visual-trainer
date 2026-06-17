@@ -1,4 +1,4 @@
-import { LEVELS } from "@/data/levels";
+import { getLevelIndex, LEVELS } from "@/data/levels";
 import type { ChildProfile, ExerciseAttempt, LevelId } from "@/types";
 
 export type LevelAdjustmentAction = "keep" | "raise" | "lower";
@@ -28,12 +28,6 @@ type RecommendLevelAdjustmentParams = {
 
 function clampIndex(index: number): number {
   return Math.min(Math.max(index, 0), LEVELS.length - 1);
-}
-
-function getLevelIndex(levelId: string): number {
-  const index = LEVELS.findIndex((level) => level.id === levelId);
-
-  return index >= 0 ? index : 0;
 }
 
 export function recommendLevelAdjustment({

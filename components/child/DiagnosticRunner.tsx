@@ -3,7 +3,7 @@
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { DIAGNOSTIC_STEPS } from "@/data/diagnostic";
+import { DIAGNOSTIC_STEPS, type DiagnosticStep } from "@/data/diagnostic";
 import { generateExercise, validateAnswer } from "@/lib/math-engine";
 import { completeChildDiagnostic, saveAttempt } from "@/lib/firestore";
 import { getSelectedChildProfileId } from "@/lib/utils/childSelection";
@@ -34,11 +34,27 @@ type DiagnosticRunnerProps = {
   locale: Locale;
 };
 
-const diagnosticQuestionCount = 12;
+const diagnosticPlanIds = [
+  "quantity-to-10",
+  "number-matching",
+  "addition-to-10",
+  "addition-to-10",
+  "subtraction-to-10",
+  "subtraction-to-10",
+  "make-10",
+  "make-10",
+  "bridge-through-10",
+  "bridge-through-10",
+  "addition-to-20",
+  "addition-to-20",
+  "subtraction-to-20",
+  "tens-to-100",
+  "two-digit-no-regroup"
+];
 
-const diagnosticPlan = DIAGNOSTIC_STEPS.flatMap((step) =>
-  Array.from({ length: step.id === "subtraction-to-10" ? 1 : 2 }).map(() => step)
-).slice(0, diagnosticQuestionCount);
+const diagnosticPlan = diagnosticPlanIds
+  .map((stepId) => DIAGNOSTIC_STEPS.find((step) => step.id === stepId))
+  .filter((step): step is DiagnosticStep => Boolean(step));
 
 function createExercise(childProfileId: string, stepIndex: number, locale: Locale): Exercise {
   const step = diagnosticPlan[stepIndex] ?? diagnosticPlan[0];
@@ -55,28 +71,30 @@ function createExercise(childProfileId: string, stepIndex: number, locale: Local
 
 function pickStartingLevel(attempts: ExerciseAttempt[]): LevelId {
   const accuracy = attempts.length === 0 ? 0 : attempts.filter((attempt) => attempt.isCorrect).length / attempts.length;
-  const additionTo10Correct = attempts.some((attempt) => attempt.topic === "addition_to_10" && attempt.isCorrect);
-  const make10Correct = attempts.some((attempt) => attempt.topic === "make_10" && attempt.isCorrect);
-  const additionTo5Correct = attempts.some((attempt) => attempt.topic === "addition_to_5" && attempt.isCorrect);
-  const quantityTo10Correct = attempts.some((attempt) => attempt.topic === "quantity_to_10" && attempt.isCorrect);
+  const hasCorrectTopic = (topic: ExerciseAttempt["topic"]) => attempts.some((attempt) => attempt.topic === topic && attempt.isCorrect);
+  const factsTo10Ready = hasCorrectTopic("addition_to_10") && hasCorrectTopic("subtraction_to_10");
+  const bridgeReady = hasCorrectTopic("make_10") && hasCorrectTopic("bridge_through_10");
+  const factsTo20Ready = hasCorrectTopic("addition_to_20") && hasCorrectTopic("subtraction_to_20");
+  const tensReady = hasCorrectTopic("tens_to_100");
+  const twoDigitReady = hasCorrectTopic("two_digit_addition_no_regroup");
 
-  if (accuracy >= 0.85 && additionTo10Correct && make10Correct) {
-    return "L5_ADDITION_TO_10";
+  if (accuracy >= 0.86 && factsTo10Ready && bridgeReady && factsTo20Ready && tensReady && twoDigitReady) {
+    return "L5_TWO_DIGIT_NO_REGROUP";
   }
 
-  if (accuracy >= 0.75 && make10Correct) {
-    return "L4_MAKE_10";
+  if (accuracy >= 0.82 && factsTo10Ready && bridgeReady && factsTo20Ready && tensReady) {
+    return "L4_TENS_TO_100";
   }
 
-  if (accuracy >= 0.65 && quantityTo10Correct) {
-    return "L3_QUANTITY_TO_10";
+  if (accuracy >= 0.78 && factsTo10Ready && bridgeReady && factsTo20Ready) {
+    return "L3_FACTS_TO_20";
   }
 
-  if (accuracy >= 0.55 && additionTo5Correct) {
-    return "L2_ADDITION_TO_5";
+  if (accuracy >= 0.7 && factsTo10Ready && bridgeReady) {
+    return "L2_BRIDGE_TO_10";
   }
 
-  return "L1_QUANTITY_TO_5";
+  return "L1_FACTS_TO_10";
 }
 
 export function DiagnosticRunner({ labels, locale }: DiagnosticRunnerProps) {

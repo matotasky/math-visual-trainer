@@ -17,13 +17,30 @@ The child starts with diagnostic tasks. The app must not assume the child alread
 
 Diagnostic order:
 
-1. Quantity recognition up to 5
-2. Quantity recognition up to 10
-3. Number matching
-4. Addition to 5
-5. Addition to 10
-6. Make 10
-7. Subtraction to 10 when appropriate
+1. Quantity recognition and number matching as a foundation check
+2. Addition and subtraction to 10
+3. Make-10 combinations
+4. Bridge-through-10 examples
+5. Addition and subtraction to 20
+6. Whole tens to 100
+7. Simple two-digit examples without regrouping
+
+Low-number tasks remain available for diagnosis and remediation. They are not the default long path for an older child who already has the visual foundations.
+
+## Level Path
+
+The main MVP progression is designed for fluency training rather than grade-by-grade textbook coverage:
+
+1. Addition and subtraction to 10
+2. Bridge through 10
+3. Addition and subtraction to 20
+4. Whole tens to 100
+5. Two-digit arithmetic without regrouping
+6. Two-digit arithmetic with regrouping
+7. Three-digit mental strategies
+8. Mixed fluency
+
+This keeps the app useful for a third-grade learner while still allowing the diagnostic to catch weak foundations.
 
 ## Visual Models
 

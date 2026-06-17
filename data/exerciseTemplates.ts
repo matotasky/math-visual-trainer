@@ -52,10 +52,66 @@ export const EXERCISE_TEMPLATES = [
     promptTemplate: "{a} - {b} = ?"
   },
   {
+    id: "subtraction-to-20-basic",
+    topic: "subtraction_to_20",
+    questionType: "subtraction",
+    visualModels: ["number_line", "none"],
+    promptTemplate: "{a} - {b} = ?"
+  },
+  {
     id: "bridge-through-10-basic",
     topic: "bridge_through_10",
     questionType: "bridge_through_10",
     visualModels: ["ten_frame", "number_line"],
     promptTemplate: "{a} + {b} = ?"
+  },
+  {
+    id: "tens-to-100-basic",
+    topic: "tens_to_100",
+    questionType: "addition",
+    visualModels: ["none"],
+    promptTemplate: "{a} ± {b} = ?"
+  },
+  {
+    id: "two-digit-addition-no-regroup",
+    topic: "two_digit_addition_no_regroup",
+    questionType: "addition",
+    visualModels: ["none"],
+    promptTemplate: "{a} + {b} = ?"
+  },
+  {
+    id: "two-digit-subtraction-no-regroup",
+    topic: "two_digit_subtraction_no_regroup",
+    questionType: "subtraction",
+    visualModels: ["none"],
+    promptTemplate: "{a} - {b} = ?"
+  },
+  {
+    id: "two-digit-addition-with-regroup",
+    topic: "two_digit_addition_with_regroup",
+    questionType: "addition",
+    visualModels: ["none"],
+    promptTemplate: "{a} + {b} = ?"
+  },
+  {
+    id: "two-digit-subtraction-with-regroup",
+    topic: "two_digit_subtraction_with_regroup",
+    questionType: "subtraction",
+    visualModels: ["none"],
+    promptTemplate: "{a} - {b} = ?"
+  },
+  {
+    id: "three-digit-addition-strategies",
+    topic: "three_digit_addition_strategies",
+    questionType: "addition",
+    visualModels: ["none"],
+    promptTemplate: "{a} + {b} = ?"
+  },
+  {
+    id: "three-digit-subtraction-strategies",
+    topic: "three_digit_subtraction_strategies",
+    questionType: "subtraction",
+    visualModels: ["none"],
+    promptTemplate: "{a} - {b} = ?"
   }
 ] satisfies ExerciseTemplate[];

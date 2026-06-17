@@ -47,7 +47,13 @@ function strategyForTopic(topic: MathTopic, labels: LearnActivityLabels): string
     return labels.make10Strategy;
   }
 
-  if (topic === "subtraction_to_10") {
+  if (
+    topic === "subtraction_to_10" ||
+    topic === "subtraction_to_20" ||
+    topic === "two_digit_subtraction_no_regroup" ||
+    topic === "two_digit_subtraction_with_regroup" ||
+    topic === "three_digit_subtraction_strategies"
+  ) {
     return labels.subtractionStrategy;
   }
 

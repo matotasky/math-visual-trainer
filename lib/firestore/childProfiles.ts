@@ -11,7 +11,7 @@ import {
   type DocumentData,
   type FieldValue
 } from "firebase/firestore";
-import { DEFAULT_LEVEL_ID } from "@/data/levels";
+import { DEFAULT_LEVEL_ID, normalizeLevelId } from "@/data/levels";
 import { getFirestoreDb } from "@/lib/firebase";
 import type { ChildProfile, TimePressure } from "@/types";
 import { FIRESTORE_COLLECTIONS } from "./collections";
@@ -49,8 +49,7 @@ function readDate(value: unknown): Date {
 }
 
 function mapChildProfile(id: string, data: DocumentData): ChildProfile {
-  const currentLevelId =
-    typeof data.currentLevelId === "string" ? (data.currentLevelId as ChildProfile["currentLevelId"]) : DEFAULT_LEVEL_ID;
+  const currentLevelId = typeof data.currentLevelId === "string" ? normalizeLevelId(data.currentLevelId) : DEFAULT_LEVEL_ID;
 
   return {
     id,

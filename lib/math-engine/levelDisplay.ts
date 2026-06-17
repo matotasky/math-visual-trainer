@@ -1,28 +1,47 @@
+import { normalizeLevelId } from "@/data/levels";
 import type { LevelId, Locale } from "@/types";
 
 const levelDisplayNames: Record<Locale, Record<LevelId, string>> = {
   sk: {
     L0_DIAGNOSTIC: "Diagnostika",
-    L1_QUANTITY_TO_5: "Level 1 - množstvá do 5",
-    L2_ADDITION_TO_5: "Level 2 - spočítavanie do 5",
-    L3_QUANTITY_TO_10: "Level 3 - množstvá do 10",
-    L4_MAKE_10: "Level 4 - dopĺňanie do 10",
-    L5_ADDITION_TO_10: "Level 5 - spočítavanie do 10",
-    L6_AUTOMATION_TO_10: "Level 6 - automatizácia do 10",
-    L7_ADDITION_TO_20: "Level 7 - spočítavanie do 20"
+    L1_FACTS_TO_10: "Level 1 - sčítanie a odčítanie do 10",
+    L2_BRIDGE_TO_10: "Level 2 - prechod cez 10",
+    L3_FACTS_TO_20: "Level 3 - sčítanie a odčítanie do 20",
+    L4_TENS_TO_100: "Level 4 - desiatky do 100",
+    L5_TWO_DIGIT_NO_REGROUP: "Level 5 - dvojciferné bez prechodu",
+    L6_TWO_DIGIT_WITH_REGROUP: "Level 6 - dvojciferné s prechodom",
+    L7_THREE_DIGIT_STRATEGIES: "Level 7 - trojciferné stratégie",
+    L8_MIXED_FLUENCY: "Level 8 - rýchly mix",
+    L1_QUANTITY_TO_5: "Level 1 - sčítanie a odčítanie do 10",
+    L2_ADDITION_TO_5: "Level 1 - sčítanie a odčítanie do 10",
+    L3_QUANTITY_TO_10: "Level 1 - sčítanie a odčítanie do 10",
+    L4_MAKE_10: "Level 2 - prechod cez 10",
+    L5_ADDITION_TO_10: "Level 1 - sčítanie a odčítanie do 10",
+    L6_AUTOMATION_TO_10: "Level 1 - sčítanie a odčítanie do 10",
+    L7_ADDITION_TO_20: "Level 3 - sčítanie a odčítanie do 20"
   },
   en: {
     L0_DIAGNOSTIC: "Diagnostic",
-    L1_QUANTITY_TO_5: "Level 1 - quantities to 5",
-    L2_ADDITION_TO_5: "Level 2 - addition to 5",
-    L3_QUANTITY_TO_10: "Level 3 - quantities to 10",
-    L4_MAKE_10: "Level 4 - make 10",
-    L5_ADDITION_TO_10: "Level 5 - addition to 10",
-    L6_AUTOMATION_TO_10: "Level 6 - automation to 10",
-    L7_ADDITION_TO_20: "Level 7 - addition to 20"
+    L1_FACTS_TO_10: "Level 1 - addition and subtraction to 10",
+    L2_BRIDGE_TO_10: "Level 2 - bridge through 10",
+    L3_FACTS_TO_20: "Level 3 - addition and subtraction to 20",
+    L4_TENS_TO_100: "Level 4 - tens to 100",
+    L5_TWO_DIGIT_NO_REGROUP: "Level 5 - two-digit without regrouping",
+    L6_TWO_DIGIT_WITH_REGROUP: "Level 6 - two-digit with regrouping",
+    L7_THREE_DIGIT_STRATEGIES: "Level 7 - three-digit strategies",
+    L8_MIXED_FLUENCY: "Level 8 - mixed fluency",
+    L1_QUANTITY_TO_5: "Level 1 - addition and subtraction to 10",
+    L2_ADDITION_TO_5: "Level 1 - addition and subtraction to 10",
+    L3_QUANTITY_TO_10: "Level 1 - addition and subtraction to 10",
+    L4_MAKE_10: "Level 2 - bridge through 10",
+    L5_ADDITION_TO_10: "Level 1 - addition and subtraction to 10",
+    L6_AUTOMATION_TO_10: "Level 1 - addition and subtraction to 10",
+    L7_ADDITION_TO_20: "Level 3 - addition and subtraction to 20"
   }
 };
 
 export function getLevelDisplayName(levelId: string, locale: Locale): string {
-  return levelDisplayNames[locale][levelId as LevelId] ?? levelId;
+  const normalizedLevelId = normalizeLevelId(levelId);
+
+  return levelDisplayNames[locale][normalizedLevelId] ?? levelDisplayNames[locale][levelId as LevelId] ?? levelId;
 }

@@ -9,7 +9,15 @@ export type MathTopic =
   | "addition_to_10"
   | "subtraction_to_10"
   | "addition_to_20"
-  | "bridge_through_10";
+  | "subtraction_to_20"
+  | "bridge_through_10"
+  | "tens_to_100"
+  | "two_digit_addition_no_regroup"
+  | "two_digit_subtraction_no_regroup"
+  | "two_digit_addition_with_regroup"
+  | "two_digit_subtraction_with_regroup"
+  | "three_digit_addition_strategies"
+  | "three_digit_subtraction_strategies";
 
 export type VisualModel = "dots" | "ten_frame" | "number_line" | "groups" | "none";
 
@@ -21,6 +29,14 @@ export type MathOperator = "+" | "-";
 
 export type LevelId =
   | "L0_DIAGNOSTIC"
+  | "L1_FACTS_TO_10"
+  | "L2_BRIDGE_TO_10"
+  | "L3_FACTS_TO_20"
+  | "L4_TENS_TO_100"
+  | "L5_TWO_DIGIT_NO_REGROUP"
+  | "L6_TWO_DIGIT_WITH_REGROUP"
+  | "L7_THREE_DIGIT_STRATEGIES"
+  | "L8_MIXED_FLUENCY"
   | "L1_QUANTITY_TO_5"
   | "L2_ADDITION_TO_5"
   | "L3_QUANTITY_TO_10"

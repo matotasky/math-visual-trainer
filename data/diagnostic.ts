@@ -9,7 +9,7 @@ export type DiagnosticStep = {
   targetCount: number;
 };
 
-export const DIAGNOSTIC_STEPS = [
+export const DIAGNOSTIC_STEPS: DiagnosticStep[] = [
   {
     id: "quantity-to-5",
     label: "Small groups",
@@ -65,5 +65,45 @@ export const DIAGNOSTIC_STEPS = [
     questionType: "subtraction",
     visualModel: "number_line",
     targetCount: 4
+  },
+  {
+    id: "bridge-through-10",
+    label: "Bridge through 10",
+    topic: "bridge_through_10",
+    questionType: "bridge_through_10",
+    visualModel: "ten_frame",
+    targetCount: 4
+  },
+  {
+    id: "addition-to-20",
+    label: "Add to 20",
+    topic: "addition_to_20",
+    questionType: "addition",
+    visualModel: "number_line",
+    targetCount: 4
+  },
+  {
+    id: "subtraction-to-20",
+    label: "Subtract to 20",
+    topic: "subtraction_to_20",
+    questionType: "subtraction",
+    visualModel: "number_line",
+    targetCount: 4
+  },
+  {
+    id: "tens-to-100",
+    label: "Tens to 100",
+    topic: "tens_to_100",
+    questionType: "addition",
+    visualModel: "none",
+    targetCount: 3
+  },
+  {
+    id: "two-digit-no-regroup",
+    label: "Two-digit without regrouping",
+    topic: "two_digit_addition_no_regroup",
+    questionType: "addition",
+    visualModel: "none",
+    targetCount: 3
   }
-] satisfies DiagnosticStep[];
+];
