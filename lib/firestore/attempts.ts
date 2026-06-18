@@ -1,6 +1,17 @@
-import { addDoc, collection, getDocs, limit, orderBy, query, where, writeBatch } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, limit, orderBy, query, runTransaction, where, writeBatch } from "firebase/firestore";
 import { getFirestoreDb } from "@/lib/firebase";
-import type { ExerciseAttempt } from "@/types";
+import { calculateMastery } from "@/lib/math-engine/mastery";
+import { getOperandKey } from "@/lib/math-engine/mistakes";
+import type { DailyStats, ExerciseAttempt, MathTopic, MistakeStats, Streak, TopicMastery } from "@/types";
+import {
+  calculateNextStreak,
+  getDailyStatsId,
+  getLocalDateKey,
+  getMistakeStatsId,
+  getStreakId,
+  getTopicMasteryId,
+  mergeUniqueTopic
+} from "./aggregates";
 import { FIRESTORE_COLLECTIONS } from "./collections";
 
 function mapAttemptDocument(id: string, data: Record<string, unknown>): ExerciseAttempt {
@@ -35,9 +46,40 @@ function sortAttemptsByOldest(attempts: ExerciseAttempt[]): ExerciseAttempt[] {
   return [...attempts].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 }
 
-export async function saveAttempt(attempt: ExerciseAttempt): Promise<void> {
-  const db = getFirestoreDb();
-  const attemptData = {
+function readNumber(value: unknown, fallback = 0): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function readDate(value: unknown, fallback = new Date()): Date {
+  if (value instanceof Date) {
+    return value;
+  }
+
+  if (typeof value === "object" && value !== null && "toDate" in value && typeof value.toDate === "function") {
+    return value.toDate() as Date;
+  }
+
+  return fallback;
+}
+
+function readTopics(value: unknown): MathTopic[] {
+  return Array.isArray(value) ? value.filter((topic): topic is MathTopic => typeof topic === "string") : [];
+}
+
+function readCommonWrongAnswers(value: unknown): Record<string, number> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([, count]) => typeof count === "number" && Number.isFinite(count))
+      .map(([answer, count]) => [answer, count])
+  );
+}
+
+function buildAttemptData(attempt: ExerciseAttempt) {
+  return {
     childProfileId: attempt.childProfileId,
     sessionId: attempt.sessionId,
     topic: attempt.topic,
@@ -54,8 +96,166 @@ export async function saveAttempt(attempt: ExerciseAttempt): Promise<void> {
     visualModel: attempt.visualModel,
     createdAt: attempt.createdAt
   };
+}
 
-  await addDoc(collection(db, FIRESTORE_COLLECTIONS.attempts), attemptData);
+function buildDailyStats(
+  id: string,
+  attempt: ExerciseAttempt,
+  data: Record<string, unknown> | undefined,
+  dateKey: string,
+  updatedAt: Date
+): DailyStats {
+  const previousAttempts = readNumber(data?.attemptsCount);
+  const attemptsCount = previousAttempts + 1;
+  const correctAttempts = readNumber(data?.correctAttempts) + (attempt.isCorrect ? 1 : 0);
+  const totalResponseTimeMs = readNumber(data?.totalResponseTimeMs) + attempt.responseTimeMs;
+
+  return {
+    id,
+    childProfileId: attempt.childProfileId,
+    date: dateKey,
+    sessionsCount: Math.max(readNumber(data?.sessionsCount), 1),
+    attemptsCount,
+    correctAttempts,
+    totalResponseTimeMs,
+    averageResponseTimeMs: Math.round(totalResponseTimeMs / attemptsCount),
+    activeMinutes: Math.max(1, Math.ceil(totalResponseTimeMs / 60000)),
+    topicsPracticed: mergeUniqueTopic(readTopics(data?.topicsPracticed), attempt.topic),
+    createdAt: data ? readDate(data.createdAt, updatedAt) : updatedAt,
+    updatedAt
+  };
+}
+
+function buildTopicMastery(
+  id: string,
+  attempt: ExerciseAttempt,
+  data: Record<string, unknown> | undefined,
+  updatedAt: Date
+): TopicMastery {
+  const previousAttempts = readNumber(data?.attemptsCount);
+  const attemptsCount = previousAttempts + 1;
+  const previousCorrect = Math.round(readNumber(data?.accuracy) * previousAttempts);
+  const correctCount = previousCorrect + (attempt.isCorrect ? 1 : 0);
+  const previousTotalResponseTime = readNumber(data?.averageResponseTimeMs) * previousAttempts;
+  const averageResponseTimeMs = Math.round((previousTotalResponseTime + attempt.responseTimeMs) / attemptsCount);
+  const accuracy = correctCount / attemptsCount;
+  const recentAccuracy = previousAttempts === 0
+    ? (attempt.isCorrect ? 1 : 0)
+    : readNumber(data?.recentAccuracy, accuracy) * 0.7 + (attempt.isCorrect ? 0.3 : 0);
+  const correctStreak = attempt.isCorrect ? readNumber(data?.correctStreak) + 1 : 0;
+  const mastery = calculateMastery({
+    accuracy,
+    averageResponseTimeMs,
+    attemptsCount,
+    correctStreak,
+    recentAccuracy,
+    mistakePenalty: attempt.isCorrect ? 0 : 0.08
+  });
+
+  return {
+    id,
+    childProfileId: attempt.childProfileId,
+    topic: attempt.topic,
+    levelId: attempt.levelId,
+    accuracy,
+    averageResponseTimeMs,
+    attemptsCount,
+    correctStreak,
+    recentAccuracy,
+    masteryScore: mastery.masteryScore,
+    lastPracticedAt: attempt.createdAt,
+    updatedAt
+  };
+}
+
+function buildMistakeStats(
+  id: string,
+  attempt: ExerciseAttempt,
+  data: Record<string, unknown> | undefined,
+  operandKey: string
+): MistakeStats {
+  const commonWrongAnswers = readCommonWrongAnswers(data?.commonWrongAnswers);
+
+  if (!attempt.isCorrect && attempt.givenAnswer !== null) {
+    const answerKey = String(attempt.givenAnswer);
+    commonWrongAnswers[answerKey] = (commonWrongAnswers[answerKey] ?? 0) + 1;
+  }
+
+  const mistakeStats = {
+    id,
+    childProfileId: attempt.childProfileId,
+    topic: attempt.topic,
+    levelId: attempt.levelId,
+    operandKey,
+    wrongCount: readNumber(data?.wrongCount) + (attempt.isCorrect ? 0 : 1),
+    totalCount: readNumber(data?.totalCount) + 1,
+    lastMistakeAt: attempt.isCorrect ? readDate(data?.lastMistakeAt, new Date(0)) : attempt.createdAt,
+    commonWrongAnswers
+  };
+
+  return attempt.operator ? { ...mistakeStats, operator: attempt.operator } : mistakeStats;
+}
+
+function mapStreakData(id: string, data: Record<string, unknown> | undefined): Streak | null {
+  if (!data) {
+    return null;
+  }
+
+  return {
+    id,
+    childProfileId: String(data.childProfileId ?? ""),
+    currentStreak: readNumber(data.currentStreak),
+    longestStreak: readNumber(data.longestStreak),
+    lastActivityDate: typeof data.lastActivityDate === "string" ? data.lastActivityDate : "",
+    activeDays: Array.isArray(data.activeDays) ? data.activeDays.filter((day): day is string => typeof day === "string") : [],
+    updatedAt: readDate(data.updatedAt)
+  };
+}
+
+export async function saveAttempt(attempt: ExerciseAttempt): Promise<void> {
+  const db = getFirestoreDb();
+
+  await addDoc(collection(db, FIRESTORE_COLLECTIONS.attempts), buildAttemptData(attempt));
+}
+
+export async function saveAttemptAndUpdateAggregates(attempt: ExerciseAttempt): Promise<void> {
+  const db = getFirestoreDb();
+  const attemptRef = doc(collection(db, FIRESTORE_COLLECTIONS.attempts));
+  const dateKey = getLocalDateKey(attempt.createdAt);
+  const operandKey = getOperandKey(attempt.operands, attempt.operator);
+  const dailyStatsId = getDailyStatsId(attempt.childProfileId, dateKey);
+  const topicMasteryId = getTopicMasteryId(attempt.childProfileId, attempt.topic, attempt.levelId);
+  const mistakeStatsId = getMistakeStatsId(attempt.childProfileId, attempt.topic, operandKey);
+  const streakId = getStreakId(attempt.childProfileId);
+  const dailyStatsRef = doc(db, FIRESTORE_COLLECTIONS.dailyStats, dailyStatsId);
+  const topicMasteryRef = doc(db, FIRESTORE_COLLECTIONS.topicMastery, topicMasteryId);
+  const mistakeStatsRef = doc(db, FIRESTORE_COLLECTIONS.mistakeStats, mistakeStatsId);
+  const streakRef = doc(db, FIRESTORE_COLLECTIONS.streaks, streakId);
+
+  await runTransaction(db, async (transaction) => {
+    const [dailyStatsSnapshot, topicMasterySnapshot, mistakeStatsSnapshot, streakSnapshot] = await Promise.all([
+      transaction.get(dailyStatsRef),
+      transaction.get(topicMasteryRef),
+      transaction.get(mistakeStatsRef),
+      transaction.get(streakRef)
+    ]);
+    const updatedAt = new Date();
+    const dailyStats = buildDailyStats(dailyStatsId, attempt, dailyStatsSnapshot.data(), dateKey, updatedAt);
+    const topicMastery = buildTopicMastery(topicMasteryId, attempt, topicMasterySnapshot.data(), updatedAt);
+    const mistakeStats = buildMistakeStats(mistakeStatsId, attempt, mistakeStatsSnapshot.data(), operandKey);
+    const streak = calculateNextStreak(
+      attempt.childProfileId,
+      mapStreakData(streakId, streakSnapshot.data()),
+      dateKey,
+      updatedAt
+    );
+
+    transaction.set(attemptRef, buildAttemptData(attempt));
+    transaction.set(dailyStatsRef, dailyStats);
+    transaction.set(topicMasteryRef, topicMastery);
+    transaction.set(mistakeStatsRef, mistakeStats);
+    transaction.set(streakRef, streak);
+  });
 }
 
 export async function listAttemptsPage(

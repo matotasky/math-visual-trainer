@@ -7,7 +7,7 @@ import { ChildStateMessage } from "@/components/child/ChildStateMessage";
 import { AnswerPad } from "@/components/math/AnswerPad";
 import { ExerciseVisual } from "@/components/math/ExerciseVisual";
 import { useChildProfile } from "@/hooks/useChildProfile";
-import { saveAttempt } from "@/lib/firestore";
+import { saveAttemptAndUpdateAggregates } from "@/lib/firestore";
 import { generateExercise, validateAnswer } from "@/lib/math-engine";
 import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import type { Exercise, ExerciseAttempt, Locale } from "@/types";
@@ -139,7 +139,7 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
     setError(null);
 
     try {
-      await saveAttempt(attempt);
+      await saveAttemptAndUpdateAggregates(attempt);
       setCorrectCount(nextCorrectCount);
 
       if (attemptCount >= practiceTaskCount) {

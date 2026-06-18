@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { DIAGNOSTIC_STEPS, type DiagnosticStep } from "@/data/diagnostic";
 import { generateExercise, validateAnswer } from "@/lib/math-engine";
-import { completeChildDiagnostic, saveAttempt } from "@/lib/firestore";
+import { completeChildDiagnostic, saveAttemptAndUpdateAggregates } from "@/lib/firestore";
 import { getSelectedChildProfileId } from "@/lib/utils/childSelection";
 import type { Exercise, ExerciseAttempt, LevelId, Locale } from "@/types";
 import { ExerciseVisual } from "@/components/math/ExerciseVisual";
@@ -173,7 +173,7 @@ export function DiagnosticRunner({ labels, locale }: DiagnosticRunnerProps) {
     setError(null);
 
     try {
-      await saveAttempt(attempt);
+      await saveAttemptAndUpdateAggregates(attempt);
       setAttempts((currentAttempts) => [...currentAttempts, attempt]);
       setLastAttempt(attempt);
       setFeedback(validation.isCorrect ? "correct" : "incorrect");
