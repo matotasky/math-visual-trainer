@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { DIAGNOSTIC_STEPS, type DiagnosticStep } from "@/data/diagnostic";
 import { generateExercise, validateAnswer } from "@/lib/math-engine";
-import { completeChildDiagnostic, saveAttemptAndUpdateAggregates } from "@/lib/firestore";
+import {
+  completeChildDiagnostic,
+  completeLearningSession,
+  createLearningSession,
+  saveAttemptAndUpdateAggregates
+} from "@/lib/firestore";
 import { getSelectedChildProfileId } from "@/lib/utils/childSelection";
 import type { Exercise, ExerciseAttempt, LevelId, Locale } from "@/types";
 import { ExerciseVisual } from "@/components/math/ExerciseVisual";
@@ -113,22 +118,50 @@ export function DiagnosticRunner({ labels, locale }: DiagnosticRunnerProps) {
   const startedAtRef = useRef(0);
 
   useEffect(() => {
-    const selectedChildProfileId = getSelectedChildProfileId();
-    childProfileIdRef.current = selectedChildProfileId;
-    sessionIdRef.current = `diagnostic-${Date.now()}`;
+    let cancelled = false;
 
-    if (selectedChildProfileId) {
-      window.setTimeout(() => {
-        setExercise(createExercise(selectedChildProfileId, 0, locale));
-      }, 0);
-      startedAtRef.current = Date.now();
+    async function prepareDiagnostic() {
+      const selectedChildProfileId = getSelectedChildProfileId();
+      childProfileIdRef.current = selectedChildProfileId;
+
+      if (!selectedChildProfileId) {
+        return;
+      }
+
+      const firstExercise = createExercise(selectedChildProfileId, 0, locale);
+
+      try {
+        const session = await createLearningSession({
+          childProfileId: selectedChildProfileId,
+          mode: "diagnostic",
+          topic: firstExercise.topic,
+          levelId: firstExercise.levelId,
+          startedAt: new Date()
+        });
+
+        if (!cancelled) {
+          sessionIdRef.current = session.id;
+          setExercise(firstExercise);
+          startedAtRef.current = Date.now();
+        }
+      } catch {
+        if (!cancelled) {
+          setError(labels.saveError);
+        }
+      }
     }
-  }, [locale]);
+
+    void prepareDiagnostic();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [labels.saveError, locale]);
 
   if (!exercise) {
     return (
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-5 text-sm font-medium text-amber-900">
-        {labels.missingChild}
+        {error ?? labels.missingChild}
       </div>
     );
   }
@@ -145,7 +178,7 @@ export function DiagnosticRunner({ labels, locale }: DiagnosticRunnerProps) {
     const validation = validateAnswer(exercise, answer);
     const activeChildProfileId = childProfileIdRef.current;
 
-    if (!activeChildProfileId) {
+    if (!activeChildProfileId || !sessionIdRef.current) {
       setError(labels.missingChild);
       return;
     }
@@ -202,6 +235,19 @@ export function DiagnosticRunner({ labels, locale }: DiagnosticRunnerProps) {
           ? [...attempts, lastAttempt]
           : attempts;
         const nextLevelId = pickStartingLevel(completedAttempts);
+        const totalResponseTimeMs = completedAttempts.reduce((total, attempt) => total + attempt.responseTimeMs, 0);
+
+        try {
+          await completeLearningSession(sessionIdRef.current, {
+            endedAt: new Date(),
+            totalTasks: completedAttempts.length,
+            correctTasks: completedAttempts.filter((attempt) => attempt.isCorrect).length,
+            averageResponseTimeMs: completedAttempts.length === 0 ? 0 : Math.round(totalResponseTimeMs / completedAttempts.length)
+          });
+        } catch {
+          setError(labels.saveError);
+        }
+
         await completeChildDiagnostic(activeChildProfileId, nextLevelId);
         setCompleted(true);
       } catch {
@@ -227,6 +273,7 @@ export function DiagnosticRunner({ labels, locale }: DiagnosticRunnerProps) {
         <CheckCircle2 aria-hidden="true" className="text-emerald-700" size={36} />
         <h1 className="mt-4 text-3xl font-bold text-slate-950">{labels.completeTitle}</h1>
         <p className="mt-3 max-w-2xl text-base leading-7 text-slate-700">{labels.completeDescription}</p>
+        {error ? <p className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">{error}</p> : null}
         <button
           className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
           type="button"

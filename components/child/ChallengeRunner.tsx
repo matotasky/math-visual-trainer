@@ -2,12 +2,12 @@
 
 import { CheckCircle2, Loader2, Zap } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChildStateMessage } from "@/components/child/ChildStateMessage";
 import { AnswerPad } from "@/components/math/AnswerPad";
 import { ExerciseVisual } from "@/components/math/ExerciseVisual";
 import { useChildProfile } from "@/hooks/useChildProfile";
-import { saveAttempt } from "@/lib/firestore";
+import { completeLearningSession, createLearningSession, saveAttempt } from "@/lib/firestore";
 import { generateExercise, validateAnswer } from "@/lib/math-engine";
 import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import type { Exercise, ExerciseAttempt, Locale } from "@/types";
@@ -54,8 +54,31 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const sessionIdRef = useRef("");
+  const correctCountRef = useRef(0);
+  const responseTimeTotalRef = useRef(0);
+  const savedTaskCountRef = useRef(0);
+  const sessionCompletedRef = useRef(false);
   const startedAtRef = useRef(0);
   const submittingRef = useRef(false);
+
+  const completeChallengeSession = useCallback(async (totalTasks: number, correctTasks: number, totalResponseTimeMs: number) => {
+    if (!sessionIdRef.current || sessionCompletedRef.current) {
+      return;
+    }
+
+    sessionCompletedRef.current = true;
+
+    try {
+      await completeLearningSession(sessionIdRef.current, {
+        endedAt: new Date(),
+        totalTasks,
+        correctTasks,
+        averageResponseTimeMs: totalTasks === 0 ? 0 : Math.round(totalResponseTimeMs / totalTasks)
+      });
+    } catch {
+      setError(labels.saveError);
+    }
+  }, [labels.saveError]);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,8 +99,27 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
         locale
       });
 
+      try {
+        if (!sessionIdRef.current) {
+          const session = await createLearningSession({
+            childProfileId: selectedChild.id,
+            mode: "challenge",
+            topic: nextExercise.topic,
+            levelId: nextExercise.levelId,
+            startedAt: new Date(now)
+          });
+
+          sessionIdRef.current = session.id;
+        }
+      } catch {
+        if (!cancelled) {
+          setError(labels.saveError);
+          setExercise(null);
+        }
+        return;
+      }
+
       if (!cancelled) {
-        sessionIdRef.current = sessionIdRef.current || `challenge-${now}`;
         startedAtRef.current = now;
         setExercise(nextExercise);
       }
@@ -88,7 +130,7 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
     return () => {
       cancelled = true;
     };
-  }, [completed, locale, selectedChild]);
+  }, [completed, labels.saveError, locale, selectedChild]);
 
   useEffect(() => {
     if (completed || !exercise) {
@@ -99,6 +141,11 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
       setTimeLeft((current) => {
         if (current <= 1) {
           window.clearInterval(timer);
+          void completeChallengeSession(
+            savedTaskCountRef.current,
+            correctCountRef.current,
+            responseTimeTotalRef.current
+          );
           setCompleted(true);
           return 0;
         }
@@ -110,7 +157,7 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
     return () => {
       window.clearInterval(timer);
     };
-  }, [completed, exercise]);
+  }, [completeChallengeSession, completed, exercise]);
 
   function createNextExercise() {
     if (!selectedChild) {
@@ -133,9 +180,15 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
       return;
     }
 
+    if (!sessionIdRef.current) {
+      setError(labels.saveError);
+      return;
+    }
+
     const validation = validateAnswer(exercise, answerValue);
     const nextCorrectCount = correctCount + (validation.isCorrect ? 1 : 0);
     const earnedXp = validation.isCorrect ? 10 : 2;
+    const responseTimeMs = Date.now() - startedAtRef.current;
     const attempt: ExerciseAttempt = {
       id: exercise.id,
       childProfileId: selectedChild.id,
@@ -149,7 +202,7 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
       correctAnswer: exercise.correctAnswer,
       givenAnswer: validation.normalizedAnswer,
       isCorrect: validation.isCorrect,
-      responseTimeMs: Date.now() - startedAtRef.current,
+      responseTimeMs,
       usedHint: false,
       visualModel: exercise.visualModel,
       createdAt: new Date()
@@ -161,10 +214,17 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
 
     try {
       await saveAttempt(attempt);
+      const nextSavedTaskCount = savedTaskCountRef.current + 1;
+      const nextResponseTimeTotal = responseTimeTotalRef.current + responseTimeMs;
+
+      savedTaskCountRef.current = nextSavedTaskCount;
+      correctCountRef.current = nextCorrectCount;
+      responseTimeTotalRef.current = nextResponseTimeTotal;
       setCorrectCount(nextCorrectCount);
       setXpScore((current) => current + earnedXp);
 
       if (taskIndex + 1 >= challengeTaskCount) {
+        await completeChallengeSession(nextSavedTaskCount, nextCorrectCount, nextResponseTimeTotal);
         setCompleted(true);
         setAnswer("");
         return;
@@ -209,6 +269,7 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
             .replace("{total}", String(challengeTaskCount))
             .replace("{score}", String(xpScore))}
         </p>
+        {error ? <p className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">{error}</p> : null}
         <Link
           className="mt-6 inline-flex min-h-12 items-center justify-center rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
           href="/child"
@@ -220,7 +281,7 @@ export function ChallengeRunner({ labels, locale }: ChallengeRunnerProps) {
   }
 
   if (!exercise) {
-    return <ChildStateMessage message={labels.loadingChild} />;
+    return <ChildStateMessage message={error ?? labels.loadingChild} />;
   }
 
   const progressLabel = labels.questionCount

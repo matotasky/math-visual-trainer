@@ -35,8 +35,8 @@ import { useAuth } from "@/hooks/useAuth";
 import {
   deleteAttemptsForLevel,
   getDashboardAggregates,
-  listAttemptsPage,
   listChildProfiles,
+  listRecentSessions,
   updateChildLevel,
   type DashboardAggregates
 } from "@/lib/firestore";
@@ -47,9 +47,9 @@ import { toLocalDateKey } from "@/lib/utils/date";
 import type {
   ChildProfile,
   DailyStats,
-  ExerciseAttempt,
   ExerciseMode,
   LevelId,
+  LearningSession,
   Locale,
   MathTopic,
   MistakeStats,
@@ -202,12 +202,13 @@ type MistakeSummary = {
 type TestSummary = {
   sessionId: string;
   createdAt: Date;
+  mode: ExerciseMode;
   totalTasks: number;
   correctTasks: number;
   averageResponseTimeMs: number;
 };
 
-const recentTestAttemptPageSize = 60;
+const recentSessionCount = 10;
 const chartDays = 14;
 const emptyDailyStats: DailyStats[] = [];
 const emptyMistakeStats: MistakeStats[] = [];
@@ -392,30 +393,17 @@ function summarizeMistakes(mistakeStats: MistakeStats[], labels: ParentDashboard
     .slice(0, 5);
 }
 
-function summarizeTests(attempts: ExerciseAttempt[]): TestSummary[] {
-  const grouped = new Map<string, ExerciseAttempt[]>();
-
-  for (const attempt of attempts.filter((candidate) => candidate.mode === "test")) {
-    grouped.set(attempt.sessionId, [...(grouped.get(attempt.sessionId) ?? []), attempt]);
-  }
-
-  return [...grouped.entries()]
-    .map(([sessionId, sessionAttempts]) => {
-      const correctTasks = sessionAttempts.filter((attempt) => attempt.isCorrect).length;
-      const totalResponseTimeMs = sessionAttempts.reduce((total, attempt) => total + attempt.responseTimeMs, 0);
-      const createdAt = sessionAttempts.reduce(
-        (latest, attempt) => (attempt.createdAt > latest ? attempt.createdAt : latest),
-        sessionAttempts[0]?.createdAt ?? new Date()
-      );
-
-      return {
-        sessionId,
-        createdAt,
-        totalTasks: sessionAttempts.length,
-        correctTasks,
-        averageResponseTimeMs: sessionAttempts.length === 0 ? 0 : Math.round(totalResponseTimeMs / sessionAttempts.length)
-      };
-    })
+function summarizeSessions(sessions: LearningSession[]): TestSummary[] {
+  return sessions
+    .filter((session) => session.completed)
+    .map((session) => ({
+      sessionId: session.id,
+      createdAt: session.endedAt ?? session.startedAt,
+      mode: session.mode,
+      totalTasks: session.totalTasks,
+      correctTasks: session.correctTasks,
+      averageResponseTimeMs: session.averageResponseTimeMs
+    }))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, 3);
 }
@@ -489,7 +477,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
   const [selectedChildId, setSelectedChildId] = useState("");
   const [dashboardAggregates, setDashboardAggregates] = useState<DashboardAggregates | null>(null);
-  const [recentAttempts, setRecentAttempts] = useState<ExerciseAttempt[]>([]);
+  const [recentSessions, setRecentSessions] = useState<LearningSession[]>([]);
   const [loadingProfiles, setLoadingProfiles] = useState(true);
   const [loadingDashboard, setLoadingDashboard] = useState(false);
   const [loadError, setLoadError] = useState(false);
@@ -531,7 +519,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
             setSelectedChildProfileId(nextSelectedChild.id);
           } else {
             setDashboardAggregates(null);
-            setRecentAttempts([]);
+            setRecentSessions([]);
           }
         }
       } catch {
@@ -540,7 +528,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
           setProfiles([]);
           setSelectedChildId("");
           setDashboardAggregates(null);
-          setRecentAttempts([]);
+          setRecentSessions([]);
         }
       } finally {
         if (!cancelled) {
@@ -570,17 +558,18 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
 
       try {
         const nextAggregates = await getDashboardAggregates(selectedChildId, chartDays);
-        let nextRecentAttempts: ExerciseAttempt[] = [];
+        let nextRecentSessions: LearningSession[] = [];
 
         try {
-          nextRecentAttempts = await listAttemptsPage(selectedChildId, recentTestAttemptPageSize);
-        } catch {
-          nextRecentAttempts = [];
+          nextRecentSessions = await listRecentSessions(selectedChildId, recentSessionCount);
+        } catch (error) {
+          console.error("Parent dashboard sessions load failed", error);
+          nextRecentSessions = [];
         }
 
         if (!cancelled) {
           setDashboardAggregates(nextAggregates);
-          setRecentAttempts(nextRecentAttempts);
+          setRecentSessions(nextRecentSessions);
         }
       } catch (error) {
         console.error("Parent dashboard load failed", error);
@@ -589,7 +578,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
           setLoadError(true);
           setDashboardErrorDetail(formatDashboardErrorDetail(error));
           setDashboardAggregates(null);
-          setRecentAttempts([]);
+          setRecentSessions([]);
         }
       } finally {
         if (!cancelled) {
@@ -629,7 +618,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   const dailyRows = useMemo(() => calculateDailyRows(dailyStats), [dailyStats]);
   const topicSummaries = useMemo(() => summarizeTopics(topicMastery), [topicMastery]);
   const mistakeSummaries = useMemo(() => summarizeMistakes(mistakeStats, labels), [mistakeStats, labels]);
-  const testSummaries = useMemo(() => summarizeTests(recentAttempts), [recentAttempts]);
+  const testSummaries = useMemo(() => summarizeSessions(recentSessions), [recentSessions]);
   const recommendation = selectedChild
     ? calculateRecommendation(
       selectedChild,
@@ -658,7 +647,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
     setSelectedChildProfileId(childProfileId);
     setResetLevelId(nextSelectedChild?.currentLevelId ?? "L0_DIAGNOSTIC");
     setDashboardAggregates(null);
-    setRecentAttempts([]);
+    setRecentSessions([]);
     setDashboardErrorDetail(null);
     setLevelError(false);
     setResetError(false);
@@ -706,7 +695,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
     try {
       const deletedCount = await deleteAttemptsForLevel(selectedChild.id, resetLevelId);
 
-      setRecentAttempts((currentAttempts) => currentAttempts.filter((attempt) => attempt.levelId !== resetLevelId));
+      setRecentSessions((currentSessions) => currentSessions.filter((session) => session.levelId !== resetLevelId));
       setDashboardAggregates((currentAggregates) =>
         currentAggregates
           ? {
@@ -1124,6 +1113,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
             {testSummaries.map((test) => (
               <article key={test.sessionId} className="rounded-md border border-slate-200 p-4">
                 <p className="text-sm font-semibold text-slate-500">{formatDateTime(test.createdAt, locale)}</p>
+                <p className="mt-1 text-xs font-bold uppercase text-sky-700">{labels.modes[test.mode]}</p>
                 <p className="mt-2 text-2xl font-bold text-slate-950">
                   {test.correctTasks}/{test.totalTasks}
                 </p>

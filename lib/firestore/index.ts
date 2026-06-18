@@ -3,3 +3,4 @@ export * from "./attempts";
 export * from "./childProfiles";
 export * from "./collections";
 export * from "./pinSettings";
+export * from "./sessions";

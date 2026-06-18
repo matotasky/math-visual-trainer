@@ -7,7 +7,7 @@ import { ChildStateMessage } from "@/components/child/ChildStateMessage";
 import { AnswerPad } from "@/components/math/AnswerPad";
 import { ExerciseVisual } from "@/components/math/ExerciseVisual";
 import { useChildProfile } from "@/hooks/useChildProfile";
-import { saveAttemptAndUpdateAggregates } from "@/lib/firestore";
+import { completeLearningSession, createLearningSession, saveAttemptAndUpdateAggregates } from "@/lib/firestore";
 import { generateExercise, validateAnswer } from "@/lib/math-engine";
 import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import type { Exercise, ExerciseAttempt, Locale } from "@/types";
@@ -53,6 +53,7 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
   const [correctCount, setCorrectCount] = useState(0);
   const [completed, setCompleted] = useState(false);
   const sessionIdRef = useRef("");
+  const responseTimeTotalRef = useRef(0);
   const startedAtRef = useRef(0);
   const submittingRef = useRef(false);
 
@@ -75,8 +76,27 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
         locale
       });
 
+      try {
+        if (!sessionIdRef.current) {
+          const session = await createLearningSession({
+            childProfileId: selectedChild.id,
+            mode: "practice",
+            topic: nextExercise.topic,
+            levelId: nextExercise.levelId,
+            startedAt: new Date(now)
+          });
+
+          sessionIdRef.current = session.id;
+        }
+      } catch {
+        if (!cancelled) {
+          setError(labels.saveError);
+          setExercise(null);
+        }
+        return;
+      }
+
       if (!cancelled) {
-        sessionIdRef.current = sessionIdRef.current || `practice-${now}`;
         startedAtRef.current = now;
         setExercise(nextExercise);
       }
@@ -87,7 +107,7 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
     return () => {
       cancelled = true;
     };
-  }, [completed, locale, selectedChild]);
+  }, [completed, labels.saveError, locale, selectedChild]);
 
   function createNextExercise() {
     if (!selectedChild) {
@@ -113,8 +133,14 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
       return;
     }
 
+    if (!sessionIdRef.current) {
+      setError(labels.saveError);
+      return;
+    }
+
     const validation = validateAnswer(exercise, answerValue);
     const nextCorrectCount = correctCount + (validation.isCorrect ? 1 : 0);
+    const responseTimeMs = Date.now() - startedAtRef.current;
     const attempt: ExerciseAttempt = {
       id: exercise.id,
       childProfileId: selectedChild.id,
@@ -128,7 +154,7 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
       correctAnswer: exercise.correctAnswer,
       givenAnswer: validation.normalizedAnswer,
       isCorrect: validation.isCorrect,
-      responseTimeMs: Date.now() - startedAtRef.current,
+      responseTimeMs,
       usedHint: false,
       visualModel: exercise.visualModel,
       createdAt: new Date()
@@ -140,9 +166,23 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
 
     try {
       await saveAttemptAndUpdateAggregates(attempt);
+      const nextResponseTimeTotal = responseTimeTotalRef.current + responseTimeMs;
+
+      responseTimeTotalRef.current = nextResponseTimeTotal;
       setCorrectCount(nextCorrectCount);
 
       if (attemptCount >= practiceTaskCount) {
+        try {
+          await completeLearningSession(sessionIdRef.current, {
+            endedAt: new Date(),
+            totalTasks: practiceTaskCount,
+            correctTasks: nextCorrectCount,
+            averageResponseTimeMs: Math.round(nextResponseTimeTotal / practiceTaskCount)
+          });
+        } catch {
+          setError(labels.saveError);
+        }
+
         setCompleted(true);
         setAnswer("");
         return;
@@ -184,6 +224,7 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
             .replace("{correct}", String(correctCount))
             .replace("{total}", String(practiceTaskCount))}
         </p>
+        {error ? <p className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">{error}</p> : null}
         <Link
           className="mt-6 inline-flex min-h-12 items-center justify-center rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
           href="/child"
@@ -195,7 +236,7 @@ export function PracticeRunner({ labels, locale }: PracticeRunnerProps) {
   }
 
   if (!exercise) {
-    return <ChildStateMessage message={labels.loadingChild} />;
+    return <ChildStateMessage message={error ?? labels.loadingChild} />;
   }
 
   const progressLabel = labels.questionCount
