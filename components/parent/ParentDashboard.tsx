@@ -462,6 +462,28 @@ function calculateRecommendation(
   return labels.recommendations.challenge;
 }
 
+function formatDashboardErrorDetail(error: unknown): string {
+  if (typeof error === "object" && error !== null) {
+    const maybeFirebaseError = error as { code?: unknown; message?: unknown };
+    const code = typeof maybeFirebaseError.code === "string" ? maybeFirebaseError.code : "";
+    const message = typeof maybeFirebaseError.message === "string" ? maybeFirebaseError.message : "";
+
+    if (code && message) {
+      return `${code}: ${message}`;
+    }
+
+    if (code) {
+      return code;
+    }
+
+    if (message) {
+      return message;
+    }
+  }
+
+  return String(error);
+}
+
 export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   const { firebaseUser, loading: authLoading } = useAuth();
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
@@ -471,6 +493,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   const [loadingProfiles, setLoadingProfiles] = useState(true);
   const [loadingDashboard, setLoadingDashboard] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [dashboardErrorDetail, setDashboardErrorDetail] = useState<string | null>(null);
   const [levelSaving, setLevelSaving] = useState(false);
   const [levelError, setLevelError] = useState(false);
   const [resetLevelId, setResetLevelId] = useState<LevelId>("L0_DIAGNOSTIC");
@@ -492,6 +515,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
     async function loadProfiles() {
       setLoadingProfiles(true);
       setLoadError(false);
+      setDashboardErrorDetail(null);
 
       try {
         const nextProfiles = await listChildProfiles(activeParentUserId);
@@ -542,6 +566,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
     async function loadDashboard() {
       setLoadingDashboard(true);
       setLoadError(false);
+      setDashboardErrorDetail(null);
 
       try {
         const nextAggregates = await getDashboardAggregates(selectedChildId, chartDays);
@@ -557,9 +582,12 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
           setDashboardAggregates(nextAggregates);
           setRecentAttempts(nextRecentAttempts);
         }
-      } catch {
+      } catch (error) {
+        console.error("Parent dashboard load failed", error);
+
         if (!cancelled) {
           setLoadError(true);
+          setDashboardErrorDetail(formatDashboardErrorDetail(error));
           setDashboardAggregates(null);
           setRecentAttempts([]);
         }
@@ -631,6 +659,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
     setResetLevelId(nextSelectedChild?.currentLevelId ?? "L0_DIAGNOSTIC");
     setDashboardAggregates(null);
     setRecentAttempts([]);
+    setDashboardErrorDetail(null);
     setLevelError(false);
     setResetError(false);
     setResetConfirmOpen(false);
@@ -755,7 +784,12 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
 
       {loadError ? (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm font-medium text-amber-900">
-          {labels.loadError}
+          <p>{labels.loadError}</p>
+          {dashboardErrorDetail ? (
+            <p className="mt-2 break-words font-mono text-xs font-normal text-amber-800">
+              {dashboardErrorDetail}
+            </p>
+          ) : null}
         </div>
       ) : null}
 
