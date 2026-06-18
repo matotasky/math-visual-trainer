@@ -89,7 +89,8 @@ service cloud.firestore {
 
     match /streaks/{streakId} {
       allow create: if createsOwnedChildScopedDocument();
-      allow read, delete: if readsOwnedChildScopedDocument();
+      allow get: if ownsChildProfile(streakId) || readsOwnedChildScopedDocument();
+      allow list, delete: if readsOwnedChildScopedDocument();
       allow update: if readsOwnedChildScopedDocument() && keepsChildScopeStable();
     }
 
