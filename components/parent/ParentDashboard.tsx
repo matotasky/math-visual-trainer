@@ -32,12 +32,30 @@ import {
 } from "recharts";
 import { LEVELS } from "@/data/levels";
 import { useAuth } from "@/hooks/useAuth";
-import { deleteAttemptsForLevel, listAttemptsPage, listChildProfiles, updateChildLevel } from "@/lib/firestore";
-import { getOperandKey, recommendLevelAdjustment } from "@/lib/math-engine";
+import {
+  deleteAttemptsForLevel,
+  getDashboardAggregates,
+  listAttemptsPage,
+  listChildProfiles,
+  updateChildLevel,
+  type DashboardAggregates
+} from "@/lib/firestore";
+import { recommendLevelAdjustmentFromMastery } from "@/lib/math-engine";
 import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import { getSelectedChildProfileId, setSelectedChildProfileId } from "@/lib/utils/childSelection";
 import { toLocalDateKey } from "@/lib/utils/date";
-import type { ChildProfile, ExerciseAttempt, ExerciseMode, LevelId, Locale, MathTopic } from "@/types";
+import type {
+  ChildProfile,
+  DailyStats,
+  ExerciseAttempt,
+  ExerciseMode,
+  LevelId,
+  Locale,
+  MathTopic,
+  MistakeStats,
+  Streak,
+  TopicMastery
+} from "@/types";
 
 type ParentDashboardLabels = {
   title: string;
@@ -168,6 +186,7 @@ type TopicSummary = {
   correct: number;
   accuracy: number;
   averageResponseTimeMs: number;
+  masteryScore: number;
   mistakes: number;
 };
 
@@ -188,8 +207,11 @@ type TestSummary = {
   averageResponseTimeMs: number;
 };
 
-const dashboardAttemptPageSize = 120;
+const recentTestAttemptPageSize = 60;
 const chartDays = 14;
+const emptyDailyStats: DailyStats[] = [];
+const emptyMistakeStats: MistakeStats[] = [];
+const emptyTopicMastery: TopicMastery[] = [];
 
 function dateKeyForOffset(daysAgo: number): string {
   const date = new Date();
@@ -200,27 +222,41 @@ function dateKeyForOffset(daysAgo: number): string {
   return toLocalDateKey(date);
 }
 
-function calculateCurrentStreak(attempts: ExerciseAttempt[]): number {
-  const activeDateKeys = new Set(attempts.map((attempt) => toLocalDateKey(attempt.createdAt)));
-  const todayKey = dateKeyForOffset(0);
-  const yesterdayKey = dateKeyForOffset(1);
+function dateFromDateKey(dateKey: string): Date | null {
+  const [year, month, day] = dateKey.split("-").map(Number);
 
-  if (!activeDateKeys.has(todayKey) && !activeDateKeys.has(yesterdayKey)) {
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  return new Date(year, month - 1, day);
+}
+
+function getVisibleCurrentStreak(streak: Streak | null): number {
+  if (!streak) {
     return 0;
   }
 
-  const startOffset = activeDateKeys.has(todayKey) ? 0 : 1;
-  let streak = 0;
+  const todayKey = dateKeyForOffset(0);
+  const yesterdayKey = dateKeyForOffset(1);
 
-  for (let offset = startOffset; offset < chartDays * 3; offset += 1) {
-    if (!activeDateKeys.has(dateKeyForOffset(offset))) {
-      break;
-    }
-
-    streak += 1;
+  if (streak.lastActivityDate !== todayKey && streak.lastActivityDate !== yesterdayKey) {
+    return 0;
   }
 
-  return streak;
+  return streak.currentStreak;
+}
+
+function getLastActivityDate(streak: Streak | null, dailyStats: DailyStats[]): Date | null {
+  const streakDate = streak?.lastActivityDate ? dateFromDateKey(streak.lastActivityDate) : null;
+
+  if (streakDate) {
+    return streakDate;
+  }
+
+  const lastDailyStat = [...dailyStats].sort((a, b) => b.date.localeCompare(a.date))[0];
+
+  return lastDailyStat ? dateFromDateKey(lastDailyStat.date) : null;
 }
 
 function formatPercent(value: number): string {
@@ -239,6 +275,12 @@ function formatDateTime(date: Date, locale: Locale): string {
   return new Intl.DateTimeFormat(locale === "sk" ? "sk-SK" : "en-US", {
     dateStyle: "medium",
     timeStyle: "short"
+  }).format(date);
+}
+
+function formatDateOnly(date: Date, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale === "sk" ? "sk-SK" : "en-US", {
+    dateStyle: "medium"
   }).format(date);
 }
 
@@ -263,79 +305,86 @@ function getLevelIndex(levelId: string): number {
   return index >= 0 ? index : 0;
 }
 
-function calculateDailyRows(attempts: ExerciseAttempt[]): DailyChartRow[] {
+function calculateDailyRows(dailyStats: DailyStats[]): DailyChartRow[] {
   const dateKeys = Array.from({ length: chartDays }, (_, index) => dateKeyForOffset(chartDays - 1 - index));
+  const dailyStatsByDate = new Map(dailyStats.map((stats) => [stats.date, stats]));
 
   return dateKeys.map((dateKey) => {
-    const dayAttempts = attempts.filter((attempt) => toLocalDateKey(attempt.createdAt) === dateKey);
-    const correct = dayAttempts.filter((attempt) => attempt.isCorrect).length;
-    const totalResponseTimeMs = dayAttempts.reduce((total, attempt) => total + attempt.responseTimeMs, 0);
+    const stats = dailyStatsByDate.get(dateKey);
+    const attemptsCount = stats?.attemptsCount ?? 0;
+    const correctAttempts = stats?.correctAttempts ?? 0;
 
     return {
       dateKey,
       label: formatDateLabel(dateKey),
-      accuracy: dayAttempts.length === 0 ? 0 : Math.round((correct / dayAttempts.length) * 100),
-      responseTimeSeconds: dayAttempts.length === 0 ? 0 : Number((totalResponseTimeMs / dayAttempts.length / 1000).toFixed(1)),
-      tasks: dayAttempts.length
+      accuracy: attemptsCount === 0 ? 0 : Math.round((correctAttempts / attemptsCount) * 100),
+      responseTimeSeconds: attemptsCount === 0 ? 0 : Number(((stats?.averageResponseTimeMs ?? 0) / 1000).toFixed(1)),
+      tasks: attemptsCount
     };
   });
 }
 
-function summarizeTopics(attempts: ExerciseAttempt[]): TopicSummary[] {
-  const grouped = new Map<MathTopic, ExerciseAttempt[]>();
+function summarizeTopics(topicMastery: TopicMastery[]): TopicSummary[] {
+  const grouped = new Map<MathTopic, TopicMastery[]>();
 
-  for (const attempt of attempts) {
-    grouped.set(attempt.topic, [...(grouped.get(attempt.topic) ?? []), attempt]);
+  for (const mastery of topicMastery) {
+    grouped.set(mastery.topic, [...(grouped.get(mastery.topic) ?? []), mastery]);
   }
 
   return [...grouped.entries()]
-    .map(([topic, topicAttempts]) => {
-      const correct = topicAttempts.filter((attempt) => attempt.isCorrect).length;
-      const totalResponseTimeMs = topicAttempts.reduce((total, attempt) => total + attempt.responseTimeMs, 0);
+    .map(([topic, masteryRows]) => {
+      const attempts = masteryRows.reduce((total, mastery) => total + mastery.attemptsCount, 0);
+      const correct = Math.round(
+        masteryRows.reduce((total, mastery) => total + mastery.accuracy * mastery.attemptsCount, 0)
+      );
+      const totalResponseTimeMs = masteryRows.reduce(
+        (total, mastery) => total + mastery.averageResponseTimeMs * mastery.attemptsCount,
+        0
+      );
+      const totalMastery = masteryRows.reduce(
+        (total, mastery) => total + mastery.masteryScore * mastery.attemptsCount,
+        0
+      );
 
       return {
         topic,
-        attempts: topicAttempts.length,
+        attempts,
         correct,
-        accuracy: topicAttempts.length === 0 ? 0 : Math.round((correct / topicAttempts.length) * 100),
-        averageResponseTimeMs: topicAttempts.length === 0 ? 0 : Math.round(totalResponseTimeMs / topicAttempts.length),
-        mistakes: topicAttempts.length - correct
+        accuracy: attempts === 0 ? 0 : Math.round((correct / attempts) * 100),
+        averageResponseTimeMs: attempts === 0 ? 0 : Math.round(totalResponseTimeMs / attempts),
+        masteryScore: attempts === 0 ? 0 : Math.round((totalMastery / attempts) * 100),
+        mistakes: attempts - correct
       };
     })
     .sort((a, b) => a.accuracy - b.accuracy || b.attempts - a.attempts);
 }
 
-function summarizeMistakes(attempts: ExerciseAttempt[], labels: ParentDashboardLabels): MistakeSummary[] {
-  const grouped = new Map<string, ExerciseAttempt[]>();
-
-  for (const attempt of attempts) {
-    const key = `${attempt.topic}:${getOperandKey(attempt.operands, attempt.operator)}`;
-    grouped.set(key, [...(grouped.get(key) ?? []), attempt]);
+function isMake10LikeMistake(stats: MistakeStats): boolean {
+  if (stats.topic === "make_10") {
+    return true;
   }
 
-  return [...grouped.values()]
-    .map((groupAttempts) => {
-      const firstAttempt = groupAttempts[0];
-      const wrongCount = groupAttempts.filter((attempt) => !attempt.isCorrect).length;
-      const totalCount = groupAttempts.length;
-      const operandKey = firstAttempt ? getOperandKey(firstAttempt.operands, firstAttempt.operator) : "";
-      const topic = firstAttempt?.topic ?? "addition_to_5";
-      const make10Like =
-        topic === "make_10"
-        || groupAttempts.some((attempt) => attempt.operator === "+" && attempt.operands.reduce((sum, operand) => sum + operand, 0) === 10);
-      const slowCorrect = groupAttempts.some((attempt) => attempt.isCorrect && attempt.responseTimeMs > 8000);
+  if (stats.operator !== "+") {
+    return false;
+  }
 
+  const operands = stats.operandKey.split("+").map(Number);
+
+  return operands.length > 1 && operands.every(Number.isFinite) && operands.reduce((sum, operand) => sum + operand, 0) === 10;
+}
+
+function summarizeMistakes(mistakeStats: MistakeStats[], labels: ParentDashboardLabels): MistakeSummary[] {
+  return mistakeStats
+    .map((stats) => {
       return {
-        operandKey,
-        topic,
-        wrongCount,
-        totalCount,
-        errorRate: totalCount === 0 ? 0 : Math.round((wrongCount / totalCount) * 100),
-        likelyIssue: make10Like
+        operandKey: stats.operandKey,
+        topic: stats.topic,
+        wrongCount: stats.wrongCount,
+        totalCount: stats.totalCount,
+        errorRate: stats.totalCount === 0 ? 0 : Math.round((stats.wrongCount / stats.totalCount) * 100),
+        likelyIssue: isMake10LikeMistake(stats)
           ? labels.insights.make10Issue
-          : slowCorrect
-            ? labels.insights.slowButCorrect
-            : labels.insights.weakPairIssue
+          : labels.insights.weakPairIssue
       };
     })
     .filter((summary) => summary.wrongCount > 0)
@@ -417,9 +466,10 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   const { firebaseUser, loading: authLoading } = useAuth();
   const [profiles, setProfiles] = useState<ChildProfile[]>([]);
   const [selectedChildId, setSelectedChildId] = useState("");
-  const [attempts, setAttempts] = useState<ExerciseAttempt[]>([]);
+  const [dashboardAggregates, setDashboardAggregates] = useState<DashboardAggregates | null>(null);
+  const [recentAttempts, setRecentAttempts] = useState<ExerciseAttempt[]>([]);
   const [loadingProfiles, setLoadingProfiles] = useState(true);
-  const [loadingAttempts, setLoadingAttempts] = useState(false);
+  const [loadingDashboard, setLoadingDashboard] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [levelSaving, setLevelSaving] = useState(false);
   const [levelError, setLevelError] = useState(false);
@@ -456,7 +506,8 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
           if (nextSelectedChild) {
             setSelectedChildProfileId(nextSelectedChild.id);
           } else {
-            setAttempts([]);
+            setDashboardAggregates(null);
+            setRecentAttempts([]);
           }
         }
       } catch {
@@ -464,7 +515,8 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
           setLoadError(true);
           setProfiles([]);
           setSelectedChildId("");
-          setAttempts([]);
+          setDashboardAggregates(null);
+          setRecentAttempts([]);
         }
       } finally {
         if (!cancelled) {
@@ -487,29 +539,38 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
 
     let cancelled = false;
 
-    async function loadAttempts() {
-      setLoadingAttempts(true);
+    async function loadDashboard() {
+      setLoadingDashboard(true);
       setLoadError(false);
 
       try {
-        const nextAttempts = await listAttemptsPage(selectedChildId, dashboardAttemptPageSize);
+        const nextAggregates = await getDashboardAggregates(selectedChildId, chartDays);
+        let nextRecentAttempts: ExerciseAttempt[] = [];
+
+        try {
+          nextRecentAttempts = await listAttemptsPage(selectedChildId, recentTestAttemptPageSize);
+        } catch {
+          nextRecentAttempts = [];
+        }
 
         if (!cancelled) {
-          setAttempts(nextAttempts);
+          setDashboardAggregates(nextAggregates);
+          setRecentAttempts(nextRecentAttempts);
         }
       } catch {
         if (!cancelled) {
           setLoadError(true);
-          setAttempts([]);
+          setDashboardAggregates(null);
+          setRecentAttempts([]);
         }
       } finally {
         if (!cancelled) {
-          setLoadingAttempts(false);
+          setLoadingDashboard(false);
         }
       }
     }
 
-    void loadAttempts();
+    void loadDashboard();
 
     return () => {
       cancelled = true;
@@ -517,33 +578,37 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
   }, [selectedChildId]);
 
   const selectedChild = profiles.find((profile) => profile.id === selectedChildId) ?? null;
+  const dailyStats = dashboardAggregates?.dailyStats ?? emptyDailyStats;
+  const topicMastery = dashboardAggregates?.topicMastery ?? emptyTopicMastery;
+  const mistakeStats = dashboardAggregates?.mistakeStats ?? emptyMistakeStats;
+  const streak = dashboardAggregates?.streak ?? null;
   const todayKey = toLocalDateKey();
-  const todayAttempts = attempts.filter((attempt) => toLocalDateKey(attempt.createdAt) === todayKey);
-  const totalAttempts = attempts.length;
-  const correctAttempts = attempts.filter((attempt) => attempt.isCorrect).length;
-  const totalResponseTimeMs = attempts.reduce((total, attempt) => total + attempt.responseTimeMs, 0);
+  const todayStats = dailyStats.find((stats) => stats.date === todayKey);
+  const totalAttempts = dailyStats.reduce((total, stats) => total + stats.attemptsCount, 0);
+  const correctAttempts = dailyStats.reduce((total, stats) => total + stats.correctAttempts, 0);
+  const totalResponseTimeMs = dailyStats.reduce((total, stats) => total + stats.totalResponseTimeMs, 0);
   const overallAccuracy = totalAttempts === 0 ? 0 : Math.round((correctAttempts / totalAttempts) * 100);
   const averageResponseTimeMs = totalAttempts === 0 ? 0 : Math.round(totalResponseTimeMs / totalAttempts);
-  const activeMinutes = totalAttempts === 0 ? 0 : Math.max(1, Math.ceil(totalResponseTimeMs / 60000));
-  const currentStreak = calculateCurrentStreak(attempts);
+  const activeMinutes = dailyStats.reduce((total, stats) => total + stats.activeMinutes, 0);
+  const currentStreak = getVisibleCurrentStreak(streak);
   const dailyGoalTasks = selectedChild ? Math.max(1, selectedChild.dailyGoalMinutes) : 1;
   const currentLevelName = selectedChild ? getLevelDisplayName(selectedChild.currentLevelId, locale) : "";
   const currentLevelIndex = selectedChild ? getLevelIndex(selectedChild.currentLevelId) : 0;
   const previousLevel = LEVELS[currentLevelIndex - 1];
   const nextLevel = LEVELS[currentLevelIndex + 1];
-  const lastActivity = attempts[0]?.createdAt;
+  const lastActivity = getLastActivityDate(streak, dailyStats);
 
-  const dailyRows = useMemo(() => calculateDailyRows(attempts), [attempts]);
-  const topicSummaries = useMemo(() => summarizeTopics(attempts), [attempts]);
-  const mistakeSummaries = useMemo(() => summarizeMistakes(attempts, labels), [attempts, labels]);
-  const testSummaries = useMemo(() => summarizeTests(attempts), [attempts]);
+  const dailyRows = useMemo(() => calculateDailyRows(dailyStats), [dailyStats]);
+  const topicSummaries = useMemo(() => summarizeTopics(topicMastery), [topicMastery]);
+  const mistakeSummaries = useMemo(() => summarizeMistakes(mistakeStats, labels), [mistakeStats, labels]);
+  const testSummaries = useMemo(() => summarizeTests(recentAttempts), [recentAttempts]);
   const recommendation = selectedChild
     ? calculateRecommendation(
       selectedChild,
       totalAttempts,
       overallAccuracy,
       currentStreak,
-      todayAttempts.length,
+      todayStats?.attemptsCount ?? 0,
       dailyGoalTasks,
       topicSummaries,
       mistakeSummaries,
@@ -551,7 +616,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
     )
     : "";
   const levelRecommendation = selectedChild
-    ? recommendLevelAdjustment({ childProfile: selectedChild, attempts })
+    ? recommendLevelAdjustmentFromMastery({ childProfile: selectedChild, mistakeStats, topicMastery })
     : null;
   const recommendedLevelName = levelRecommendation
     ? getLevelDisplayName(levelRecommendation.recommendedLevelId, locale)
@@ -564,7 +629,8 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
     setSelectedChildId(childProfileId);
     setSelectedChildProfileId(childProfileId);
     setResetLevelId(nextSelectedChild?.currentLevelId ?? "L0_DIAGNOSTIC");
-    setAttempts([]);
+    setDashboardAggregates(null);
+    setRecentAttempts([]);
     setLevelError(false);
     setResetError(false);
     setResetConfirmOpen(false);
@@ -611,7 +677,16 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
     try {
       const deletedCount = await deleteAttemptsForLevel(selectedChild.id, resetLevelId);
 
-      setAttempts((currentAttempts) => currentAttempts.filter((attempt) => attempt.levelId !== resetLevelId));
+      setRecentAttempts((currentAttempts) => currentAttempts.filter((attempt) => attempt.levelId !== resetLevelId));
+      setDashboardAggregates((currentAggregates) =>
+        currentAggregates
+          ? {
+            ...currentAggregates,
+            mistakeStats: currentAggregates.mistakeStats.filter((stats) => stats.levelId !== resetLevelId),
+            topicMastery: currentAggregates.topicMastery.filter((mastery) => mastery.levelId !== resetLevelId)
+          }
+          : currentAggregates
+      );
       setLastResetCount(deletedCount);
       setResetConfirmOpen(false);
     } catch {
@@ -672,7 +747,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
             {labels.currentLevel.replace("{level}", currentLevelName)}
           </p>
           <p>
-            {labels.lastActivity}: {lastActivity ? formatDateTime(lastActivity, locale) : labels.noActivity}
+            {labels.lastActivity}: {lastActivity ? formatDateOnly(lastActivity, locale) : labels.noActivity}
           </p>
           <p className="text-xs font-semibold uppercase text-slate-500">{labels.recentWindow}</p>
         </div>
@@ -684,7 +759,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
         </div>
       ) : null}
 
-      {loadingAttempts ? (
+      {loadingDashboard ? (
         <div className="flex min-h-32 items-center gap-3 rounded-lg border border-slate-200 bg-white p-5 text-sm font-semibold text-slate-600">
           <Loader2 aria-hidden="true" className="animate-spin" size={18} />
           {labels.loadingDashboard}
@@ -696,7 +771,7 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
         <MetricCard icon={CheckCircle2} label={labels.cards.overallAccuracy} value={formatPercent(overallAccuracy)} />
         <MetricCard icon={Clock3} label={labels.cards.averageResponseTime} value={formatResponseTime(averageResponseTimeMs)} />
         <MetricCard icon={Activity} label={labels.cards.practiceMinutes} value={String(activeMinutes)} />
-        <MetricCard icon={Target} label={labels.cards.tasksToday} value={`${todayAttempts.length}/${dailyGoalTasks}`} />
+        <MetricCard icon={Target} label={labels.cards.tasksToday} value={`${todayStats?.attemptsCount ?? 0}/${dailyGoalTasks}`} />
         <MetricCard icon={BarChart3} label={labels.cards.currentLevel} value={currentLevelName} />
       </div>
 
@@ -947,8 +1022,8 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" tick={false} tickLine={false} />
               <YAxis allowDecimals={false} domain={[0, 100]} tickFormatter={(value) => `${value}%`} />
-              <Tooltip formatter={(value) => [`${value}%`, labels.table.accuracy]} labelFormatter={(label) => String(label)} />
-              <Bar dataKey="accuracy" fill="#7c3aed" radius={[6, 6, 0, 0]} />
+              <Tooltip formatter={(value) => [`${value}%`, labels.charts.topicMastery]} labelFormatter={(label) => String(label)} />
+              <Bar dataKey="masteryScore" fill="#7c3aed" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartPanel>
