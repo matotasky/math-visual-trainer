@@ -15,6 +15,8 @@ export type CurriculumAreaId = "numbers_operations" | "relations_data" | "geomet
 
 export type CurriculumModuleStatus = "planned" | "active" | "coming_soon";
 
+export type CurriculumVerificationStatus = "draft" | "source_identified" | "partially_verified" | "verified";
+
 export type CurriculumCycle = {
   id: CurriculumCycleId;
   title: string;
@@ -40,4 +42,7 @@ export type CurriculumModule = {
   status: CurriculumModuleStatus;
   sourceNote?: string;
   skillTags?: string[];
+  verificationStatus?: CurriculumVerificationStatus;
+  officialSourceRefs?: string[];
+  officialCycleNote?: string;
 };

@@ -61,6 +61,22 @@ Each Cycle 1 module can include:
 
 The note exists so future UI, exports, or parent-facing explanations can distinguish draft scaffolding from verified curriculum content.
 
+## Official Verification Workflow
+
+Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.
+
+Verification statuses:
+- `draft`: internal draft with no source mapping work completed
+- `source_identified`: official source pages are known, but the module is not fully verified
+- `partially_verified`: part of the module has been manually compared with official materials
+- `verified`: the module has been manually checked against the official mathematics standard
+
+`source_identified` means that official source pages are stored as metadata. It does not mean the module title, scope, prerequisites, or future lesson content are fully verified.
+
+`verified` should only be used after manual comparison with the official mathematics standard and related Slovak curriculum documents.
+
+Public marketing claims must not say that Math Visual Trainer is fully aligned with ŠVP or the Slovak national curriculum until the relevant modules and content have been verified.
+
 ## Visual Arithmetic Remediation
 
 Visual Arithmetic remains a separate core skills pathway. Curriculum modules can later link children back to visual arithmetic when a school topic exposes a weaker underlying concept.

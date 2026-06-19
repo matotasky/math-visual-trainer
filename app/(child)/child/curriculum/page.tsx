@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { SK_MATH_CURRICULUM_CYCLES, getCurriculumModulesByCycle } from "@/data/curriculum/sk-math";
+import {
+  SK_MATH_CURRICULUM_CYCLES,
+  SK_MATH_OFFICIAL_SOURCES,
+  getCurriculumModulesByCycle
+} from "@/data/curriculum/sk-math";
 import { getLearningPathway } from "@/data/pathways";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
@@ -7,6 +11,7 @@ import type {
   CurriculumCycleId,
   CurriculumModule,
   CurriculumModuleStatus,
+  CurriculumVerificationStatus,
   GradeId,
   LearningPathwayId,
   Locale
@@ -195,6 +200,40 @@ function getStatusLabel(status: CurriculumModuleStatus, locale: Locale): string 
   return status === "active" ? "Active" : status === "planned" ? "Planned" : "Coming soon";
 }
 
+function getVerificationLabel(status: CurriculumVerificationStatus | undefined, locale: Locale): string {
+  const resolvedStatus = status ?? "draft";
+
+  if (locale === "sk") {
+    if (resolvedStatus === "source_identified") {
+      return "Zdroj identifikovaný";
+    }
+
+    if (resolvedStatus === "partially_verified") {
+      return "Čiastočne overené";
+    }
+
+    if (resolvedStatus === "verified") {
+      return "Overené";
+    }
+
+    return "Draft";
+  }
+
+  if (resolvedStatus === "source_identified") {
+    return "Source identified";
+  }
+
+  if (resolvedStatus === "partially_verified") {
+    return "Partially verified";
+  }
+
+  if (resolvedStatus === "verified") {
+    return "Verified";
+  }
+
+  return "Draft";
+}
+
 function getModuleText(module: CurriculumModule, locale: Locale) {
   return locale === "sk" ? (moduleTextSk[module.id] ?? module) : module;
 }
@@ -283,9 +322,14 @@ export default async function CurriculumPage() {
                             <h4 className="text-lg font-bold text-slate-950">{text.title}</h4>
                             <p className="mt-1 text-sm leading-6 text-slate-600">{text.description}</p>
                           </div>
-                          <span className="inline-flex w-fit rounded-md bg-sky-50 px-3 py-1 text-xs font-bold uppercase text-sky-800">
-                            {getStatusLabel(module.status, locale)}
-                          </span>
+                          <div className="flex w-fit flex-wrap gap-2">
+                            <span className="inline-flex rounded-md bg-sky-50 px-3 py-1 text-xs font-bold uppercase text-sky-800">
+                              {getStatusLabel(module.status, locale)}
+                            </span>
+                            <span className="inline-flex rounded-md bg-white px-3 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                              {getVerificationLabel(module.verificationStatus, locale)}
+                            </span>
+                          </div>
                         </div>
 
                         <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-slate-600">
@@ -305,6 +349,30 @@ export default async function CurriculumPage() {
               </section>
             );
           })}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
+        <h2 className="text-lg font-bold text-slate-950">
+          {isSlovak ? "Identifikované zdrojové stránky" : "Identified source pages"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Tieto zdroje sú uložené ako metadata. Neznamená to ešte úplné overenie modulov podľa oficiálneho štandardu."
+            : "These sources are stored as metadata. This does not mean the modules are fully verified against the official standard yet."}
+        </p>
+        <div className="mt-4 grid gap-2">
+          {Object.values(SK_MATH_OFFICIAL_SOURCES).map((source) => (
+            <a
+              key={source.id}
+              className="text-sm font-semibold text-sky-800 underline-offset-4 hover:underline"
+              href={source.url}
+              rel="noreferrer"
+              target="_blank"
+            >
+              {source.title}
+            </a>
+          ))}
         </div>
       </section>
 

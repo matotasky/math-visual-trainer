@@ -6,6 +6,7 @@ import { SK_MATH_CURRICULUM_MODULES } from "./modules";
 export { SK_MATH_CURRICULUM_AREAS } from "./areas";
 export { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 export { SK_MATH_CURRICULUM_MODULES } from "./modules";
+export { SK_MATH_OFFICIAL_SOURCES } from "./sources";
 
 export function getCurriculumCycle(id: CurriculumCycleId) {
   const cycle = SK_MATH_CURRICULUM_CYCLES.find((item) => item.id === id);

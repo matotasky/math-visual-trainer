@@ -3,6 +3,16 @@ import type { CurriculumModule } from "@/types";
 const cycleOneSourceNote =
   "Draft scaffold aligned with Slovak Cycle 1 math structure. Not a complete official curriculum map.";
 
+const cycleOneVerificationMetadata: Pick<
+  CurriculumModule,
+  "verificationStatus" | "officialSourceRefs" | "officialCycleNote"
+> = {
+  verificationStatus: "source_identified",
+  officialSourceRefs: ["ministry_svp_2023", "ministry_math_informatics"],
+  officialCycleNote:
+    "Working scaffold for Cycle 1. Official content mapping must be verified against the Ministry mathematics standard before public alignment claims."
+};
+
 export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
   {
     id: "quantity_and_number_sense",
@@ -15,6 +25,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: ["visual_arithmetic"],
     status: "planned",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["number_sense", "quantity", "comparison"]
   },
   {
@@ -28,6 +39,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: ["visual_arithmetic"],
     status: "planned",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["number_line", "comparison", "ordering"]
   },
   {
@@ -41,6 +53,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
     status: "planned",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["addition", "subtraction", "to_20"]
   },
   {
@@ -54,6 +67,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
     status: "planned",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["make_10", "bridge_through_10", "addition_strategy"]
   },
   {
@@ -67,6 +81,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
     status: "planned",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["addition", "subtraction", "to_100", "place_value"]
   },
   {
@@ -80,6 +95,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: ["visual_arithmetic"],
     status: "planned",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["multiplication", "groups", "repeated_addition"]
   },
   {
@@ -93,6 +109,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: ["visual_arithmetic"],
     status: "planned",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["division", "sharing", "groups"]
   },
   {
@@ -106,6 +123,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
     status: "planned",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["word_problems", "reasoning", "operations"]
   },
   {
@@ -119,6 +137,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
     status: "planned",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["patterns", "skip_counting", "number_sequences"]
   },
   {
@@ -132,6 +151,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: [],
     status: "coming_soon",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["tables", "data", "reading_data"]
   },
   {
@@ -145,6 +165,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: [],
     status: "coming_soon",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["patterns", "sequences", "relations"]
   },
   {
@@ -158,6 +179,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: [],
     status: "coming_soon",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["charts", "data", "interpretation"]
   },
   {
@@ -171,6 +193,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: [],
     status: "coming_soon",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["shapes", "measurement", "spatial_language"]
   },
   {
@@ -184,6 +207,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: [],
     status: "coming_soon",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["plane_shapes", "properties", "geometry"]
   },
   {
@@ -197,6 +221,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: [],
     status: "coming_soon",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["solids", "spatial_orientation", "geometry"]
   },
   {
@@ -210,6 +235,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: [],
     status: "coming_soon",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["measurement", "length", "mass", "time", "money"]
   },
   {
@@ -223,6 +249,7 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     visualArithmeticRemediation: [],
     status: "coming_soon",
     sourceNote: cycleOneSourceNote,
+    ...cycleOneVerificationMetadata,
     skillTags: ["symmetry", "visual_reasoning", "geometry"]
   }
 ];
