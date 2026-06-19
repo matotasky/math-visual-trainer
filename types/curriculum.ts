@@ -1,0 +1,41 @@
+export type CurriculumCycleId = "cycle_1" | "cycle_2" | "cycle_3";
+
+export type GradeId =
+  | "grade_1"
+  | "grade_2"
+  | "grade_3"
+  | "grade_4"
+  | "grade_5"
+  | "grade_6"
+  | "grade_7"
+  | "grade_8"
+  | "grade_9";
+
+export type CurriculumAreaId = "numbers_operations" | "relations_data" | "geometry";
+
+export type CurriculumModuleStatus = "planned" | "active" | "coming_soon";
+
+export type CurriculumCycle = {
+  id: CurriculumCycleId;
+  title: string;
+  description: string;
+  grades: GradeId[];
+};
+
+export type CurriculumArea = {
+  id: CurriculumAreaId;
+  title: string;
+  description: string;
+};
+
+export type CurriculumModule = {
+  id: string;
+  title: string;
+  description: string;
+  cycleId: CurriculumCycleId;
+  recommendedGrades: GradeId[];
+  areaId: CurriculumAreaId;
+  prerequisites: string[];
+  visualArithmeticRemediation: string[];
+  status: CurriculumModuleStatus;
+};

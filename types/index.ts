@@ -1,6 +1,7 @@
 export * from "./analytics";
 export * from "./attempt";
 export * from "./child";
+export * from "./curriculum";
 export * from "./locale";
 export * from "./math";
 export * from "./pathway";
