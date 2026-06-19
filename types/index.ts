@@ -3,6 +3,7 @@ export * from "./attempt";
 export * from "./child";
 export * from "./locale";
 export * from "./math";
+export * from "./pathway";
 export * from "./pin";
 export * from "./session";
 export * from "./streak";

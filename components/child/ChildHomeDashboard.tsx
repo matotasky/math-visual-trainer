@@ -1,15 +1,16 @@
 "use client";
 
-import { BookOpen, ClipboardCheck, Dumbbell, Gift, Loader2, Settings, Sparkles, Trophy } from "lucide-react";
+import { BookOpen, ClipboardCheck, Dumbbell, Gift, Loader2, Settings, Sparkles, Trophy, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ChildModeCard } from "@/components/child/ChildModeCard";
 import { ChildStateMessage } from "@/components/child/ChildStateMessage";
+import { LEARNING_PATHWAYS } from "@/data/pathways";
 import { useChildProfile } from "@/hooks/useChildProfile";
 import { listAttemptsPage } from "@/lib/firestore";
 import { getLevelDisplayName } from "@/lib/math-engine/levelDisplay";
 import { toLocalDateKey } from "@/lib/utils/date";
-import type { ExerciseAttempt, ExerciseMode, Locale } from "@/types";
+import type { ExerciseAttempt, ExerciseMode, LearningPathwayId, Locale } from "@/types";
 
 type ChildHomeModeKey = "diagnostic" | "learn" | "practice" | "test" | "challenge" | "rewards";
 
@@ -83,6 +84,57 @@ const modeConfig = [
     icon: Gift
   }
 ] as const;
+
+const pathwayConfig: Record<LearningPathwayId, { icon: LucideIcon; tone: "default" | "recommended" | "locked" }> = {
+  visual_arithmetic: {
+    icon: BookOpen,
+    tone: "recommended"
+  },
+  arithmetic_fluency: {
+    icon: Dumbbell,
+    tone: "default"
+  },
+  school_curriculum: {
+    icon: ClipboardCheck,
+    tone: "locked"
+  }
+};
+
+const pathwayText: Record<
+  Locale,
+  Record<LearningPathwayId, { title: string; description: string; status?: string }>
+> = {
+  sk: {
+    visual_arithmetic: {
+      title: "Vizuálna aritmetika",
+      description: "Porozumenie číslam cez bodky, desaťové rámiky, zoskupovanie a premýšľanie cez 10."
+    },
+    arithmetic_fluency: {
+      title: "Počtová plynulosť",
+      description: "Rýchlejšie a stabilnejšie sčítanie a odčítanie pre deti, ktoré už rozumejú základom."
+    },
+    school_curriculum: {
+      title: "Školské učivo",
+      description: "Budúca cesta podľa slovenských ročníkov a cyklov základnej školy.",
+      status: "Čoskoro"
+    }
+  },
+  en: {
+    visual_arithmetic: {
+      title: "Visual Arithmetic",
+      description: "Number understanding through dots, ten-frames, grouping, and make-10 thinking."
+    },
+    arithmetic_fluency: {
+      title: "Arithmetic Fluency",
+      description: "Faster and steadier addition and subtraction for children who already understand the basics."
+    },
+    school_curriculum: {
+      title: "School Curriculum",
+      description: "Future pathway based on Slovak primary school grades and learning cycles.",
+      status: "Coming soon"
+    }
+  }
+};
 
 function attemptsForMode(attempts: ExerciseAttempt[], mode: ExerciseMode): ExerciseAttempt[] {
   return attempts.filter((attempt) => attempt.mode === mode);
@@ -272,6 +324,25 @@ export function ChildHomeDashboard({ labels, locale }: ChildHomeDashboardProps) 
             {progressLoading ? labels.loadingProgress : labels.parentAreaDescription}
           </p>
         </aside>
+      </div>
+
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {LEARNING_PATHWAYS.map((pathway) => {
+          const config = pathwayConfig[pathway.id];
+          const text = pathwayText[locale][pathway.id];
+
+          return (
+            <ChildModeCard
+              key={pathway.id}
+              description={text.description}
+              href={pathway.route}
+              icon={config.icon}
+              label={text.title}
+              status={pathway.status === "coming_soon" ? text.status : undefined}
+              tone={config.tone}
+            />
+          );
+        })}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
