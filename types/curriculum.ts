@@ -38,4 +38,6 @@ export type CurriculumModule = {
   prerequisites: string[];
   visualArithmeticRemediation: string[];
   status: CurriculumModuleStatus;
+  sourceNote?: string;
+  skillTags?: string[];
 };

@@ -1,12 +1,16 @@
 import Link from "next/link";
-import {
-  SK_MATH_CURRICULUM_CYCLES,
-  getCurriculumArea,
-  getCurriculumModulesByCycle
-} from "@/data/curriculum/sk-math";
+import { SK_MATH_CURRICULUM_CYCLES, getCurriculumModulesByCycle } from "@/data/curriculum/sk-math";
 import { getLearningPathway } from "@/data/pathways";
 import { getRequestLocale } from "@/lib/i18n/server";
-import type { CurriculumCycleId, CurriculumModuleStatus, GradeId, Locale } from "@/types";
+import type {
+  CurriculumAreaId,
+  CurriculumCycleId,
+  CurriculumModule,
+  CurriculumModuleStatus,
+  GradeId,
+  LearningPathwayId,
+  Locale
+} from "@/types";
 
 const pathway = getLearningPathway("school_curriculum");
 
@@ -66,10 +70,60 @@ const gradeLabels: Record<Locale, Record<GradeId, string>> = {
   }
 };
 
+const areaOrder: CurriculumAreaId[] = ["numbers_operations", "relations_data", "geometry"];
+
+const areaText: Record<Locale, Record<CurriculumAreaId, { title: string; description: string }>> = {
+  sk: {
+    numbers_operations: {
+      title: "Čísla a operácie",
+      description: "Číselné predstavy, stratégie počítania, slovné úlohy a plynulosť."
+    },
+    relations_data: {
+      title: "Vzťahy a dáta",
+      description: "Vzory, postupnosti, tabuľky a jednoduché grafické zobrazenia dát."
+    },
+    geometry: {
+      title: "Geometria",
+      description: "Tvary, telesá, orientácia v priestore, meranie a symetria."
+    }
+  },
+  en: {
+    numbers_operations: {
+      title: "Numbers and operations",
+      description: "Number sense, calculation strategies, word problems, and fluency."
+    },
+    relations_data: {
+      title: "Relations and data",
+      description: "Patterns, sequences, tables, and simple visual data displays."
+    },
+    geometry: {
+      title: "Geometry",
+      description: "Shapes, solids, spatial orientation, measurement, and symmetry."
+    }
+  }
+};
+
+const remediationLabels: Record<Locale, Record<LearningPathwayId, string>> = {
+  sk: {
+    visual_arithmetic: "Vizuálna aritmetika",
+    arithmetic_fluency: "Počtová plynulosť",
+    school_curriculum: "Školské učivo"
+  },
+  en: {
+    visual_arithmetic: "Visual Arithmetic",
+    arithmetic_fluency: "Arithmetic Fluency",
+    school_curriculum: "School Curriculum"
+  }
+};
+
 const moduleTextSk: Record<string, { title: string; description: string }> = {
   quantity_and_number_sense: {
     title: "Množstvo a porozumenie číslam",
     description: "Buduje význam čísla, rozpoznávanie množstva a porovnávanie čísel."
+  },
+  number_line_and_comparison: {
+    title: "Číselná os a porovnávanie",
+    description: "Používa číselnú os na porovnávanie, usporiadanie a hľadanie čísel."
   },
   addition_subtraction_to_20: {
     title: "Sčítanie a odčítanie do 20",
@@ -79,17 +133,57 @@ const moduleTextSk: Record<string, { title: string; description: string }> = {
     title: "Doplnenie do 10 a prechod cez 10",
     description: "Prepája rozklady do 10 so stratégiou prechodu cez desiatku."
   },
+  addition_subtraction_to_100: {
+    title: "Sčítanie a odčítanie do 100",
+    description: "Rozširuje stratégie počítania na dvojciferné čísla do 100."
+  },
   multiplication_as_groups: {
     title: "Násobenie ako skupiny",
     description: "Pripravuje násobenie cez opakované skupiny a vizuálnu štruktúru."
+  },
+  division_as_sharing: {
+    title: "Delenie ako rozdeľovanie",
+    description: "Predstavuje delenie ako férové rozdeľovanie a tvorenie skupín."
+  },
+  word_problems_cycle_1: {
+    title: "Slovné úlohy pre 1. cyklus",
+    description: "Prepája počítanie s krátkymi situáciami z bežného života."
+  },
+  number_patterns_cycle_1: {
+    title: "Číselné vzory pre 1. cyklus",
+    description: "Buduje počítanie po krokoch, jednoduché vzory a číselné štruktúry."
   },
   basic_data_tables: {
     title: "Jednoduché tabuľky údajov",
     description: "Zoznamuje dieťa s tabuľkami a čítaním menších súborov dát."
   },
+  patterns_and_sequences_cycle_1: {
+    title: "Vzory a postupnosti pre 1. cyklus",
+    description: "Skúma opakujúce sa vzory, rastúce vzory a jednoduché postupnosti."
+  },
+  simple_charts_cycle_1: {
+    title: "Jednoduché grafy pre 1. cyklus",
+    description: "Pripravuje jednoduché grafy a detské otázky k dátam."
+  },
   shapes_and_measurement_intro: {
     title: "Tvary a prvé meranie",
     description: "Zoznamuje dieťa s tvarmi, priestorovým jazykom a prvým meraním."
+  },
+  plane_shapes_cycle_1: {
+    title: "Rovinné útvary pre 1. cyklus",
+    description: "Rozpoznáva a porovnáva základné rovinné útvary a ich vlastnosti."
+  },
+  solids_and_spatial_orientation: {
+    title: "Telesá a orientácia v priestore",
+    description: "Predstavuje základné telesá, polohu a orientáciu v priestore."
+  },
+  length_mass_time_money_intro: {
+    title: "Dĺžka, hmotnosť, čas a peniaze",
+    description: "Buduje praktické meranie s bežnými jednotkami a situáciami."
+  },
+  symmetry_intro: {
+    title: "Úvod do symetrie",
+    description: "Predstavuje symetriu cez vizuálne párovanie a jednoduché tvary."
   }
 };
 
@@ -101,28 +195,14 @@ function getStatusLabel(status: CurriculumModuleStatus, locale: Locale): string 
   return status === "active" ? "Active" : status === "planned" ? "Planned" : "Coming soon";
 }
 
-function getAreaTitle(areaId: Parameters<typeof getCurriculumArea>[0], locale: Locale): string {
-  const area = getCurriculumArea(areaId);
-
-  if (locale === "sk") {
-    if (area.id === "numbers_operations") {
-      return "Čísla a operácie";
-    }
-
-    if (area.id === "relations_data") {
-      return "Vzťahy a dáta";
-    }
-
-    return "Geometria";
-  }
-
-  return area.title;
+function getModuleText(module: CurriculumModule, locale: Locale) {
+  return locale === "sk" ? (moduleTextSk[module.id] ?? module) : module;
 }
 
 export default async function CurriculumPage() {
   const locale = await getRequestLocale();
   const isSlovak = locale === "sk";
-  const starterModules = getCurriculumModulesByCycle("cycle_1");
+  const cycleOneModules = getCurriculumModulesByCycle("cycle_1");
 
   return (
     <section className="py-8">
@@ -135,8 +215,13 @@ export default async function CurriculumPage() {
         </h1>
         <p className="mt-4 text-base leading-7 text-slate-700">
           {isSlovak
-            ? "Táto časť je zatiaľ curriculum scaffold. Pripravuje appku na slovenské vzdelávacie cykly, ročníkové filtrovanie pre rodičov a budúce odporúčania podľa potrieb dieťaťa."
-            : "This section is currently a curriculum scaffold. It prepares the app for Slovak learning cycles, parent-friendly grade navigation, and future recommendations based on each child's needs."}
+            ? "Táto časť pripravuje appku na slovenské vzdelávacie cykly, ročníkové filtrovanie pre rodičov a budúce odporúčania podľa potrieb dieťaťa."
+            : "This section prepares the app for Slovak learning cycles, parent-friendly grade navigation, and future recommendations based on each child's needs."}
+        </p>
+        <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm font-semibold leading-6 text-amber-950">
+          {isSlovak
+            ? "Toto je pracovný scaffold, nie finálna oficiálna mapa učiva."
+            : "This is a working scaffold, not a final official curriculum map."}
         </p>
       </div>
 
@@ -162,41 +247,62 @@ export default async function CurriculumPage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-slate-950">
-              {isSlovak ? "Náhľad modulov pre 1. cyklus" : "Starter modules for cycle 1"}
+              {isSlovak ? "Pracovný náhľad modulov pre 1. cyklus" : "Working module preview for cycle 1"}
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               {isSlovak
-                ? "Toto nie je kompletná oficiálna mapa učiva. Je to iba prvý dátový rámec pre ďalšie bloky."
-                : "This is not a complete official curriculum map. It is only the first data scaffold for future blocks."}
+                ? "Moduly sú zoskupené podľa oblasti. Zatiaľ neslúžia ako klikateľné lekcie."
+                : "Modules are grouped by area. They are not clickable lessons yet."}
             </p>
           </div>
           <span className="inline-flex rounded-md bg-white px-3 py-1 text-xs font-bold uppercase text-slate-700 shadow-sm">
-            {isSlovak ? "Scaffold" : "Scaffold"}
+            {isSlovak ? "Draft" : "Draft"}
           </span>
         </div>
 
-        <div className="mt-5 grid gap-3">
-          {starterModules.map((module) => {
-            const text = isSlovak ? (moduleTextSk[module.id] ?? module) : module;
+        <div className="mt-6 grid gap-5">
+          {areaOrder.map((areaId) => {
+            const area = areaText[locale][areaId];
+            const modules = cycleOneModules.filter((module) => module.areaId === areaId);
 
             return (
-              <article key={module.id} className="rounded-md border border-slate-200 bg-white p-4">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-950">{text.title}</h3>
-                    <p className="mt-1 text-sm leading-6 text-slate-600">{text.description}</p>
-                  </div>
-                  <span className="inline-flex w-fit rounded-md bg-sky-50 px-3 py-1 text-xs font-bold uppercase text-sky-800">
-                    {getStatusLabel(module.status, locale)}
-                  </span>
+              <section key={areaId} className="rounded-lg border border-slate-200 bg-white p-4">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-950">{area.title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{area.description}</p>
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-slate-600">
-                  <span className="rounded-md bg-slate-100 px-2 py-1">{getAreaTitle(module.areaId, locale)}</span>
-                  <span className="rounded-md bg-slate-100 px-2 py-1">
-                    {module.recommendedGrades.map((grade) => gradeLabels[locale][grade]).join(", ")}
-                  </span>
+
+                <div className="mt-4 grid gap-3">
+                  {modules.map((module) => {
+                    const text = getModuleText(module, locale);
+
+                    return (
+                      <article key={module.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <h4 className="text-lg font-bold text-slate-950">{text.title}</h4>
+                            <p className="mt-1 text-sm leading-6 text-slate-600">{text.description}</p>
+                          </div>
+                          <span className="inline-flex w-fit rounded-md bg-sky-50 px-3 py-1 text-xs font-bold uppercase text-sky-800">
+                            {getStatusLabel(module.status, locale)}
+                          </span>
+                        </div>
+
+                        <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-slate-600">
+                          <span className="rounded-md bg-white px-2 py-1 shadow-sm">
+                            {module.recommendedGrades.map((grade) => gradeLabels[locale][grade]).join(", ")}
+                          </span>
+                          {module.visualArithmeticRemediation.map((pathwayId) => (
+                            <span key={pathwayId} className="rounded-md bg-emerald-50 px-2 py-1 text-emerald-800">
+                              {remediationLabels[locale][pathwayId as LearningPathwayId]}
+                            </span>
+                          ))}
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
-              </article>
+              </section>
             );
           })}
         </div>

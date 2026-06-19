@@ -1,4 +1,4 @@
-import type { CurriculumAreaId, CurriculumCycleId, GradeId } from "@/types";
+import type { CurriculumAreaId, CurriculumCycleId, CurriculumModuleStatus, GradeId, LearningPathwayId } from "@/types";
 import { SK_MATH_CURRICULUM_AREAS } from "./areas";
 import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 import { SK_MATH_CURRICULUM_MODULES } from "./modules";
@@ -37,4 +37,12 @@ export function getCurriculumModulesByGrade(gradeId: GradeId) {
 
 export function getCurriculumModulesByArea(areaId: CurriculumAreaId) {
   return SK_MATH_CURRICULUM_MODULES.filter((module) => module.areaId === areaId);
+}
+
+export function getCurriculumModulesByStatus(status: CurriculumModuleStatus) {
+  return SK_MATH_CURRICULUM_MODULES.filter((module) => module.status === status);
+}
+
+export function getCurriculumModulesByRemediation(pathwayId: LearningPathwayId) {
+  return SK_MATH_CURRICULUM_MODULES.filter((module) => module.visualArithmeticRemediation.includes(pathwayId));
 }

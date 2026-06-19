@@ -1,5 +1,8 @@
 import type { CurriculumModule } from "@/types";
 
+const cycleOneSourceNote =
+  "Draft scaffold aligned with Slovak Cycle 1 math structure. Not a complete official curriculum map.";
+
 export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
   {
     id: "quantity_and_number_sense",
@@ -10,7 +13,22 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     areaId: "numbers_operations",
     prerequisites: [],
     visualArithmeticRemediation: ["visual_arithmetic"],
-    status: "planned"
+    status: "planned",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["number_sense", "quantity", "comparison"]
+  },
+  {
+    id: "number_line_and_comparison",
+    title: "Number line and comparison",
+    description: "Uses number lines to compare, order, and locate numbers.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_1", "grade_2"],
+    areaId: "numbers_operations",
+    prerequisites: ["quantity_and_number_sense"],
+    visualArithmeticRemediation: ["visual_arithmetic"],
+    status: "planned",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["number_line", "comparison", "ordering"]
   },
   {
     id: "addition_subtraction_to_20",
@@ -21,7 +39,9 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     areaId: "numbers_operations",
     prerequisites: ["quantity_and_number_sense"],
     visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
-    status: "planned"
+    status: "planned",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["addition", "subtraction", "to_20"]
   },
   {
     id: "make_10_and_bridge_through_10",
@@ -30,9 +50,24 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     cycleId: "cycle_1",
     recommendedGrades: ["grade_1", "grade_2", "grade_3"],
     areaId: "numbers_operations",
-    prerequisites: ["quantity_and_number_sense"],
+    prerequisites: ["quantity_and_number_sense", "addition_subtraction_to_20"],
     visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
-    status: "planned"
+    status: "planned",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["make_10", "bridge_through_10", "addition_strategy"]
+  },
+  {
+    id: "addition_subtraction_to_100",
+    title: "Addition and subtraction to 100",
+    description: "Extends arithmetic strategies to two-digit numbers within 100.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_2", "grade_3"],
+    areaId: "numbers_operations",
+    prerequisites: ["addition_subtraction_to_20", "make_10_and_bridge_through_10"],
+    visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
+    status: "planned",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["addition", "subtraction", "to_100", "place_value"]
   },
   {
     id: "multiplication_as_groups",
@@ -43,7 +78,48 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     areaId: "numbers_operations",
     prerequisites: ["addition_subtraction_to_20"],
     visualArithmeticRemediation: ["visual_arithmetic"],
-    status: "coming_soon"
+    status: "planned",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["multiplication", "groups", "repeated_addition"]
+  },
+  {
+    id: "division_as_sharing",
+    title: "Division as sharing",
+    description: "Introduces division as fair sharing and grouping.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_2", "grade_3"],
+    areaId: "numbers_operations",
+    prerequisites: ["multiplication_as_groups"],
+    visualArithmeticRemediation: ["visual_arithmetic"],
+    status: "planned",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["division", "sharing", "groups"]
+  },
+  {
+    id: "word_problems_cycle_1",
+    title: "Word problems for cycle 1",
+    description: "Connects arithmetic to short real-world situations.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_1", "grade_2", "grade_3"],
+    areaId: "numbers_operations",
+    prerequisites: ["addition_subtraction_to_20"],
+    visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
+    status: "planned",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["word_problems", "reasoning", "operations"]
+  },
+  {
+    id: "number_patterns_cycle_1",
+    title: "Number patterns for cycle 1",
+    description: "Builds skip-counting, simple patterns, and arithmetic structure.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_2", "grade_3"],
+    areaId: "numbers_operations",
+    prerequisites: ["number_line_and_comparison"],
+    visualArithmeticRemediation: ["visual_arithmetic", "arithmetic_fluency"],
+    status: "planned",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["patterns", "skip_counting", "number_sequences"]
   },
   {
     id: "basic_data_tables",
@@ -54,7 +130,35 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     areaId: "relations_data",
     prerequisites: [],
     visualArithmeticRemediation: [],
-    status: "coming_soon"
+    status: "coming_soon",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["tables", "data", "reading_data"]
+  },
+  {
+    id: "patterns_and_sequences_cycle_1",
+    title: "Patterns and sequences for cycle 1",
+    description: "Explores repeating patterns, growing patterns, and simple sequences.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_1", "grade_2", "grade_3"],
+    areaId: "relations_data",
+    prerequisites: [],
+    visualArithmeticRemediation: [],
+    status: "coming_soon",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["patterns", "sequences", "relations"]
+  },
+  {
+    id: "simple_charts_cycle_1",
+    title: "Simple charts for cycle 1",
+    description: "Introduces simple charts and child-friendly data questions.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_2", "grade_3"],
+    areaId: "relations_data",
+    prerequisites: ["basic_data_tables"],
+    visualArithmeticRemediation: [],
+    status: "coming_soon",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["charts", "data", "interpretation"]
   },
   {
     id: "shapes_and_measurement_intro",
@@ -65,6 +169,60 @@ export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
     areaId: "geometry",
     prerequisites: [],
     visualArithmeticRemediation: [],
-    status: "coming_soon"
+    status: "coming_soon",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["shapes", "measurement", "spatial_language"]
+  },
+  {
+    id: "plane_shapes_cycle_1",
+    title: "Plane shapes for cycle 1",
+    description: "Recognizes and compares basic flat shapes and their properties.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_1", "grade_2"],
+    areaId: "geometry",
+    prerequisites: ["shapes_and_measurement_intro"],
+    visualArithmeticRemediation: [],
+    status: "coming_soon",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["plane_shapes", "properties", "geometry"]
+  },
+  {
+    id: "solids_and_spatial_orientation",
+    title: "Solids and spatial orientation",
+    description: "Introduces basic solids, position words, and spatial orientation.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_1", "grade_2", "grade_3"],
+    areaId: "geometry",
+    prerequisites: ["shapes_and_measurement_intro"],
+    visualArithmeticRemediation: [],
+    status: "coming_soon",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["solids", "spatial_orientation", "geometry"]
+  },
+  {
+    id: "length_mass_time_money_intro",
+    title: "Length, mass, time, and money intro",
+    description: "Builds early practical measurement with common units and contexts.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_2", "grade_3"],
+    areaId: "geometry",
+    prerequisites: ["shapes_and_measurement_intro"],
+    visualArithmeticRemediation: [],
+    status: "coming_soon",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["measurement", "length", "mass", "time", "money"]
+  },
+  {
+    id: "symmetry_intro",
+    title: "Symmetry intro",
+    description: "Introduces symmetry through visual matching and simple shape work.",
+    cycleId: "cycle_1",
+    recommendedGrades: ["grade_2", "grade_3"],
+    areaId: "geometry",
+    prerequisites: ["plane_shapes_cycle_1"],
+    visualArithmeticRemediation: [],
+    status: "coming_soon",
+    sourceNote: cycleOneSourceNote,
+    skillTags: ["symmetry", "visual_reasoning", "geometry"]
   }
 ];
