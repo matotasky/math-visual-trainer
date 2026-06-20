@@ -11,6 +11,7 @@ import type {
   CurriculumCycleId,
   CurriculumModule,
   CurriculumModuleStatus,
+  CurriculumOfficialSource,
   CurriculumVerificationStatus,
   GradeId,
   LearningPathwayId,
@@ -118,6 +119,19 @@ const remediationLabels: Record<Locale, Record<LearningPathwayId, string>> = {
     visual_arithmetic: "Visual Arithmetic",
     arithmetic_fluency: "Arithmetic Fluency",
     school_curriculum: "School Curriculum"
+  }
+};
+
+const sourceTypeLabels: Record<Locale, Record<CurriculumOfficialSource["sourceType"], string>> = {
+  sk: {
+    page: "Stránka",
+    pdf: "PDF",
+    portal: "Portál"
+  },
+  en: {
+    page: "Page",
+    pdf: "PDF",
+    portal: "Portal"
   }
 };
 
@@ -354,24 +368,34 @@ export default async function CurriculumPage() {
 
       <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
         <h2 className="text-lg font-bold text-slate-950">
-          {isSlovak ? "Identifikované zdrojové stránky" : "Identified source pages"}
+          {isSlovak ? "Identifikované zdroje a dokumenty" : "Identified sources and documents"}
         </h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">
           {isSlovak
             ? "Tieto zdroje sú uložené ako metadata. Neznamená to ešte úplné overenie modulov podľa oficiálneho štandardu."
             : "These sources are stored as metadata. This does not mean the modules are fully verified against the official standard yet."}
         </p>
-        <div className="mt-4 grid gap-2">
+        <div className="mt-4 grid gap-3">
           {Object.values(SK_MATH_OFFICIAL_SOURCES).map((source) => (
-            <a
-              key={source.id}
-              className="text-sm font-semibold text-sky-800 underline-offset-4 hover:underline"
-              href={source.url}
-              rel="noreferrer"
-              target="_blank"
-            >
-              {source.title}
-            </a>
+            <div key={source.id} className="rounded-md border border-slate-200 bg-slate-50 p-3">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <a
+                  className="text-sm font-semibold text-sky-800 underline-offset-4 hover:underline"
+                  href={source.url}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {source.title}
+                </a>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {sourceTypeLabels[locale][source.sourceType]}
+                </span>
+              </div>
+              <p className="mt-1 text-xs font-semibold text-slate-500">{source.publisher}</p>
+              {source.retrievedNote ? (
+                <p className="mt-2 text-xs leading-5 text-slate-500">{source.retrievedNote}</p>
+              ) : null}
+            </div>
           ))}
         </div>
       </section>

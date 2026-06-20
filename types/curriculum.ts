@@ -17,6 +17,15 @@ export type CurriculumModuleStatus = "planned" | "active" | "coming_soon";
 
 export type CurriculumVerificationStatus = "draft" | "source_identified" | "partially_verified" | "verified";
 
+export type CurriculumOfficialSource = {
+  id: string;
+  title: string;
+  url: string;
+  sourceType: "page" | "pdf" | "portal";
+  publisher: string;
+  retrievedNote?: string;
+};
+
 export type CurriculumCycle = {
   id: CurriculumCycleId;
   title: string;

@@ -61,6 +61,19 @@ Each Cycle 1 module can include:
 
 The note exists so future UI, exports, or parent-facing explanations can distinguish draft scaffolding from verified curriculum content.
 
+## Identified Official Documents
+
+The current metadata identifies these source pages and documents for future manual verification:
+
+- Ministry ŠVP 2023 page: `https://www.minedu.sk/statny-vzdelavaci-program-pre-zakladne-vzdelavanie/`
+- Ministry Matematika a informatika page: `https://www.minedu.sk/matematika-a-informatika/`
+- Matematika PDF listed on the ministry page, dated 03.01.2024
+- Vzdelávanie 21 page as contextual implementation information: `https://vzdelavanie21.sk/novy-statny-vzdelavaci-program/`
+
+Identifying the PDF is not the same as verifying module content. Later manual verification must compare each module against the mathematics standard before alignment claims are made.
+
+The direct PDF URL should be confirmed when possible. Until then, the PDF metadata points to the Ministry Matematika a informatika page where the PDF is listed.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.

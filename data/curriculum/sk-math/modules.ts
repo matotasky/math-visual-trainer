@@ -8,9 +8,9 @@ const cycleOneVerificationMetadata: Pick<
   "verificationStatus" | "officialSourceRefs" | "officialCycleNote"
 > = {
   verificationStatus: "source_identified",
-  officialSourceRefs: ["ministry_svp_2023", "ministry_math_informatics"],
+  officialSourceRefs: ["ministry_svp_2023", "ministry_math_informatics", "ministry_math_standard_pdf"],
   officialCycleNote:
-    "Working scaffold for Cycle 1. Official content mapping must be verified against the Ministry mathematics standard before public alignment claims."
+    "Working scaffold for Cycle 1. Ministry mathematics PDF source is identified, but module-level content mapping still requires manual verification before public alignment claims."
 };
 
 export const SK_MATH_CURRICULUM_MODULES: CurriculumModule[] = [
