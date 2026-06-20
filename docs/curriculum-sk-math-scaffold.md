@@ -110,6 +110,14 @@ High-risk modules should be manually checked before any public-facing wording su
 
 `verificationStatus` should stay `source_identified` until manual review is complete. Do not move a module to `partially_verified` or `verified` based on assumptions, module names, or general curriculum familiarity.
 
+## UI Separation
+
+The child-facing school curriculum page should stay simple, encouraging, and non-technical. It can show cycles, draft module previews, planned status, recommended grades, and remediation pathways, but it should not show source URLs, verification workflow counters, public claim risk, or other internal metadata.
+
+Verification details live in the parent/product UI at `/parent/curriculum-verification`. That page is read-only scaffold data for now. It exists to help product review and future manual curriculum verification without turning the child experience into an internal checklist.
+
+The verification matrix and source metadata are not editable from the app and do not write to Firestore in the MVP scaffold.
+
 ## Visual Arithmetic Remediation
 
 Visual Arithmetic remains a separate core skills pathway. Curriculum modules can later link children back to visual arithmetic when a school topic exposes a weaker underlying concept.

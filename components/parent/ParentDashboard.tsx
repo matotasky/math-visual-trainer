@@ -768,6 +768,12 @@ export function ParentDashboard({ labels, locale }: ParentDashboardProps) {
             {labels.lastActivity}: {lastActivity ? formatDateOnly(lastActivity, locale) : labels.noActivity}
           </p>
           <p className="text-xs font-semibold uppercase text-slate-500">{labels.recentWindow}</p>
+          <Link
+            className="mt-2 inline-flex min-h-10 items-center justify-center rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 lg:self-end"
+            href="/parent/curriculum-verification"
+          >
+            {locale === "sk" ? "Overenie učiva" : "Curriculum verification"}
+          </Link>
         </div>
       </div>
 

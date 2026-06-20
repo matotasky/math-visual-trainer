@@ -1,8 +1,6 @@
 import Link from "next/link";
 import {
   SK_MATH_CURRICULUM_CYCLES,
-  SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
-  SK_MATH_OFFICIAL_SOURCES,
   getCurriculumModulesByCycle
 } from "@/data/curriculum/sk-math";
 import { getLearningPathway } from "@/data/pathways";
@@ -12,8 +10,6 @@ import type {
   CurriculumCycleId,
   CurriculumModule,
   CurriculumModuleStatus,
-  CurriculumOfficialSource,
-  CurriculumVerificationStatus,
   GradeId,
   LearningPathwayId,
   Locale
@@ -123,19 +119,6 @@ const remediationLabels: Record<Locale, Record<LearningPathwayId, string>> = {
   }
 };
 
-const sourceTypeLabels: Record<Locale, Record<CurriculumOfficialSource["sourceType"], string>> = {
-  sk: {
-    page: "Stránka",
-    pdf: "PDF",
-    portal: "Portál"
-  },
-  en: {
-    page: "Page",
-    pdf: "PDF",
-    portal: "Portal"
-  }
-};
-
 const moduleTextSk: Record<string, { title: string; description: string }> = {
   quantity_and_number_sense: {
     title: "Množstvo a porozumenie číslam",
@@ -215,40 +198,6 @@ function getStatusLabel(status: CurriculumModuleStatus, locale: Locale): string 
   return status === "active" ? "Active" : status === "planned" ? "Planned" : "Coming soon";
 }
 
-function getVerificationLabel(status: CurriculumVerificationStatus | undefined, locale: Locale): string {
-  const resolvedStatus = status ?? "draft";
-
-  if (locale === "sk") {
-    if (resolvedStatus === "source_identified") {
-      return "Zdroj identifikovaný";
-    }
-
-    if (resolvedStatus === "partially_verified") {
-      return "Čiastočne overené";
-    }
-
-    if (resolvedStatus === "verified") {
-      return "Overené";
-    }
-
-    return "Draft";
-  }
-
-  if (resolvedStatus === "source_identified") {
-    return "Source identified";
-  }
-
-  if (resolvedStatus === "partially_verified") {
-    return "Partially verified";
-  }
-
-  if (resolvedStatus === "verified") {
-    return "Verified";
-  }
-
-  return "Draft";
-}
-
 function getModuleText(module: CurriculumModule, locale: Locale) {
   return locale === "sk" ? (moduleTextSk[module.id] ?? module) : module;
 }
@@ -257,14 +206,6 @@ export default async function CurriculumPage() {
   const locale = await getRequestLocale();
   const isSlovak = locale === "sk";
   const cycleOneModules = getCurriculumModulesByCycle("cycle_1");
-  const totalCycleOneModules = cycleOneModules.length;
-  const verifiedModulesCount = cycleOneModules.filter((module) => module.verificationStatus === "verified").length;
-  const sourceIdentifiedCount = cycleOneModules.filter(
-    (module) => module.verificationStatus === "source_identified"
-  ).length;
-  const highRiskPublicClaimCount = SK_MATH_CYCLE_1_VERIFICATION_MATRIX.filter(
-    (row) => row.publicClaimRisk === "high"
-  ).length;
 
   return (
     <section className="py-8">
@@ -284,6 +225,11 @@ export default async function CurriculumPage() {
           {isSlovak
             ? "Toto je pracovný scaffold, nie finálna oficiálna mapa učiva."
             : "This is a working scaffold, not a final official curriculum map."}
+        </p>
+        <p className="mt-3 rounded-lg border border-sky-200 bg-sky-50 p-4 text-sm font-semibold leading-6 text-sky-950">
+          {isSlovak
+            ? "Obsah školského učiva zatiaľ pripravujeme. Najprv overujeme témy podľa oficiálnych podkladov."
+            : "School curriculum content is being prepared. We are checking topics against official sources first."}
         </p>
       </div>
 
@@ -349,9 +295,6 @@ export default async function CurriculumPage() {
                             <span className="inline-flex rounded-md bg-sky-50 px-3 py-1 text-xs font-bold uppercase text-sky-800">
                               {getStatusLabel(module.status, locale)}
                             </span>
-                            <span className="inline-flex rounded-md bg-white px-3 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
-                              {getVerificationLabel(module.verificationStatus, locale)}
-                            </span>
                           </div>
                         </div>
 
@@ -372,77 +315,6 @@ export default async function CurriculumPage() {
               </section>
             );
           })}
-        </div>
-      </section>
-
-      <section className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-5">
-        <h2 className="text-lg font-bold text-slate-950">
-          {isSlovak ? "Proces overenia" : "Verification workflow"}
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-amber-950">
-          {isSlovak
-            ? "Moduly sú zatiaľ pracovný scaffold. Pred verejným tvrdením o súlade so ŠVP musí byť každý modul manuálne porovnaný s oficiálnym štandardom."
-            : "Modules are still a working scaffold. Before any public claim of curriculum alignment, each module must be manually compared with the official standard."}
-        </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-md bg-white p-3 shadow-sm">
-            <p className="text-xs font-bold uppercase text-slate-500">
-              {isSlovak ? "Moduly 1. cyklu" : "Cycle 1 modules"}
-            </p>
-            <p className="mt-1 text-2xl font-bold text-slate-950">{totalCycleOneModules}</p>
-          </div>
-          <div className="rounded-md bg-white p-3 shadow-sm">
-            <p className="text-xs font-bold uppercase text-slate-500">
-              {isSlovak ? "Overené" : "Verified"}
-            </p>
-            <p className="mt-1 text-2xl font-bold text-slate-950">{verifiedModulesCount}</p>
-          </div>
-          <div className="rounded-md bg-white p-3 shadow-sm">
-            <p className="text-xs font-bold uppercase text-slate-500">
-              {isSlovak ? "Zdroj identifikovaný" : "Source identified"}
-            </p>
-            <p className="mt-1 text-2xl font-bold text-slate-950">{sourceIdentifiedCount}</p>
-          </div>
-          <div className="rounded-md bg-white p-3 shadow-sm">
-            <p className="text-xs font-bold uppercase text-slate-500">
-              {isSlovak ? "Vysoké riziko tvrdení" : "High claim risk"}
-            </p>
-            <p className="mt-1 text-2xl font-bold text-slate-950">{highRiskPublicClaimCount}</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
-        <h2 className="text-lg font-bold text-slate-950">
-          {isSlovak ? "Identifikované zdroje a dokumenty" : "Identified sources and documents"}
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
-          {isSlovak
-            ? "Tieto zdroje sú uložené ako metadata. Neznamená to ešte úplné overenie modulov podľa oficiálneho štandardu."
-            : "These sources are stored as metadata. This does not mean the modules are fully verified against the official standard yet."}
-        </p>
-        <div className="mt-4 grid gap-3">
-          {Object.values(SK_MATH_OFFICIAL_SOURCES).map((source) => (
-            <div key={source.id} className="rounded-md border border-slate-200 bg-slate-50 p-3">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                <a
-                  className="text-sm font-semibold text-sky-800 underline-offset-4 hover:underline"
-                  href={source.url}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  {source.title}
-                </a>
-                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
-                  {sourceTypeLabels[locale][source.sourceType]}
-                </span>
-              </div>
-              <p className="mt-1 text-xs font-semibold text-slate-500">{source.publisher}</p>
-              {source.retrievedNote ? (
-                <p className="mt-2 text-xs leading-5 text-slate-500">{source.retrievedNote}</p>
-              ) : null}
-            </div>
-          ))}
         </div>
       </section>
 
