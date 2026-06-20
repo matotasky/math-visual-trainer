@@ -17,6 +17,8 @@ export type CurriculumModuleStatus = "planned" | "active" | "coming_soon";
 
 export type CurriculumVerificationStatus = "draft" | "source_identified" | "partially_verified" | "verified";
 
+export type CurriculumVerificationRisk = "low" | "medium" | "high";
+
 export type CurriculumOfficialSource = {
   id: string;
   title: string;
@@ -54,4 +56,16 @@ export type CurriculumModule = {
   verificationStatus?: CurriculumVerificationStatus;
   officialSourceRefs?: string[];
   officialCycleNote?: string;
+};
+
+export type CurriculumVerificationMatrixRow = {
+  moduleId: string;
+  cycleId: CurriculumCycleId;
+  areaId: CurriculumAreaId;
+  currentStatus: CurriculumVerificationStatus;
+  sourceRefs: string[];
+  needsManualCheck: string[];
+  evidenceNotes: string[];
+  publicClaimRisk: CurriculumVerificationRisk;
+  nextAction: string;
 };

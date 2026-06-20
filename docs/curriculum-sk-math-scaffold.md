@@ -90,6 +90,26 @@ Verification statuses:
 
 Public marketing claims must not say that Math Visual Trainer is fully aligned with ŠVP or the Slovak national curriculum until the relevant modules and content have been verified.
 
+## Manual Verification Matrix
+
+The manual verification matrix exists to avoid accidental false alignment claims. It gives every Cycle 1 draft module a structured row for manual review against the identified official sources.
+
+Each row tracks:
+- module id
+- cycle and area
+- current verification status
+- source references
+- manual checks still needed
+- evidence notes
+- public claim risk
+- next action
+
+High-risk modules should be manually checked before any public-facing wording suggests curriculum alignment. This is especially important for broad areas such as word problems, data, geometry, measurement, and cross-topic reasoning.
+
+`evidenceNotes` must be filled only after manual comparison with official documents. Notes should record what was checked, where the evidence appears, and what wording is safe to show.
+
+`verificationStatus` should stay `source_identified` until manual review is complete. Do not move a module to `partially_verified` or `verified` based on assumptions, module names, or general curriculum familiarity.
+
 ## Visual Arithmetic Remediation
 
 Visual Arithmetic remains a separate core skills pathway. Curriculum modules can later link children back to visual arithmetic when a school topic exposes a weaker underlying concept.

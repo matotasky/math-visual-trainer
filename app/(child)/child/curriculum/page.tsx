@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   SK_MATH_CURRICULUM_CYCLES,
+  SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
   SK_MATH_OFFICIAL_SOURCES,
   getCurriculumModulesByCycle
 } from "@/data/curriculum/sk-math";
@@ -256,6 +257,14 @@ export default async function CurriculumPage() {
   const locale = await getRequestLocale();
   const isSlovak = locale === "sk";
   const cycleOneModules = getCurriculumModulesByCycle("cycle_1");
+  const totalCycleOneModules = cycleOneModules.length;
+  const verifiedModulesCount = cycleOneModules.filter((module) => module.verificationStatus === "verified").length;
+  const sourceIdentifiedCount = cycleOneModules.filter(
+    (module) => module.verificationStatus === "source_identified"
+  ).length;
+  const highRiskPublicClaimCount = SK_MATH_CYCLE_1_VERIFICATION_MATRIX.filter(
+    (row) => row.publicClaimRisk === "high"
+  ).length;
 
   return (
     <section className="py-8">
@@ -363,6 +372,43 @@ export default async function CurriculumPage() {
               </section>
             );
           })}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-5">
+        <h2 className="text-lg font-bold text-slate-950">
+          {isSlovak ? "Proces overenia" : "Verification workflow"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-amber-950">
+          {isSlovak
+            ? "Moduly sú zatiaľ pracovný scaffold. Pred verejným tvrdením o súlade so ŠVP musí byť každý modul manuálne porovnaný s oficiálnym štandardom."
+            : "Modules are still a working scaffold. Before any public claim of curriculum alignment, each module must be manually compared with the official standard."}
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-md bg-white p-3 shadow-sm">
+            <p className="text-xs font-bold uppercase text-slate-500">
+              {isSlovak ? "Moduly 1. cyklu" : "Cycle 1 modules"}
+            </p>
+            <p className="mt-1 text-2xl font-bold text-slate-950">{totalCycleOneModules}</p>
+          </div>
+          <div className="rounded-md bg-white p-3 shadow-sm">
+            <p className="text-xs font-bold uppercase text-slate-500">
+              {isSlovak ? "Overené" : "Verified"}
+            </p>
+            <p className="mt-1 text-2xl font-bold text-slate-950">{verifiedModulesCount}</p>
+          </div>
+          <div className="rounded-md bg-white p-3 shadow-sm">
+            <p className="text-xs font-bold uppercase text-slate-500">
+              {isSlovak ? "Zdroj identifikovaný" : "Source identified"}
+            </p>
+            <p className="mt-1 text-2xl font-bold text-slate-950">{sourceIdentifiedCount}</p>
+          </div>
+          <div className="rounded-md bg-white p-3 shadow-sm">
+            <p className="text-xs font-bold uppercase text-slate-500">
+              {isSlovak ? "Vysoké riziko tvrdení" : "High claim risk"}
+            </p>
+            <p className="mt-1 text-2xl font-bold text-slate-950">{highRiskPublicClaimCount}</p>
+          </div>
         </div>
       </section>
 

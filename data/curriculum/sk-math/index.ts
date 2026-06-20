@@ -1,12 +1,21 @@
-import type { CurriculumAreaId, CurriculumCycleId, CurriculumModuleStatus, GradeId, LearningPathwayId } from "@/types";
+import type {
+  CurriculumAreaId,
+  CurriculumCycleId,
+  CurriculumModuleStatus,
+  CurriculumVerificationRisk,
+  GradeId,
+  LearningPathwayId
+} from "@/types";
 import { SK_MATH_CURRICULUM_AREAS } from "./areas";
 import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 import { SK_MATH_CURRICULUM_MODULES } from "./modules";
+import { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
 
 export { SK_MATH_CURRICULUM_AREAS } from "./areas";
 export { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 export { SK_MATH_CURRICULUM_MODULES } from "./modules";
 export { SK_MATH_OFFICIAL_SOURCES } from "./sources";
+export { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
 
 export function getCurriculumCycle(id: CurriculumCycleId) {
   const cycle = SK_MATH_CURRICULUM_CYCLES.find((item) => item.id === id);
@@ -46,4 +55,16 @@ export function getCurriculumModulesByStatus(status: CurriculumModuleStatus) {
 
 export function getCurriculumModulesByRemediation(pathwayId: LearningPathwayId) {
   return SK_MATH_CURRICULUM_MODULES.filter((module) => module.visualArithmeticRemediation.includes(pathwayId));
+}
+
+export function getVerificationRowsByModule(moduleId: string) {
+  return SK_MATH_CYCLE_1_VERIFICATION_MATRIX.filter((row) => row.moduleId === moduleId);
+}
+
+export function getVerificationRowsByRisk(risk: CurriculumVerificationRisk) {
+  return SK_MATH_CYCLE_1_VERIFICATION_MATRIX.filter((row) => row.publicClaimRisk === risk);
+}
+
+export function getUnverifiedCurriculumModules() {
+  return SK_MATH_CURRICULUM_MODULES.filter((module) => module.verificationStatus !== "verified");
 }
