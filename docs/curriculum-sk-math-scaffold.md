@@ -138,6 +138,16 @@ They do not change module verification status, candidate mapping status, officia
 
 They do not write to Firestore and do not implement editing in the MVP scaffold.
 
+## First Recorded Evidence: `quantity_and_number_sense`
+
+The first review evidence was recorded from the official mathematics PDF JSON for `quantity_and_number_sense`.
+
+The evidence supports the candidate mapping to Cycle 1 numbers and operations, especially early number meaning, quantity, ordering, comparison, number line work, and multiple number representations.
+
+This is not final verification. The module `verificationStatus` remains `source_identified`.
+
+The module-to-official mapping remains `candidate` until a separate decision step confirms or rejects the mapping.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.
