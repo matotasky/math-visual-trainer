@@ -88,6 +88,18 @@ These outline sections are separate from product modules. They provide a read-on
 
 Later verification work should compare each product module against the official mathematics PDF, decide which official component it belongs to, record evidence notes, and only then move mapping or verification statuses forward.
 
+## Candidate Module-To-Official Mapping
+
+Candidate mapping links draft product curriculum modules to official Cycle 1 outline sections. It is a product planning aid, not a verification result.
+
+`candidate` means the product module appears to belong under an official outline component based on its draft scope. It does not mean the module is aligned with the Slovak curriculum, and it does not support public claims about official ŠVP alignment.
+
+`confirmed` should only be used after manual comparison with the official mathematics PDF and after evidence notes explain what was checked.
+
+`rejected` can be used later if manual review shows that a product module does not belong to a proposed official component.
+
+The current MVP keeps all module-to-official mappings as `candidate`, with empty evidence notes.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.

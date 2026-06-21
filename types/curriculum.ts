@@ -44,6 +44,17 @@ export type CurriculumOfficialCycleOutlineSection = {
   mappingStatus: "not_mapped" | "partially_mapped" | "mapped";
 };
 
+export type CurriculumModuleOfficialMappingStatus = "candidate" | "needs_review" | "confirmed" | "rejected";
+
+export type CurriculumModuleOfficialMapping = {
+  moduleId: string;
+  officialOutlineSectionId: string;
+  status: CurriculumModuleOfficialMappingStatus;
+  rationale: string;
+  evidenceNotes: string[];
+  reviewerNote: string;
+};
+
 export type CurriculumCycle = {
   id: CurriculumCycleId;
   title: string;

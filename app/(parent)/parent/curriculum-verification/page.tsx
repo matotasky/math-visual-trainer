@@ -3,12 +3,14 @@ import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
 import {
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
+  SK_MATH_MODULE_OFFICIAL_MAPPINGS,
   SK_MATH_OFFICIAL_CYCLE_1_OUTLINE,
   SK_MATH_OFFICIAL_SOURCES
 } from "@/data/curriculum/sk-math";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumAreaId,
+  CurriculumModuleOfficialMappingStatus,
   CurriculumOfficialCycleOutlineSection,
   CurriculumVerificationRisk,
   CurriculumVerificationStatus,
@@ -82,6 +84,21 @@ const mappingStatusLabels: Record<
     not_mapped: "Not mapped",
     partially_mapped: "Partially mapped",
     mapped: "Mapped"
+  }
+};
+
+const candidateMappingStatusLabels: Record<Locale, Record<CurriculumModuleOfficialMappingStatus, string>> = {
+  sk: {
+    candidate: "Návrh",
+    needs_review: "Vyžaduje kontrolu",
+    confirmed: "Potvrdené",
+    rejected: "Zamietnuté"
+  },
+  en: {
+    candidate: "Candidate",
+    needs_review: "Needs review",
+    confirmed: "Confirmed",
+    rejected: "Rejected"
   }
 };
 
@@ -188,6 +205,51 @@ export default async function ParentCurriculumVerificationPage() {
               <p className="mt-2 text-sm leading-6 text-slate-700">{section.summaryNote}</p>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Návrh mapovania modulov" : "Candidate module mapping"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Toto je iba návrh mapovania. Neznamená overenie súladu so ŠVP."
+            : "This is candidate mapping only. It does not mean official curriculum alignment is verified."}
+        </p>
+        <div className="mt-4 grid gap-4">
+          {SK_MATH_OFFICIAL_CYCLE_1_OUTLINE.map((section) => {
+            const mappings = SK_MATH_MODULE_OFFICIAL_MAPPINGS.filter(
+              (mapping) => mapping.officialOutlineSectionId === section.id
+            );
+
+            return (
+              <section key={section.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                  <h3 className="text-base font-bold text-slate-950">{section.title}</h3>
+                  <span className="text-xs font-bold uppercase text-slate-500">
+                    {mappings.length} {isSlovak ? "modulov" : "modules"}
+                  </span>
+                </div>
+                <div className="mt-3 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
+                  {mappings.map((mapping) => (
+                    <article key={mapping.moduleId} className="p-3">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-950">{getModuleTitle(mapping.moduleId)}</h4>
+                          <p className="mt-1 text-sm leading-6 text-slate-600">{mapping.rationale}</p>
+                        </div>
+                        <span className="inline-flex w-fit rounded-md bg-sky-50 px-2 py-1 text-xs font-bold uppercase text-sky-800">
+                          {candidateMappingStatusLabels[locale][mapping.status]}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-slate-500">{mapping.reviewerNote}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            );
+          })}
         </div>
       </section>
 
