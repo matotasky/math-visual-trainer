@@ -6,6 +6,7 @@ import {
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
   SK_MATH_OFFICIAL_CYCLE_1_OUTLINE,
   SK_MATH_OFFICIAL_SOURCES,
+  SK_MATH_REVIEW_CHECKLIST,
   SK_MATH_REVIEW_EVIDENCE
 } from "@/data/curriculum/sk-math";
 import { getRequestLocale } from "@/lib/i18n/server";
@@ -13,6 +14,7 @@ import type {
   CurriculumAreaId,
   CurriculumModuleOfficialMappingStatus,
   CurriculumOfficialCycleOutlineSection,
+  CurriculumReviewChecklistStatus,
   CurriculumReviewStatus,
   CurriculumVerificationRisk,
   CurriculumVerificationStatus,
@@ -116,6 +118,19 @@ const reviewStatusLabels: Record<Locale, Record<CurriculumReviewStatus, string>>
     in_review: "In review",
     evidence_recorded: "Evidence recorded",
     ready_for_decision: "Ready for decision"
+  }
+};
+
+const reviewChecklistStatusLabels: Record<Locale, Record<CurriculumReviewChecklistStatus, string>> = {
+  sk: {
+    open: "Otvorené",
+    checked: "Skontrolované",
+    not_applicable: "Netýka sa"
+  },
+  en: {
+    open: "Open",
+    checked: "Checked",
+    not_applicable: "Not applicable"
   }
 };
 
@@ -280,36 +295,81 @@ export default async function ParentCurriculumVerificationPage() {
             : "Evidence is not added yet. This section only prepares a place for manual verification."}
         </p>
         <div className="mt-4 grid gap-3">
-          {SK_MATH_REVIEW_EVIDENCE.map((evidence) => (
-            <article key={evidence.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(evidence.moduleId)}</h3>
-                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
-                    {evidence.officialOutlineSectionId}
-                  </p>
+          {SK_MATH_REVIEW_EVIDENCE.map((evidence) => {
+            const checklistItems = SK_MATH_REVIEW_CHECKLIST.filter((item) => item.reviewEvidenceId === evidence.id);
+
+            return (
+              <article key={evidence.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-base font-bold text-slate-950">{getModuleTitle(evidence.moduleId)}</h3>
+                    <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
+                      {evidence.officialOutlineSectionId}
+                    </p>
+                  </div>
+                  <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                    {reviewStatusLabels[locale][evidence.reviewStatus]}
+                  </span>
                 </div>
-                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
-                  {reviewStatusLabels[locale][evidence.reviewStatus]}
-                </span>
-              </div>
-              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
-                <div>
-                  <dt className="font-bold text-slate-800">{isSlovak ? "Kontrolór" : "Reviewer"}</dt>
-                  <dd className="mt-1 text-slate-600">
-                    {evidence.reviewedBy || (isSlovak ? "nepriradené" : "not assigned")}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="font-bold text-slate-800">{isSlovak ? "Dátum kontroly" : "Reviewed at"}</dt>
-                  <dd className="mt-1 text-slate-600">
-                    {evidence.reviewedAt ?? (isSlovak ? "neskontrolované" : "not reviewed")}
-                  </dd>
-                </div>
-              </dl>
-              <p className="mt-3 text-sm leading-6 text-slate-700">{evidence.reviewNotes}</p>
-            </article>
-          ))}
+                <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                  <div>
+                    <dt className="font-bold text-slate-800">{isSlovak ? "Kontrolór" : "Reviewer"}</dt>
+                    <dd className="mt-1 text-slate-600">
+                      {evidence.reviewedBy || (isSlovak ? "nepriradené" : "not assigned")}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-bold text-slate-800">{isSlovak ? "Dátum kontroly" : "Reviewed at"}</dt>
+                    <dd className="mt-1 text-slate-600">
+                      {evidence.reviewedAt ?? (isSlovak ? "neskontrolované" : "not reviewed")}
+                    </dd>
+                  </div>
+                </dl>
+                <p className="mt-3 text-sm leading-6 text-slate-700">{evidence.reviewNotes}</p>
+
+                {checklistItems.length > 0 ? (
+                  <div className="mt-4 rounded-md border border-slate-200 bg-white p-3">
+                    <h4 className="text-sm font-bold text-slate-950">
+                      {isSlovak ? "Checklist manuálnej kontroly" : "Manual review checklist"}
+                    </h4>
+                    <div className="mt-3 grid gap-3">
+                      {checklistItems.map((item) => (
+                        <article key={item.id} className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                            <div>
+                              <h5 className="text-sm font-bold text-slate-950">{item.label}</h5>
+                              <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
+                            </div>
+                            <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                              {reviewChecklistStatusLabels[locale][item.status]}
+                            </span>
+                          </div>
+                          <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+                            <div>
+                              <dt className="font-bold uppercase text-slate-500">
+                                {isSlovak ? "Zdrojová referencia" : "Source reference"}
+                              </dt>
+                              <dd className="mt-1 text-slate-600">
+                                {item.sourceReference || (isSlovak ? "nedoplnené" : "not added")}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt className="font-bold uppercase text-slate-500">
+                                {isSlovak ? "Poznámka kontrolóra" : "Reviewer note"}
+                              </dt>
+                              <dd className="mt-1 text-slate-600">
+                                {item.reviewerNote || (isSlovak ? "nedoplnené" : "not added")}
+                              </dd>
+                            </div>
+                          </dl>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </article>
+            );
+          })}
         </div>
       </section>
 

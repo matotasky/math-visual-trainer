@@ -4,6 +4,7 @@ import type {
   CurriculumModuleOfficialMappingStatus,
   CurriculumModuleStatus,
   CurriculumOfficialComponentId,
+  CurriculumReviewChecklistStatus,
   CurriculumReviewStatus,
   CurriculumVerificationRisk,
   GradeId,
@@ -14,6 +15,7 @@ import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 import { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 import { SK_MATH_CURRICULUM_MODULES } from "./modules";
 import { SK_MATH_OFFICIAL_CYCLE_1_OUTLINE } from "./official-cycle-1-outline";
+import { SK_MATH_REVIEW_CHECKLIST } from "./review-checklist";
 import { SK_MATH_REVIEW_EVIDENCE } from "./review-evidence";
 import { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
 
@@ -23,6 +25,7 @@ export { SK_MATH_CURRICULUM_MODULES } from "./modules";
 export { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 export { SK_MATH_OFFICIAL_SOURCES } from "./sources";
 export { SK_MATH_OFFICIAL_CYCLE_1_OUTLINE } from "./official-cycle-1-outline";
+export { SK_MATH_REVIEW_CHECKLIST } from "./review-checklist";
 export { SK_MATH_REVIEW_EVIDENCE } from "./review-evidence";
 export { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
 
@@ -108,6 +111,14 @@ export function getReviewEvidenceByOutlineSection(officialOutlineSectionId: stri
   return SK_MATH_REVIEW_EVIDENCE.filter(
     (evidence) => evidence.officialOutlineSectionId === officialOutlineSectionId
   );
+}
+
+export function getReviewChecklistByEvidence(reviewEvidenceId: string) {
+  return SK_MATH_REVIEW_CHECKLIST.filter((item) => item.reviewEvidenceId === reviewEvidenceId);
+}
+
+export function getReviewChecklistByStatus(status: CurriculumReviewChecklistStatus) {
+  return SK_MATH_REVIEW_CHECKLIST.filter((item) => item.status === status);
 }
 
 export function getUnverifiedCurriculumModules() {

@@ -110,6 +110,16 @@ Review evidence is not the same as module verification. A module can have a revi
 
 Statuses such as `verified`, `confirmed`, or `mapped` should only be used after evidence exists, the evidence has been reviewed, and the reviewer can explain what official source material supports the decision.
 
+## Manual Review Checklist
+
+Manual review checklist items guide a reviewer before evidence is recorded. They break a module review into smaller questions so future verification work can be careful and repeatable.
+
+`open` means nothing has been reviewed yet. It is the only status used in the current scaffold.
+
+`sourceReference` and `reviewerNote` must remain empty until a reviewer has manually compared the product module with the official mathematics PDF.
+
+`checked` should only be used after a reviewer has inspected the official source, added a real source reference, and written a reviewer note explaining the decision.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.

@@ -69,6 +69,18 @@ export type CurriculumReviewEvidence = {
   reviewedAt: string | null;
 };
 
+export type CurriculumReviewChecklistStatus = "open" | "checked" | "not_applicable";
+
+export type CurriculumReviewChecklistItem = {
+  id: string;
+  reviewEvidenceId: string;
+  label: string;
+  description: string;
+  status: CurriculumReviewChecklistStatus;
+  sourceReference: string;
+  reviewerNote: string;
+};
+
 export type CurriculumCycle = {
   id: CurriculumCycleId;
   title: string;
