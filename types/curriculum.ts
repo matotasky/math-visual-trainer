@@ -57,6 +57,12 @@ export type CurriculumModuleOfficialMapping = {
 
 export type CurriculumReviewStatus = "not_started" | "in_review" | "evidence_recorded" | "ready_for_decision";
 
+export type CurriculumReviewDecisionRecommendation =
+  | "no_decision"
+  | "needs_more_evidence"
+  | "ready_to_confirm"
+  | "do_not_confirm";
+
 export type CurriculumReviewEvidence = {
   id: string;
   moduleId: string;
@@ -64,6 +70,9 @@ export type CurriculumReviewEvidence = {
   reviewStatus: CurriculumReviewStatus;
   sourceIds: string[];
   sourceQuoteOrReference: string;
+  sourcePageHint?: string;
+  officialWordingReference?: string;
+  decisionRecommendation?: CurriculumReviewDecisionRecommendation;
   reviewNotes: string;
   reviewedBy: string;
   reviewedAt: string | null;
@@ -78,6 +87,9 @@ export type CurriculumReviewChecklistItem = {
   description: string;
   status: CurriculumReviewChecklistStatus;
   sourceReference: string;
+  sourcePageHint?: string;
+  officialWordingReference?: string;
+  decisionRecommendation?: CurriculumReviewDecisionRecommendation;
   reviewerNote: string;
 };
 

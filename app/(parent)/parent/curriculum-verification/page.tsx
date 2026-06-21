@@ -15,6 +15,7 @@ import type {
   CurriculumModuleOfficialMappingStatus,
   CurriculumOfficialCycleOutlineSection,
   CurriculumReviewChecklistStatus,
+  CurriculumReviewDecisionRecommendation,
   CurriculumReviewStatus,
   CurriculumVerificationRisk,
   CurriculumVerificationStatus,
@@ -131,6 +132,21 @@ const reviewChecklistStatusLabels: Record<Locale, Record<CurriculumReviewCheckli
     open: "Open",
     checked: "Checked",
     not_applicable: "Not applicable"
+  }
+};
+
+const decisionRecommendationLabels: Record<Locale, Record<CurriculumReviewDecisionRecommendation, string>> = {
+  sk: {
+    no_decision: "Bez rozhodnutia",
+    needs_more_evidence: "Treba viac dôkazov",
+    ready_to_confirm: "Pripravené na potvrdenie",
+    do_not_confirm: "Nepotvrdzovať"
+  },
+  en: {
+    no_decision: "No decision",
+    needs_more_evidence: "Needs more evidence",
+    ready_to_confirm: "Ready to confirm",
+    do_not_confirm: "Do not confirm"
   }
 };
 
@@ -324,6 +340,28 @@ export default async function ParentCurriculumVerificationPage() {
                       {evidence.reviewedAt ?? (isSlovak ? "neskontrolované" : "not reviewed")}
                     </dd>
                   </div>
+                  <div>
+                    <dt className="font-bold text-slate-800">{isSlovak ? "Pomôcka k strane" : "Source page hint"}</dt>
+                    <dd className="mt-1 text-slate-600">
+                      {evidence.sourcePageHint || (isSlovak ? "nedoplnené" : "not added")}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-bold text-slate-800">
+                      {isSlovak ? "Oficiálna formulácia" : "Official wording reference"}
+                    </dt>
+                    <dd className="mt-1 text-slate-600">
+                      {evidence.officialWordingReference || (isSlovak ? "nedoplnené" : "not added")}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-bold text-slate-800">
+                      {isSlovak ? "Odporúčanie rozhodnutia" : "Decision recommendation"}
+                    </dt>
+                    <dd className="mt-1 text-slate-600">
+                      {decisionRecommendationLabels[locale][evidence.decisionRecommendation ?? "no_decision"]}
+                    </dd>
+                  </div>
                 </dl>
                 <p className="mt-3 text-sm leading-6 text-slate-700">{evidence.reviewNotes}</p>
 
@@ -354,6 +392,30 @@ export default async function ParentCurriculumVerificationPage() {
                             </span>
                           </div>
                           <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+                            <div>
+                              <dt className="font-bold uppercase text-slate-500">
+                                {isSlovak ? "Pomôcka k strane" : "Source page hint"}
+                              </dt>
+                              <dd className="mt-1 text-slate-600">
+                                {item.sourcePageHint || (isSlovak ? "nedoplnené" : "not added")}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt className="font-bold uppercase text-slate-500">
+                                {isSlovak ? "Oficiálna formulácia" : "Official wording reference"}
+                              </dt>
+                              <dd className="mt-1 text-slate-600">
+                                {item.officialWordingReference || (isSlovak ? "nedoplnené" : "not added")}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt className="font-bold uppercase text-slate-500">
+                                {isSlovak ? "Odporúčanie rozhodnutia" : "Decision recommendation"}
+                              </dt>
+                              <dd className="mt-1 text-slate-600">
+                                {decisionRecommendationLabels[locale][item.decisionRecommendation ?? "no_decision"]}
+                              </dd>
+                            </div>
                             <div>
                               <dt className="font-bold uppercase text-slate-500">
                                 {isSlovak ? "Zdrojová referencia" : "Source reference"}

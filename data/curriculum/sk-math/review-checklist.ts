@@ -11,6 +11,9 @@ export const SK_MATH_REVIEW_CHECKLIST: CurriculumReviewChecklistItem[] = [
       "Check whether the official Cycle 1 numbers and operations component includes early number meaning, natural numbers or quantity understanding relevant to this product module.",
     status: "open",
     sourceReference: "",
+    sourcePageHint: "",
+    officialWordingReference: "",
+    decisionRecommendation: "no_decision",
     reviewerNote: ""
   },
   {
@@ -21,6 +24,9 @@ export const SK_MATH_REVIEW_CHECKLIST: CurriculumReviewChecklistItem[] = [
       "Check whether official wording supports quantity comparison, ordering, or number comparison as part of Cycle 1 expectations.",
     status: "open",
     sourceReference: "",
+    sourcePageHint: "",
+    officialWordingReference: "",
+    decisionRecommendation: "no_decision",
     reviewerNote: ""
   },
   {
@@ -31,6 +37,9 @@ export const SK_MATH_REVIEW_CHECKLIST: CurriculumReviewChecklistItem[] = [
       "Check that recommended grades in the product are presented only as parent-friendly navigation and not as official grade-level claims.",
     status: "open",
     sourceReference: "",
+    sourcePageHint: "",
+    officialWordingReference: "",
+    decisionRecommendation: "no_decision",
     reviewerNote: ""
   },
   {
@@ -41,6 +50,9 @@ export const SK_MATH_REVIEW_CHECKLIST: CurriculumReviewChecklistItem[] = [
       "Check whether linking this module to Visual Arithmetic is a product remediation decision rather than an official curriculum claim.",
     status: "open",
     sourceReference: "",
+    sourcePageHint: "",
+    officialWordingReference: "",
+    decisionRecommendation: "no_decision",
     reviewerNote: ""
   }
 ];

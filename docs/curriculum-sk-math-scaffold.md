@@ -106,6 +106,12 @@ Manual review evidence rows prepare a place to record actual source references d
 
 Evidence rows should contain source quotes, page references, or review notes only after manual comparison with the official mathematics PDF. Do not add fake quotes, inferred evidence, or generic assumptions.
 
+`sourcePageHint` is a future convenience field for locating evidence in the PDF. It should stay empty until a reviewer manually identifies a useful page, section, or table location.
+
+`officialWordingReference` should contain exact manually checked wording or a safe source reference, not guesses or inferred wording.
+
+`decisionRecommendation` remains `no_decision` until evidence is reviewed. It should not be used to imply verification by itself.
+
 Review evidence is not the same as module verification. A module can have a review evidence row and still remain `source_identified`.
 
 Statuses such as `verified`, `confirmed`, or `mapped` should only be used after evidence exists, the evidence has been reviewed, and the reviewer can explain what official source material supports the decision.
@@ -117,6 +123,10 @@ Manual review checklist items guide a reviewer before evidence is recorded. They
 `open` means nothing has been reviewed yet. It is the only status used in the current scaffold.
 
 `sourceReference` and `reviewerNote` must remain empty until a reviewer has manually compared the product module with the official mathematics PDF.
+
+Checklist `sourcePageHint` and `officialWordingReference` follow the same rule: they are placeholders for real manual PDF references and must not contain guessed source text.
+
+Checklist `decisionRecommendation` remains `no_decision` while the checklist item is still `open`.
 
 `checked` should only be used after a reviewer has inspected the official source, added a real source reference, and written a reviewer note explaining the decision.
 

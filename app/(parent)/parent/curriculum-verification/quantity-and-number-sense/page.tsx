@@ -12,6 +12,7 @@ import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumModuleOfficialMappingStatus,
   CurriculumReviewChecklistStatus,
+  CurriculumReviewDecisionRecommendation,
   CurriculumReviewStatus,
   CurriculumVerificationStatus,
   GradeId,
@@ -115,6 +116,21 @@ const checklistStatusLabels: Record<Locale, Record<CurriculumReviewChecklistStat
     open: "Open",
     checked: "Checked",
     not_applicable: "Not applicable"
+  }
+};
+
+const decisionRecommendationLabels: Record<Locale, Record<CurriculumReviewDecisionRecommendation, string>> = {
+  sk: {
+    no_decision: "Bez rozhodnutia",
+    needs_more_evidence: "Treba viac dôkazov",
+    ready_to_confirm: "Pripravené na potvrdenie",
+    do_not_confirm: "Nepotvrdzovať"
+  },
+  en: {
+    no_decision: "No decision",
+    needs_more_evidence: "Needs more evidence",
+    ready_to_confirm: "Ready to confirm",
+    do_not_confirm: "Do not confirm"
   }
 };
 
@@ -261,6 +277,23 @@ export default async function QuantityAndNumberSenseReviewPage() {
           </dl>
         </SectionCard>
 
+        <SectionCard title={isSlovak ? "PDF referencie" : "PDF reference placeholders"}>
+          <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <Field
+              label={isSlovak ? "Pomôcka k strane" : "Source page hint"}
+              value={reviewEvidence.sourcePageHint || (isSlovak ? "nedoplnené" : "not added")}
+            />
+            <Field
+              label={isSlovak ? "Oficiálna formulácia" : "Official wording reference"}
+              value={reviewEvidence.officialWordingReference || (isSlovak ? "nedoplnené" : "not added")}
+            />
+            <Field
+              label={isSlovak ? "Odporúčanie rozhodnutia" : "Decision recommendation"}
+              value={decisionRecommendationLabels[locale][reviewEvidence.decisionRecommendation ?? "no_decision"]}
+            />
+          </dl>
+        </SectionCard>
+
         <SectionCard title={isSlovak ? "Checklist" : "Checklist"}>
           <div className="grid gap-3">
             {checklistItems.map((item) => (
@@ -275,6 +308,18 @@ export default async function QuantityAndNumberSenseReviewPage() {
                   </span>
                 </div>
                 <dl className="mt-3 grid gap-3 text-xs sm:grid-cols-2">
+                  <Field
+                    label={isSlovak ? "Pomôcka k strane" : "Source page hint"}
+                    value={item.sourcePageHint || (isSlovak ? "nedoplnené" : "not added")}
+                  />
+                  <Field
+                    label={isSlovak ? "Oficiálna formulácia" : "Official wording reference"}
+                    value={item.officialWordingReference || (isSlovak ? "nedoplnené" : "not added")}
+                  />
+                  <Field
+                    label={isSlovak ? "Odporúčanie rozhodnutia" : "Decision recommendation"}
+                    value={decisionRecommendationLabels[locale][item.decisionRecommendation ?? "no_decision"]}
+                  />
                   <Field
                     label={isSlovak ? "Zdrojová referencia" : "Source reference"}
                     value={item.sourceReference || (isSlovak ? "nedoplnené" : "not added")}

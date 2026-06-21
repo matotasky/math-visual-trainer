@@ -8,6 +8,9 @@ export const SK_MATH_REVIEW_EVIDENCE: CurriculumReviewEvidence[] = [
     reviewStatus: "not_started",
     sourceIds: ["ministry_math_standard_pdf"],
     sourceQuoteOrReference: "",
+    sourcePageHint: "",
+    officialWordingReference: "",
+    decisionRecommendation: "no_decision",
     reviewNotes:
       "Review not started. Evidence must be added only after manual comparison with the official mathematics PDF.",
     reviewedBy: "",
