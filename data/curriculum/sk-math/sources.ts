@@ -20,11 +20,11 @@ export const SK_MATH_OFFICIAL_SOURCES = {
   ministryMathStandardPdf: {
     id: "ministry_math_standard_pdf",
     title: "Matematika (.pdf, 03.01.2024)",
-    url: "https://www.minedu.sk/matematika-a-informatika/",
+    url: "https://www.minedu.sk/data/att/490/28441.a209a3.pdf",
     sourceType: "pdf",
     publisher: "Ministerstvo školstva, výskumu, vývoja a mládeže SR",
     retrievedNote:
-      "The ministry page lists Matematika (.pdf, 870.79 kB) dated 03.01.2024. Direct PDF URL should be confirmed during manual verification."
+      "Direct PDF URL identified from the Ministry Matematika a informatika page. The PDF is listed as Matematika (.pdf, 870.79 kB), dated 03.01.2024. Module-level mapping still requires manual verification."
   },
   vzdelavanie21NewSvp: {
     id: "vzdelavanie21_new_svp",

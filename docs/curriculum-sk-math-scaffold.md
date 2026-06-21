@@ -67,12 +67,26 @@ The current metadata identifies these source pages and documents for future manu
 
 - Ministry ŠVP 2023 page: `https://www.minedu.sk/statny-vzdelavaci-program-pre-zakladne-vzdelavanie/`
 - Ministry Matematika a informatika page: `https://www.minedu.sk/matematika-a-informatika/`
-- Matematika PDF listed on the ministry page, dated 03.01.2024
+- Matematika PDF listed on the ministry page, dated 03.01.2024: `https://www.minedu.sk/data/att/490/28441.a209a3.pdf`
 - Vzdelávanie 21 page as contextual implementation information: `https://vzdelavanie21.sk/novy-statny-vzdelavaci-program/`
 
 Identifying the PDF is not the same as verifying module content. Later manual verification must compare each module against the mathematics standard before alignment claims are made.
 
-The direct PDF URL should be confirmed when possible. Until then, the PDF metadata points to the Ministry Matematika a informatika page where the PDF is listed.
+The direct PDF URL is now stored in source metadata. This still does not verify module-level mapping.
+
+## Official Cycle 1 Outline
+
+The official Cycle 1 outline stores the three main content components listed for Cycle 1 in the mathematics PDF:
+
+- Čísla a operácie s číslami
+- Závislosti, vzťahy a práca s údajmi
+- Geometria
+
+These outline sections are separate from product modules. They provide a read-only scaffold for future manual mapping work and are visible in the parent/product verification page.
+
+`mappingStatus: "not_mapped"` means product modules have not yet been manually mapped to the official component. It must not be interpreted as module verification or curriculum alignment.
+
+Later verification work should compare each product module against the official mathematics PDF, decide which official component it belongs to, record evidence notes, and only then move mapping or verification statuses forward.
 
 ## Official Verification Workflow
 

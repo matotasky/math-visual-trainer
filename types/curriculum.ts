@@ -28,6 +28,22 @@ export type CurriculumOfficialSource = {
   retrievedNote?: string;
 };
 
+export type CurriculumOfficialComponentId =
+  | "official_numbers_operations"
+  | "official_relations_data"
+  | "official_geometry";
+
+export type CurriculumOfficialCycleOutlineSection = {
+  id: string;
+  cycleId: CurriculumCycleId;
+  officialComponentId: CurriculumOfficialComponentId;
+  title: string;
+  sourceId: string;
+  pageRangeNote: string;
+  summaryNote: string;
+  mappingStatus: "not_mapped" | "partially_mapped" | "mapped";
+};
+
 export type CurriculumCycle = {
   id: CurriculumCycleId;
   title: string;

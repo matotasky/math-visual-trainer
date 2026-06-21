@@ -3,11 +3,13 @@ import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
 import {
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
+  SK_MATH_OFFICIAL_CYCLE_1_OUTLINE,
   SK_MATH_OFFICIAL_SOURCES
 } from "@/data/curriculum/sk-math";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumAreaId,
+  CurriculumOfficialCycleOutlineSection,
   CurriculumVerificationRisk,
   CurriculumVerificationStatus,
   Locale
@@ -64,6 +66,22 @@ const verificationStatusLabels: Record<Locale, Record<CurriculumVerificationStat
     source_identified: "Source identified",
     partially_verified: "Partially verified",
     verified: "Verified"
+  }
+};
+
+const mappingStatusLabels: Record<
+  Locale,
+  Record<CurriculumOfficialCycleOutlineSection["mappingStatus"], string>
+> = {
+  sk: {
+    not_mapped: "Nenamapované",
+    partially_mapped: "Čiastočne namapované",
+    mapped: "Namapované"
+  },
+  en: {
+    not_mapped: "Not mapped",
+    partially_mapped: "Partially mapped",
+    mapped: "Mapped"
   }
 };
 
@@ -140,6 +158,34 @@ export default async function ParentCurriculumVerificationPage() {
               {source.retrievedNote ? (
                 <p className="mt-2 text-xs leading-5 text-slate-500">{source.retrievedNote}</p>
               ) : null}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Oficiálny rámec 1. cyklu" : "Official Cycle 1 outline"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Tieto sekcie zachytávajú hlavné komponenty z oficiálneho PDF. Produktové moduly ešte nie sú manuálne namapované."
+            : "These sections capture the main components from the official PDF. Product modules are not manually mapped yet."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_OFFICIAL_CYCLE_1_OUTLINE.map((section) => (
+            <article key={section.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{section.title}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{section.sourceId}</p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {mappingStatusLabels[locale][section.mappingStatus]}
+                </span>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{section.pageRangeNote}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-700">{section.summaryNote}</p>
             </article>
           ))}
         </div>

@@ -2,6 +2,7 @@ import type {
   CurriculumAreaId,
   CurriculumCycleId,
   CurriculumModuleStatus,
+  CurriculumOfficialComponentId,
   CurriculumVerificationRisk,
   GradeId,
   LearningPathwayId
@@ -9,12 +10,14 @@ import type {
 import { SK_MATH_CURRICULUM_AREAS } from "./areas";
 import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 import { SK_MATH_CURRICULUM_MODULES } from "./modules";
+import { SK_MATH_OFFICIAL_CYCLE_1_OUTLINE } from "./official-cycle-1-outline";
 import { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
 
 export { SK_MATH_CURRICULUM_AREAS } from "./areas";
 export { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 export { SK_MATH_CURRICULUM_MODULES } from "./modules";
 export { SK_MATH_OFFICIAL_SOURCES } from "./sources";
+export { SK_MATH_OFFICIAL_CYCLE_1_OUTLINE } from "./official-cycle-1-outline";
 export { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
 
 export function getCurriculumCycle(id: CurriculumCycleId) {
@@ -63,6 +66,14 @@ export function getVerificationRowsByModule(moduleId: string) {
 
 export function getVerificationRowsByRisk(risk: CurriculumVerificationRisk) {
   return SK_MATH_CYCLE_1_VERIFICATION_MATRIX.filter((row) => row.publicClaimRisk === risk);
+}
+
+export function getOfficialCycleOutline(cycleId: CurriculumCycleId) {
+  return SK_MATH_OFFICIAL_CYCLE_1_OUTLINE.filter((section) => section.cycleId === cycleId);
+}
+
+export function getOfficialOutlineSectionsByComponent(officialComponentId: CurriculumOfficialComponentId) {
+  return SK_MATH_OFFICIAL_CYCLE_1_OUTLINE.filter((section) => section.officialComponentId === officialComponentId);
 }
 
 export function getUnverifiedCurriculumModules() {
