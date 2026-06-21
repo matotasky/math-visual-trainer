@@ -148,6 +148,16 @@ This is not final verification. The module `verificationStatus` remains `source_
 
 The module-to-official mapping remains `candidate` until a separate decision step confirms or rejects the mapping.
 
+## First Confirmed Mapping: `quantity_and_number_sense`
+
+The module-to-official mapping for `quantity_and_number_sense` was confirmed from the recorded review evidence.
+
+Confirmed mapping is not the same as module verification. It only means the draft product module belongs under the official Cycle 1 numbers and operations component.
+
+The module `verificationStatus` remains `source_identified`, and the official outline `mappingStatus` remains `not_mapped`.
+
+Future content and lesson verification is still required before this module can be marked `verified`.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.

@@ -28,9 +28,20 @@ function createCandidateMappings(
 }
 
 export const SK_MATH_MODULE_OFFICIAL_MAPPINGS: CurriculumModuleOfficialMapping[] = [
+  {
+    moduleId: "quantity_and_number_sense",
+    officialOutlineSectionId: "cycle_1_numbers_operations",
+    status: "confirmed",
+    rationale: numbersOperationsRationale,
+    evidenceNotes: [
+      "Evidence recorded in review_quantity_and_number_sense_cycle_1_numbers_operations.",
+      "Official PDF JSON references Cycle 1 numbers and operations, natural numbers, comparison, ordering, number as quantity/order, number line, and number representations."
+    ],
+    reviewerNote:
+      "Mapping confirmed based on recorded evidence from the official mathematics PDF JSON. This confirms only that the product module belongs under Cycle 1 numbers and operations; it does not verify the module content."
+  },
   ...createCandidateMappings(
     [
-      "quantity_and_number_sense",
       "number_line_and_comparison",
       "addition_subtraction_to_20",
       "make_10_and_bridge_through_10",

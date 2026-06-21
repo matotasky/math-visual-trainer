@@ -13,9 +13,9 @@ export const SK_MATH_REVIEW_EVIDENCE: CurriculumReviewEvidence[] = [
       "Official mathematics PDF, Cycle 1, Čísla a operácie s číslami, section 1 Prirodzené čísla v obore do 10 000; JSON pageNumber 9-11 / PDF footer pages 8-10.",
     officialWordingReference:
       "Official standard references number concepts, comparison and ordering of natural numbers, work with sets, number as quantity and order, number line, and multiple representations of numbers.",
-    decisionRecommendation: "ready_to_confirm",
+    decisionRecommendation: "no_decision",
     reviewNotes:
-      "Evidence recorded from the official mathematics PDF JSON. The module scope is supported as a candidate mapping under Cycle 1 numbers and operations, especially number meaning, quantity, ordering, comparison, and number representations. This does not yet mark the module as verified.",
+      "Evidence recorded from the official mathematics PDF JSON. The module scope is supported as a candidate mapping under Cycle 1 numbers and operations, especially number meaning, quantity, ordering, comparison, and number representations. This does not yet mark the module as verified. The module-to-official mapping has been confirmed separately. Further module verification still requires a separate decision.",
     reviewedBy: "Martin Tašký",
     reviewedAt: "2026-06-21"
   }
