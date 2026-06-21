@@ -120,6 +120,14 @@ Manual review checklist items guide a reviewer before evidence is recorded. They
 
 `checked` should only be used after a reviewer has inspected the official source, added a real source reference, and written a reviewer note explaining the decision.
 
+## Review Detail Pages
+
+Review detail pages are read-only in the MVP. They help manual reviewers inspect a draft module, candidate mapping, review evidence, and checklist in one place.
+
+They do not change module verification status, candidate mapping status, official outline mapping status, review evidence status, or checklist status.
+
+They do not write to Firestore and do not implement editing in the MVP scaffold.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.

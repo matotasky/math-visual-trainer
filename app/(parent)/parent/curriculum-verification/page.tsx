@@ -327,6 +327,15 @@ export default async function ParentCurriculumVerificationPage() {
                 </dl>
                 <p className="mt-3 text-sm leading-6 text-slate-700">{evidence.reviewNotes}</p>
 
+                {evidence.moduleId === "quantity_and_number_sense" ? (
+                  <Link
+                    className="mt-3 inline-flex min-h-10 items-center justify-center rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                    href="/parent/curriculum-verification/quantity-and-number-sense"
+                  >
+                    {isSlovak ? "Otvoriť detail review" : "Open review detail"}
+                  </Link>
+                ) : null}
+
                 {checklistItems.length > 0 ? (
                   <div className="mt-4 rounded-md border border-slate-200 bg-white p-3">
                     <h4 className="text-sm font-bold text-slate-950">
