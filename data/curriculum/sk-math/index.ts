@@ -2,8 +2,10 @@ import type {
   CurriculumAreaId,
   CurriculumCycleId,
   CurriculumModuleOfficialMappingStatus,
+  CurriculumModuleVerificationDecisionStatus,
   CurriculumModuleStatus,
   CurriculumOfficialComponentId,
+  CurriculumPublicClaimRiskLevel,
   CurriculumReviewChecklistStatus,
   CurriculumReviewStatus,
   CurriculumVerificationRisk,
@@ -13,8 +15,10 @@ import type {
 import { SK_MATH_CURRICULUM_AREAS } from "./areas";
 import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 import { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
+import { SK_MATH_MODULE_VERIFICATION_DECISIONS } from "./module-verification-decisions";
 import { SK_MATH_CURRICULUM_MODULES } from "./modules";
 import { SK_MATH_OFFICIAL_CYCLE_1_OUTLINE } from "./official-cycle-1-outline";
+import { SK_MATH_PUBLIC_WORDING_GUARDRAILS } from "./public-wording-guardrails";
 import { SK_MATH_REVIEW_CHECKLIST } from "./review-checklist";
 import { SK_MATH_REVIEW_EVIDENCE } from "./review-evidence";
 import { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
@@ -23,8 +27,10 @@ export { SK_MATH_CURRICULUM_AREAS } from "./areas";
 export { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 export { SK_MATH_CURRICULUM_MODULES } from "./modules";
 export { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
+export { SK_MATH_MODULE_VERIFICATION_DECISIONS } from "./module-verification-decisions";
 export { SK_MATH_OFFICIAL_SOURCES } from "./sources";
 export { SK_MATH_OFFICIAL_CYCLE_1_OUTLINE } from "./official-cycle-1-outline";
+export { SK_MATH_PUBLIC_WORDING_GUARDRAILS } from "./public-wording-guardrails";
 export { SK_MATH_REVIEW_CHECKLIST } from "./review-checklist";
 export { SK_MATH_REVIEW_EVIDENCE } from "./review-evidence";
 export { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
@@ -119,6 +125,43 @@ export function getReviewChecklistByEvidence(reviewEvidenceId: string) {
 
 export function getReviewChecklistByStatus(status: CurriculumReviewChecklistStatus) {
   return SK_MATH_REVIEW_CHECKLIST.filter((item) => item.status === status);
+}
+
+export function getModuleVerificationDecisionsByModule(moduleId: string) {
+  return SK_MATH_MODULE_VERIFICATION_DECISIONS.filter((decision) => decision.moduleId === moduleId);
+}
+
+export function getModuleVerificationDecisionsByStatus(status: CurriculumModuleVerificationDecisionStatus) {
+  return SK_MATH_MODULE_VERIFICATION_DECISIONS.filter((decision) => decision.decisionStatus === status);
+}
+
+export function getPublicWordingGuardrailsByRisk(riskLevel: CurriculumPublicClaimRiskLevel) {
+  return SK_MATH_PUBLIC_WORDING_GUARDRAILS.filter((guardrail) => guardrail.riskLevel === riskLevel);
+}
+
+export function getCurriculumVerificationSummary() {
+  const cycleOneModules = SK_MATH_CURRICULUM_MODULES.filter((module) => module.cycleId === "cycle_1");
+  const modulesWithRecordedEvidence = new Set(
+    SK_MATH_REVIEW_EVIDENCE.filter((evidence) => evidence.reviewStatus === "evidence_recorded").map(
+      (evidence) => evidence.moduleId
+    )
+  );
+
+  return {
+    totalCycleOneModules: cycleOneModules.length,
+    modulesWithRecordedEvidence: modulesWithRecordedEvidence.size,
+    confirmedMappings: SK_MATH_MODULE_OFFICIAL_MAPPINGS.filter((mapping) => mapping.status === "confirmed").length,
+    verifiedModules: cycleOneModules.filter((module) => module.verificationStatus === "verified").length,
+    modulesNeedingLessonContent: SK_MATH_MODULE_VERIFICATION_DECISIONS.filter(
+      (decision) => decision.decisionStatus === "needs_lesson_content"
+    ).length,
+    blockedPublicClaimsCount: SK_MATH_PUBLIC_WORDING_GUARDRAILS.filter(
+      (guardrail) => guardrail.riskLevel === "blocked"
+    ).length,
+    cautionPublicClaimsCount: SK_MATH_PUBLIC_WORDING_GUARDRAILS.filter(
+      (guardrail) => guardrail.riskLevel === "caution"
+    ).length
+  };
 }
 
 export function getUnverifiedCurriculumModules() {

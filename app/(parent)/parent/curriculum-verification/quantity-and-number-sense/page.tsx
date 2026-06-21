@@ -4,6 +4,7 @@ import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
 import {
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
+  SK_MATH_MODULE_VERIFICATION_DECISIONS,
   SK_MATH_OFFICIAL_CYCLE_1_OUTLINE,
   SK_MATH_REVIEW_CHECKLIST,
   SK_MATH_REVIEW_EVIDENCE
@@ -11,6 +12,8 @@ import {
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumModuleOfficialMappingStatus,
+  CurriculumModuleVerificationDecision,
+  CurriculumModuleVerificationDecisionStatus,
   CurriculumReviewChecklistStatus,
   CurriculumReviewDecisionRecommendation,
   CurriculumReviewStatus,
@@ -91,6 +94,41 @@ const mappingStatusLabels: Record<Locale, Record<CurriculumModuleOfficialMapping
   }
 };
 
+const moduleDecisionStatusLabels: Record<Locale, Record<CurriculumModuleVerificationDecisionStatus, string>> = {
+  sk: {
+    not_started: "Nezačaté",
+    needs_lesson_content: "Treba obsah lekcií",
+    ready_for_review: "Pripravené na review",
+    approved_for_partial_verification: "Schválené na čiastočné overenie",
+    approved_for_verification: "Schválené na overenie",
+    rejected: "Zamietnuté"
+  },
+  en: {
+    not_started: "Not started",
+    needs_lesson_content: "Needs lesson content",
+    ready_for_review: "Ready for review",
+    approved_for_partial_verification: "Approved for partial verification",
+    approved_for_verification: "Approved for verification",
+    rejected: "Rejected"
+  }
+};
+
+const moduleDecisionTypeLabels: Record<Locale, Record<CurriculumModuleVerificationDecision["decisionType"], string>> =
+  {
+    sk: {
+      module_scope: "Rozsah modulu",
+      lesson_content: "Obsah lekcií",
+      assessment_content: "Obsah hodnotenia",
+      full_module: "Celý modul"
+    },
+    en: {
+      module_scope: "Module scope",
+      lesson_content: "Lesson content",
+      assessment_content: "Assessment content",
+      full_module: "Full module"
+    }
+  };
+
 const reviewStatusLabels: Record<Locale, Record<CurriculumReviewStatus, string>> = {
   sk: {
     not_started: "Nezačaté",
@@ -153,12 +191,13 @@ export default async function QuantityAndNumberSenseReviewPage() {
   const outlineSection = mapping
     ? SK_MATH_OFFICIAL_CYCLE_1_OUTLINE.find((section) => section.id === mapping.officialOutlineSectionId)
     : undefined;
+  const verificationDecision = SK_MATH_MODULE_VERIFICATION_DECISIONS.find((decision) => decision.moduleId === moduleId);
   const reviewEvidence = SK_MATH_REVIEW_EVIDENCE.find((item) => item.moduleId === moduleId);
   const checklistItems = reviewEvidence
     ? SK_MATH_REVIEW_CHECKLIST.filter((item) => item.reviewEvidenceId === reviewEvidence.id)
     : [];
 
-  if (!curriculumModule || !mapping || !outlineSection || !reviewEvidence) {
+  if (!curriculumModule || !mapping || !outlineSection || !verificationDecision || !reviewEvidence) {
     return (
       <section className="py-8">
         <ParentSectionHeader
@@ -247,6 +286,51 @@ export default async function QuantityAndNumberSenseReviewPage() {
             <div className="md:col-span-2">
               <dt className="font-bold text-slate-800">{isSlovak ? "Poznámka reviewera" : "Reviewer note"}</dt>
               <dd className="mt-1 leading-6 text-slate-600">{mapping.reviewerNote}</dd>
+            </div>
+          </dl>
+        </SectionCard>
+
+        <SectionCard title={isSlovak ? "Rozhodnutie k overeniu" : "Verification decision"}>
+          <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <Field
+              label={isSlovak ? "Stav rozhodnutia" : "Decision status"}
+              value={moduleDecisionStatusLabels[locale][verificationDecision.decisionStatus]}
+            />
+            <Field
+              label={isSlovak ? "Typ rozhodnutia" : "Decision type"}
+              value={moduleDecisionTypeLabels[locale][verificationDecision.decisionType]}
+            />
+            <Field
+              label={isSlovak ? "Súvisiace evidence ID" : "Related evidence IDs"}
+              value={verificationDecision.relatedEvidenceIds.join(", ")}
+            />
+            <Field
+              label={isSlovak ? "Súvisiace mapping moduly" : "Related mapping module IDs"}
+              value={verificationDecision.relatedMappingModuleIds.join(", ")}
+            />
+            <Field
+              label={isSlovak ? "Rozhodol" : "Decided by"}
+              value={verificationDecision.decidedBy || (isSlovak ? "nepriradené" : "not assigned")}
+            />
+            <Field
+              label={isSlovak ? "Dátum rozhodnutia" : "Decided at"}
+              value={verificationDecision.decidedAt ?? (isSlovak ? "nerozhodnuté" : "not decided")}
+            />
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">
+                {isSlovak ? "Potrebné pred verified" : "Required before verified"}
+              </dt>
+              <dd className="mt-2">
+                <ul className="list-disc space-y-1 pl-5 leading-6 text-slate-600">
+                  {verificationDecision.requiredBeforeVerified.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">{isSlovak ? "Poznámky" : "Decision notes"}</dt>
+              <dd className="mt-1 leading-6 text-slate-600">{verificationDecision.decisionNotes}</dd>
             </div>
           </dl>
         </SectionCard>

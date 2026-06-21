@@ -4,16 +4,22 @@ import {
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
+  SK_MATH_MODULE_VERIFICATION_DECISIONS,
   SK_MATH_OFFICIAL_CYCLE_1_OUTLINE,
   SK_MATH_OFFICIAL_SOURCES,
+  SK_MATH_PUBLIC_WORDING_GUARDRAILS,
   SK_MATH_REVIEW_CHECKLIST,
-  SK_MATH_REVIEW_EVIDENCE
+  SK_MATH_REVIEW_EVIDENCE,
+  getCurriculumVerificationSummary
 } from "@/data/curriculum/sk-math";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumAreaId,
   CurriculumModuleOfficialMappingStatus,
+  CurriculumModuleVerificationDecision,
+  CurriculumModuleVerificationDecisionStatus,
   CurriculumOfficialCycleOutlineSection,
+  CurriculumPublicClaimRiskLevel,
   CurriculumReviewChecklistStatus,
   CurriculumReviewDecisionRecommendation,
   CurriculumReviewStatus,
@@ -150,6 +156,54 @@ const decisionRecommendationLabels: Record<Locale, Record<CurriculumReviewDecisi
   }
 };
 
+const moduleDecisionStatusLabels: Record<Locale, Record<CurriculumModuleVerificationDecisionStatus, string>> = {
+  sk: {
+    not_started: "Nezačaté",
+    needs_lesson_content: "Treba obsah lekcií",
+    ready_for_review: "Pripravené na review",
+    approved_for_partial_verification: "Schválené na čiastočné overenie",
+    approved_for_verification: "Schválené na overenie",
+    rejected: "Zamietnuté"
+  },
+  en: {
+    not_started: "Not started",
+    needs_lesson_content: "Needs lesson content",
+    ready_for_review: "Ready for review",
+    approved_for_partial_verification: "Approved for partial verification",
+    approved_for_verification: "Approved for verification",
+    rejected: "Rejected"
+  }
+};
+
+const moduleDecisionTypeLabels: Record<Locale, Record<CurriculumModuleVerificationDecision["decisionType"], string>> =
+  {
+    sk: {
+      module_scope: "Rozsah modulu",
+      lesson_content: "Obsah lekcií",
+      assessment_content: "Obsah hodnotenia",
+      full_module: "Celý modul"
+    },
+    en: {
+      module_scope: "Module scope",
+      lesson_content: "Lesson content",
+      assessment_content: "Assessment content",
+      full_module: "Full module"
+    }
+  };
+
+const publicClaimRiskLabels: Record<Locale, Record<CurriculumPublicClaimRiskLevel, string>> = {
+  sk: {
+    safe: "Bezpečné",
+    caution: "Opatrne",
+    blocked: "Blokované"
+  },
+  en: {
+    safe: "Safe",
+    caution: "Caution",
+    blocked: "Blocked"
+  }
+};
+
 const riskOrder: CurriculumVerificationRisk[] = ["high", "medium", "low"];
 
 function getModuleTitle(moduleId: string) {
@@ -168,6 +222,7 @@ export default async function ParentCurriculumVerificationPage() {
   const highRiskPublicClaimCount = SK_MATH_CYCLE_1_VERIFICATION_MATRIX.filter(
     (row) => row.publicClaimRisk === "high"
   ).length;
+  const verificationSummary = getCurriculumVerificationSummary();
 
   return (
     <section className="py-8">
@@ -197,6 +252,47 @@ export default async function ParentCurriculumVerificationPage() {
             ? "Zdroj identifikovaný znamená, že máme uložené oficiálne podklady. Neznamená to ešte, že konkrétny modul je overený alebo že môžeme verejne tvrdiť úplný súlad so ŠVP."
             : "Source identified means official materials are recorded. It does not mean a module is verified yet or that public full-alignment claims are safe."}
         </p>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Súhrn postupu overovania" : "Verification progress summary"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Súhrn je vypočítaný z read-only scaffold dát. Nič nemení a nezapisuje."
+            : "This summary is computed from read-only scaffold data. It changes and writes nothing."}
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <MetricCard
+            label={isSlovak ? "Moduly 1. cyklu" : "Cycle 1 modules"}
+            value={verificationSummary.totalCycleOneModules}
+          />
+          <MetricCard
+            label={isSlovak ? "Moduly s dôkazmi" : "Modules with evidence"}
+            value={verificationSummary.modulesWithRecordedEvidence}
+          />
+          <MetricCard
+            label={isSlovak ? "Potvrdené mapovania" : "Confirmed mappings"}
+            value={verificationSummary.confirmedMappings}
+          />
+          <MetricCard
+            label={isSlovak ? "Overené moduly" : "Verified modules"}
+            value={verificationSummary.verifiedModules}
+          />
+          <MetricCard
+            label={isSlovak ? "Treba obsah lekcií" : "Need lesson content"}
+            value={verificationSummary.modulesNeedingLessonContent}
+          />
+          <MetricCard
+            label={isSlovak ? "Blokované tvrdenia" : "Blocked claims"}
+            value={verificationSummary.blockedPublicClaimsCount}
+          />
+          <MetricCard
+            label={isSlovak ? "Opatrné tvrdenia" : "Caution claims"}
+            value={verificationSummary.cautionPublicClaimsCount}
+          />
+        </div>
       </section>
 
       <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
@@ -441,6 +537,108 @@ export default async function ParentCurriculumVerificationPage() {
               </article>
             );
           })}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Rozhodnutia k overeniu modulov" : "Module verification decisions"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Tieto rozhodnutia oddeľujú evidence a mapovanie od finálneho overenia modulu."
+            : "These decisions separate evidence and mapping from final module verification."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_MODULE_VERIFICATION_DECISIONS.map((decision) => (
+            <article key={decision.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(decision.moduleId)}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{decision.id}</p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {moduleDecisionStatusLabels[locale][decision.decisionStatus]}
+                </span>
+              </div>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Typ rozhodnutia" : "Decision type"}</dt>
+                  <dd className="mt-1 text-slate-600">{moduleDecisionTypeLabels[locale][decision.decisionType]}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">
+                    {isSlovak ? "Súvisiace evidence ID" : "Related evidence IDs"}
+                  </dt>
+                  <dd className="mt-1 break-words text-slate-600">{decision.relatedEvidenceIds.join(", ")}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">
+                    {isSlovak ? "Počet krokov pred verified" : "Required before verified"}
+                  </dt>
+                  <dd className="mt-1 text-slate-600">{decision.requiredBeforeVerified.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Rozhodol" : "Decided by"}</dt>
+                  <dd className="mt-1 text-slate-600">
+                    {decision.decidedBy || (isSlovak ? "nepriradené" : "not assigned")}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Dátum rozhodnutia" : "Decided at"}</dt>
+                  <dd className="mt-1 text-slate-600">
+                    {decision.decidedAt ?? (isSlovak ? "nerozhodnuté" : "not decided")}
+                  </dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{decision.decisionNotes}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Ochranné pravidlá verejných tvrdení" : "Public wording guardrails"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Tieto pravidlá pomáhajú nekomunikovať viac, než podporujú aktuálne dôkazy."
+            : "These guardrails help avoid communicating more than the current evidence supports."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_PUBLIC_WORDING_GUARDRAILS.map((guardrail) => (
+            <article key={guardrail.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{guardrail.label}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{guardrail.id}</p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {publicClaimRiskLabels[locale][guardrail.riskLevel]}
+                </span>
+              </div>
+              <div className="mt-3 grid gap-4 text-sm leading-6 text-slate-600 lg:grid-cols-2">
+                <div>
+                  <p className="font-bold text-slate-800">{isSlovak ? "Povolené príklady" : "Allowed examples"}</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5">
+                    {guardrail.allowedWording.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-bold text-slate-800">{isSlovak ? "Blokované príklady" : "Blocked examples"}</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-5">
+                    {guardrail.blockedWording.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{guardrail.rationale}</p>
+            </article>
+          ))}
         </div>
       </section>
 

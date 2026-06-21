@@ -98,7 +98,7 @@ Candidate mapping links draft product curriculum modules to official Cycle 1 out
 
 `rejected` can be used later if manual review shows that a product module does not belong to a proposed official component.
 
-The current MVP keeps all module-to-official mappings as `candidate`, with empty evidence notes.
+The current scaffold keeps most module-to-official mappings as `candidate`. `quantity_and_number_sense` has a confirmed mapping with recorded evidence notes, but that still does not mark the module as verified.
 
 ## Manual Review Evidence
 
@@ -157,6 +157,32 @@ Confirmed mapping is not the same as module verification. It only means the draf
 The module `verificationStatus` remains `source_identified`, and the official outline `mappingStatus` remains `not_mapped`.
 
 Future content and lesson verification is still required before this module can be marked `verified`.
+
+## Module Verification Decisions
+
+Module verification decisions separate evidence and mapping from final verification.
+
+`needs_lesson_content` means module scope or mapping can be supported, but the module cannot be verified until actual lesson and assessment content exists.
+
+`source_identified` remains the module status until a later explicit verification update.
+
+`approved_for_verification` should only be used after content evidence exists and lesson or assessment material has been manually compared with the official mathematics PDF.
+
+## Public Wording Guardrails
+
+Public wording must not claim full ŠVP alignment until modules and content are verified.
+
+Confirmed mapping can be communicated only as mapping. It must not be described as final verification or official approval.
+
+Visual Arithmetic remediation must be described as a product learning path, not an official curriculum requirement.
+
+## Verification Progress Summary
+
+The verification progress summary is computed from read-only scaffold data.
+
+It helps product review by counting modules, recorded evidence, confirmed mappings, verification decisions, and wording guardrails.
+
+The summary does not update statuses, write to Firestore, or create curriculum claims.
 
 ## Official Verification Workflow
 

@@ -55,6 +55,38 @@ export type CurriculumModuleOfficialMapping = {
   reviewerNote: string;
 };
 
+export type CurriculumModuleVerificationDecisionStatus =
+  | "not_started"
+  | "needs_lesson_content"
+  | "ready_for_review"
+  | "approved_for_partial_verification"
+  | "approved_for_verification"
+  | "rejected";
+
+export type CurriculumModuleVerificationDecision = {
+  id: string;
+  moduleId: string;
+  decisionStatus: CurriculumModuleVerificationDecisionStatus;
+  decisionType: "module_scope" | "lesson_content" | "assessment_content" | "full_module";
+  relatedEvidenceIds: string[];
+  relatedMappingModuleIds: string[];
+  requiredBeforeVerified: string[];
+  decisionNotes: string;
+  decidedBy: string;
+  decidedAt: string | null;
+};
+
+export type CurriculumPublicClaimRiskLevel = "safe" | "caution" | "blocked";
+
+export type CurriculumPublicWordingGuardrail = {
+  id: string;
+  label: string;
+  riskLevel: CurriculumPublicClaimRiskLevel;
+  allowedWording: string[];
+  blockedWording: string[];
+  rationale: string;
+};
+
 export type CurriculumReviewStatus = "not_started" | "in_review" | "evidence_recorded" | "ready_for_decision";
 
 export type CurriculumReviewDecisionRecommendation =
