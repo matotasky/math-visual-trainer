@@ -5,13 +5,15 @@ import {
   SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
   SK_MATH_OFFICIAL_CYCLE_1_OUTLINE,
-  SK_MATH_OFFICIAL_SOURCES
+  SK_MATH_OFFICIAL_SOURCES,
+  SK_MATH_REVIEW_EVIDENCE
 } from "@/data/curriculum/sk-math";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumAreaId,
   CurriculumModuleOfficialMappingStatus,
   CurriculumOfficialCycleOutlineSection,
+  CurriculumReviewStatus,
   CurriculumVerificationRisk,
   CurriculumVerificationStatus,
   Locale
@@ -99,6 +101,21 @@ const candidateMappingStatusLabels: Record<Locale, Record<CurriculumModuleOffici
     needs_review: "Needs review",
     confirmed: "Confirmed",
     rejected: "Rejected"
+  }
+};
+
+const reviewStatusLabels: Record<Locale, Record<CurriculumReviewStatus, string>> = {
+  sk: {
+    not_started: "Nezačaté",
+    in_review: "Prebieha kontrola",
+    evidence_recorded: "Dôkazy doplnené",
+    ready_for_decision: "Pripravené na rozhodnutie"
+  },
+  en: {
+    not_started: "Not started",
+    in_review: "In review",
+    evidence_recorded: "Evidence recorded",
+    ready_for_decision: "Ready for decision"
   }
 };
 
@@ -250,6 +267,49 @@ export default async function ParentCurriculumVerificationPage() {
               </section>
             );
           })}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Dôkazy z manuálneho overenia" : "Manual review evidence"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Dôkazy zatiaľ nie sú doplnené. Táto časť len pripravuje miesto na manuálne overenie."
+            : "Evidence is not added yet. This section only prepares a place for manual verification."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_REVIEW_EVIDENCE.map((evidence) => (
+            <article key={evidence.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(evidence.moduleId)}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
+                    {evidence.officialOutlineSectionId}
+                  </p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {reviewStatusLabels[locale][evidence.reviewStatus]}
+                </span>
+              </div>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Kontrolór" : "Reviewer"}</dt>
+                  <dd className="mt-1 text-slate-600">
+                    {evidence.reviewedBy || (isSlovak ? "nepriradené" : "not assigned")}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Dátum kontroly" : "Reviewed at"}</dt>
+                  <dd className="mt-1 text-slate-600">
+                    {evidence.reviewedAt ?? (isSlovak ? "neskontrolované" : "not reviewed")}
+                  </dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{evidence.reviewNotes}</p>
+            </article>
+          ))}
         </div>
       </section>
 

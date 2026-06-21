@@ -100,6 +100,16 @@ Candidate mapping links draft product curriculum modules to official Cycle 1 out
 
 The current MVP keeps all module-to-official mappings as `candidate`, with empty evidence notes.
 
+## Manual Review Evidence
+
+Manual review evidence rows prepare a place to record actual source references during future curriculum verification work.
+
+Evidence rows should contain source quotes, page references, or review notes only after manual comparison with the official mathematics PDF. Do not add fake quotes, inferred evidence, or generic assumptions.
+
+Review evidence is not the same as module verification. A module can have a review evidence row and still remain `source_identified`.
+
+Statuses such as `verified`, `confirmed`, or `mapped` should only be used after evidence exists, the evidence has been reviewed, and the reviewer can explain what official source material supports the decision.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.

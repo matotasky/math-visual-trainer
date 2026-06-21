@@ -4,6 +4,7 @@ import type {
   CurriculumModuleOfficialMappingStatus,
   CurriculumModuleStatus,
   CurriculumOfficialComponentId,
+  CurriculumReviewStatus,
   CurriculumVerificationRisk,
   GradeId,
   LearningPathwayId
@@ -13,6 +14,7 @@ import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 import { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 import { SK_MATH_CURRICULUM_MODULES } from "./modules";
 import { SK_MATH_OFFICIAL_CYCLE_1_OUTLINE } from "./official-cycle-1-outline";
+import { SK_MATH_REVIEW_EVIDENCE } from "./review-evidence";
 import { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
 
 export { SK_MATH_CURRICULUM_AREAS } from "./areas";
@@ -21,6 +23,7 @@ export { SK_MATH_CURRICULUM_MODULES } from "./modules";
 export { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 export { SK_MATH_OFFICIAL_SOURCES } from "./sources";
 export { SK_MATH_OFFICIAL_CYCLE_1_OUTLINE } from "./official-cycle-1-outline";
+export { SK_MATH_REVIEW_EVIDENCE } from "./review-evidence";
 export { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
 
 export function getCurriculumCycle(id: CurriculumCycleId) {
@@ -91,6 +94,20 @@ export function getOfficialMappingsByOutlineSection(officialOutlineSectionId: st
 
 export function getOfficialMappingsByStatus(status: CurriculumModuleOfficialMappingStatus) {
   return SK_MATH_MODULE_OFFICIAL_MAPPINGS.filter((mapping) => mapping.status === status);
+}
+
+export function getReviewEvidenceByModule(moduleId: string) {
+  return SK_MATH_REVIEW_EVIDENCE.filter((evidence) => evidence.moduleId === moduleId);
+}
+
+export function getReviewEvidenceByStatus(status: CurriculumReviewStatus) {
+  return SK_MATH_REVIEW_EVIDENCE.filter((evidence) => evidence.reviewStatus === status);
+}
+
+export function getReviewEvidenceByOutlineSection(officialOutlineSectionId: string) {
+  return SK_MATH_REVIEW_EVIDENCE.filter(
+    (evidence) => evidence.officialOutlineSectionId === officialOutlineSectionId
+  );
 }
 
 export function getUnverifiedCurriculumModules() {

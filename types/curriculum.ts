@@ -55,6 +55,20 @@ export type CurriculumModuleOfficialMapping = {
   reviewerNote: string;
 };
 
+export type CurriculumReviewStatus = "not_started" | "in_review" | "evidence_recorded" | "ready_for_decision";
+
+export type CurriculumReviewEvidence = {
+  id: string;
+  moduleId: string;
+  officialOutlineSectionId: string;
+  reviewStatus: CurriculumReviewStatus;
+  sourceIds: string[];
+  sourceQuoteOrReference: string;
+  reviewNotes: string;
+  reviewedBy: string;
+  reviewedAt: string | null;
+};
+
 export type CurriculumCycle = {
   id: CurriculumCycleId;
   title: string;
