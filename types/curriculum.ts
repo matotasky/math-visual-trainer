@@ -150,6 +150,44 @@ export type CurriculumAssessmentBlueprint = {
   publicReleaseNote: string;
 };
 
+export type CurriculumBlueprintReviewStatus =
+  | "not_started"
+  | "evidence_needed"
+  | "evidence_recorded"
+  | "ready_for_decision";
+
+export type CurriculumBlueprintReviewEvidence = {
+  id: string;
+  blueprintId: string;
+  blueprintType: "lesson" | "assessment";
+  moduleId: string;
+  reviewStatus: CurriculumBlueprintReviewStatus;
+  sourceEvidenceIds: string[];
+  reviewFocus: string[];
+  findings: string[];
+  gaps: string[];
+  reviewerNote: string;
+  reviewedBy: string;
+  reviewedAt: string | null;
+};
+
+export type CurriculumBlueprintReadinessGateStatus =
+  | "blocked"
+  | "needs_review"
+  | "ready_for_internal_preview"
+  | "ready_for_child_preview";
+
+export type CurriculumBlueprintReadinessGate = {
+  id: string;
+  blueprintId: string;
+  blueprintType: "lesson" | "assessment";
+  moduleId: string;
+  gateStatus: CurriculumBlueprintReadinessGateStatus;
+  blockingReasons: string[];
+  requiredActions: string[];
+  releaseNote: string;
+};
+
 export type CurriculumReviewStatus = "not_started" | "in_review" | "evidence_recorded" | "ready_for_decision";
 
 export type CurriculumReviewDecisionRecommendation =

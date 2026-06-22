@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
 import {
   SK_MATH_ASSESSMENT_BLUEPRINTS,
+  SK_MATH_BLUEPRINT_READINESS_GATES,
+  SK_MATH_BLUEPRINT_REVIEW_EVIDENCE,
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_LESSON_BLUEPRINTS,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
@@ -15,6 +17,10 @@ import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumAssessmentBlueprintStatus,
   CurriculumAssessmentItemIntent,
+  CurriculumBlueprintReadinessGate,
+  CurriculumBlueprintReadinessGateStatus,
+  CurriculumBlueprintReviewEvidence,
+  CurriculumBlueprintReviewStatus,
   CurriculumLessonBlueprintStatus,
   CurriculumLessonBlueprintStepType,
   CurriculumModuleOfficialMappingStatus,
@@ -242,6 +248,36 @@ const assessmentIntentLabels: Record<Locale, Record<CurriculumAssessmentItemInte
   }
 };
 
+const blueprintReviewStatusLabels: Record<Locale, Record<CurriculumBlueprintReviewStatus, string>> = {
+  sk: {
+    not_started: "Nezačaté",
+    evidence_needed: "Treba dôkazy",
+    evidence_recorded: "Dôkazy doplnené",
+    ready_for_decision: "Pripravené na rozhodnutie"
+  },
+  en: {
+    not_started: "Not started",
+    evidence_needed: "Evidence needed",
+    evidence_recorded: "Evidence recorded",
+    ready_for_decision: "Ready for decision"
+  }
+};
+
+const blueprintReadinessGateStatusLabels: Record<Locale, Record<CurriculumBlueprintReadinessGateStatus, string>> = {
+  sk: {
+    blocked: "Blokované",
+    needs_review: "Treba review",
+    ready_for_internal_preview: "Pripravené na interný preview",
+    ready_for_child_preview: "Pripravené na child preview"
+  },
+  en: {
+    blocked: "Blocked",
+    needs_review: "Needs review",
+    ready_for_internal_preview: "Ready for internal preview",
+    ready_for_child_preview: "Ready for child preview"
+  }
+};
+
 const moduleText = {
   sk: {
     title: "Množstvo a porozumenie číslam",
@@ -268,6 +304,18 @@ export default async function QuantityAndNumberSenseReviewPage() {
     : [];
   const lessonBlueprint = SK_MATH_LESSON_BLUEPRINTS.find((blueprint) => blueprint.moduleId === moduleId);
   const assessmentBlueprint = SK_MATH_ASSESSMENT_BLUEPRINTS.find((blueprint) => blueprint.moduleId === moduleId);
+  const lessonBlueprintReviewEvidence = lessonBlueprint
+    ? SK_MATH_BLUEPRINT_REVIEW_EVIDENCE.find((evidence) => evidence.blueprintId === lessonBlueprint.id)
+    : undefined;
+  const lessonBlueprintGate = lessonBlueprint
+    ? SK_MATH_BLUEPRINT_READINESS_GATES.find((gate) => gate.blueprintId === lessonBlueprint.id)
+    : undefined;
+  const assessmentBlueprintReviewEvidence = assessmentBlueprint
+    ? SK_MATH_BLUEPRINT_REVIEW_EVIDENCE.find((evidence) => evidence.blueprintId === assessmentBlueprint.id)
+    : undefined;
+  const assessmentBlueprintGate = assessmentBlueprint
+    ? SK_MATH_BLUEPRINT_READINESS_GATES.find((gate) => gate.blueprintId === assessmentBlueprint.id)
+    : undefined;
 
   if (
     !curriculumModule ||
@@ -276,7 +324,11 @@ export default async function QuantityAndNumberSenseReviewPage() {
     !verificationDecision ||
     !reviewEvidence ||
     !lessonBlueprint ||
-    !assessmentBlueprint
+    !assessmentBlueprint ||
+    !lessonBlueprintReviewEvidence ||
+    !lessonBlueprintGate ||
+    !assessmentBlueprintReviewEvidence ||
+    !assessmentBlueprintGate
   ) {
     return (
       <section className="py-8">
@@ -496,6 +548,15 @@ export default async function QuantityAndNumberSenseReviewPage() {
               </article>
             ))}
           </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            <BlueprintReviewEvidencePanel
+              evidence={lessonBlueprintReviewEvidence}
+              isSlovak={isSlovak}
+              locale={locale}
+            />
+            <BlueprintReadinessGatePanel gate={lessonBlueprintGate} isSlovak={isSlovak} locale={locale} />
+          </div>
         </SectionCard>
 
         <SectionCard title={isSlovak ? "Blueprint hodnotenia" : "Assessment blueprint"}>
@@ -553,6 +614,15 @@ export default async function QuantityAndNumberSenseReviewPage() {
                 </dl>
               </article>
             ))}
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            <BlueprintReviewEvidencePanel
+              evidence={assessmentBlueprintReviewEvidence}
+              isSlovak={isSlovak}
+              locale={locale}
+            />
+            <BlueprintReadinessGatePanel gate={assessmentBlueprintGate} isSlovak={isSlovak} locale={locale} />
           </div>
         </SectionCard>
 
@@ -642,6 +712,100 @@ export default async function QuantityAndNumberSenseReviewPage() {
         <BackLink isSlovak={isSlovak} />
       </div>
     </section>
+  );
+}
+
+function BlueprintReviewEvidencePanel({
+  evidence,
+  isSlovak,
+  locale
+}: {
+  evidence: CurriculumBlueprintReviewEvidence;
+  isSlovak: boolean;
+  locale: Locale;
+}) {
+  return (
+    <section className="rounded-md border border-slate-200 bg-slate-50 p-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-sm font-bold text-slate-950">
+            {isSlovak ? "Review dôkazy blueprintu" : "Blueprint review evidence"}
+          </h3>
+          <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{evidence.id}</p>
+        </div>
+        <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+          {blueprintReviewStatusLabels[locale][evidence.reviewStatus]}
+        </span>
+      </div>
+      <dl className="mt-3 grid gap-3 text-sm">
+        <Field
+          label={isSlovak ? "Súvisiace evidence ID" : "Source evidence IDs"}
+          value={evidence.sourceEvidenceIds.join(", ")}
+        />
+        <Field
+          label={isSlovak ? "Kontrolór" : "Reviewer"}
+          value={evidence.reviewedBy || (isSlovak ? "nepriradené" : "not assigned")}
+        />
+        <Field
+          label={isSlovak ? "Dátum review" : "Reviewed at"}
+          value={evidence.reviewedAt ?? (isSlovak ? "neskontrolované" : "not reviewed")}
+        />
+      </dl>
+      <ListBlock title={isSlovak ? "Review focus" : "Review focus"} items={evidence.reviewFocus} />
+      <ListBlock
+        title={isSlovak ? "Zistenia" : "Findings"}
+        emptyText={isSlovak ? "zatiaľ nedoplnené" : "not added yet"}
+        items={evidence.findings}
+      />
+      <ListBlock title={isSlovak ? "Medzery" : "Gaps"} items={evidence.gaps} />
+      <p className="mt-3 text-sm leading-6 text-slate-700">{evidence.reviewerNote}</p>
+    </section>
+  );
+}
+
+function BlueprintReadinessGatePanel({
+  gate,
+  isSlovak,
+  locale
+}: {
+  gate: CurriculumBlueprintReadinessGate;
+  isSlovak: boolean;
+  locale: Locale;
+}) {
+  return (
+    <section className="rounded-md border border-slate-200 bg-slate-50 p-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-sm font-bold text-slate-950">
+            {isSlovak ? "Readiness gate blueprintu" : "Blueprint readiness gate"}
+          </h3>
+          <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{gate.id}</p>
+        </div>
+        <span className="inline-flex w-fit rounded-md bg-rose-50 px-2 py-1 text-xs font-bold uppercase text-rose-800">
+          {blueprintReadinessGateStatusLabels[locale][gate.gateStatus]}
+        </span>
+      </div>
+      <ListBlock title={isSlovak ? "Blokujúce dôvody" : "Blocking reasons"} items={gate.blockingReasons} />
+      <ListBlock title={isSlovak ? "Povinné akcie" : "Required actions"} items={gate.requiredActions} />
+      <p className="mt-3 text-sm leading-6 text-slate-700">{gate.releaseNote}</p>
+    </section>
+  );
+}
+
+function ListBlock({ emptyText, items, title }: { emptyText?: string; items: string[]; title: string }) {
+  return (
+    <div className="mt-3 text-sm">
+      <p className="font-bold text-slate-800">{title}</p>
+      {items.length > 0 ? (
+        <ul className="mt-1 list-disc space-y-1 pl-5 leading-6 text-slate-600">
+          {items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-1 leading-6 text-slate-500">{emptyText ?? "not added"}</p>
+      )}
+    </div>
   );
 }
 

@@ -206,6 +206,36 @@ Blueprint existence does not change `verificationStatus`.
 
 A module should only become `verified` after lesson content and assessment content have evidence, review notes, and an explicit verification decision. For `quantity_and_number_sense`, the module remains `source_identified` even though a lesson blueprint and assessment blueprint now exist.
 
+## Blueprint Review Evidence
+
+Blueprint review evidence is separate from module-level evidence.
+
+Module-level evidence can support the general curriculum scope, but lesson and assessment blueprint content needs its own review evidence before it can move toward release.
+
+`evidence_needed` means the blueprint must not become child-facing. It signals that final examples, wording, prompts, and any remediation or misconception language still need manual review.
+
+Lesson blueprint evidence should check whether each lesson step is supported by the recorded source evidence and whether the child-facing draft wording avoids overclaiming official curriculum alignment.
+
+Assessment blueprint evidence should check whether item intents match recorded evidence, whether prompts are age-appropriate, and whether misconception probes are treated as product hypotheses until reviewed.
+
+## Blueprint Readiness Gates
+
+Blueprint readiness gates prevent accidental child-facing release.
+
+`blocked` means a lesson blueprint is not ready for child preview and an assessment blueprint is not ready for diagnostic or scoring use.
+
+Gates are read-only scaffold data. They do not write to Firestore, do not change `verificationStatus`, do not change blueprint status, and do not imply official verification.
+
+Readiness can move forward only after explicit review evidence is recorded and a later implementation block intentionally changes the relevant gate or blueprint status.
+
+## Diagnostics Boundary
+
+Assessment blueprints are not diagnostic scoring logic.
+
+They are draft item plans and must remain disconnected from diagnostic scoring, mastery calculation, Firestore attempts, and child progression until a later explicit scoring or diagnostic implementation step.
+
+No assessment blueprint item should influence child placement, parent analytics, or progression without a separate implementation and review pass.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.

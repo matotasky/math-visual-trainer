@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
 import {
   SK_MATH_ASSESSMENT_BLUEPRINTS,
+  SK_MATH_BLUEPRINT_READINESS_GATES,
+  SK_MATH_BLUEPRINT_REVIEW_EVIDENCE,
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
   SK_MATH_LESSON_BLUEPRINTS,
@@ -18,6 +20,8 @@ import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumAssessmentBlueprintStatus,
   CurriculumAreaId,
+  CurriculumBlueprintReadinessGateStatus,
+  CurriculumBlueprintReviewStatus,
   CurriculumLessonBlueprintStatus,
   CurriculumModuleOfficialMappingStatus,
   CurriculumModuleVerificationDecision,
@@ -238,6 +242,47 @@ const assessmentBlueprintStatusLabels: Record<Locale, Record<CurriculumAssessmen
   }
 };
 
+const blueprintTypeLabels: Record<Locale, Record<"lesson" | "assessment", string>> = {
+  sk: {
+    lesson: "Lekcia",
+    assessment: "Hodnotenie"
+  },
+  en: {
+    lesson: "Lesson",
+    assessment: "Assessment"
+  }
+};
+
+const blueprintReviewStatusLabels: Record<Locale, Record<CurriculumBlueprintReviewStatus, string>> = {
+  sk: {
+    not_started: "Nezačaté",
+    evidence_needed: "Treba dôkazy",
+    evidence_recorded: "Dôkazy doplnené",
+    ready_for_decision: "Pripravené na rozhodnutie"
+  },
+  en: {
+    not_started: "Not started",
+    evidence_needed: "Evidence needed",
+    evidence_recorded: "Evidence recorded",
+    ready_for_decision: "Ready for decision"
+  }
+};
+
+const blueprintReadinessGateStatusLabels: Record<Locale, Record<CurriculumBlueprintReadinessGateStatus, string>> = {
+  sk: {
+    blocked: "Blokované",
+    needs_review: "Treba review",
+    ready_for_internal_preview: "Pripravené na interný preview",
+    ready_for_child_preview: "Pripravené na child preview"
+  },
+  en: {
+    blocked: "Blocked",
+    needs_review: "Needs review",
+    ready_for_internal_preview: "Ready for internal preview",
+    ready_for_child_preview: "Ready for child preview"
+  }
+};
+
 const riskOrder: CurriculumVerificationRisk[] = ["high", "medium", "low"];
 
 function getModuleTitle(moduleId: string) {
@@ -333,6 +378,14 @@ export default async function ParentCurriculumVerificationPage() {
           <MetricCard
             label={isSlovak ? "Draft hodnotenia" : "Draft assessments"}
             value={verificationSummary.assessmentBlueprintsDraft}
+          />
+          <MetricCard
+            label={isSlovak ? "Blueprinty bez dôkazov" : "Blueprints needing evidence"}
+            value={verificationSummary.blueprintReviewsNeedingEvidence}
+          />
+          <MetricCard
+            label={isSlovak ? "Blokované blueprinty" : "Blocked blueprints"}
+            value={verificationSummary.blueprintReadinessBlocked}
           />
         </div>
       </section>
@@ -712,6 +765,102 @@ export default async function ParentCurriculumVerificationPage() {
                 </div>
               </dl>
               <p className="mt-3 text-sm leading-6 text-slate-700">{blueprint.publicReleaseNote}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Review dôkazy k blueprintom" : "Blueprint review evidence"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Táto vrstva sleduje dôkazy pre konkrétne lesson a assessment blueprinty. Neoveruje modul a nemení blueprint status."
+            : "This layer tracks evidence for specific lesson and assessment blueprints. It does not verify the module or change blueprint status."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_BLUEPRINT_REVIEW_EVIDENCE.map((evidence) => (
+            <article key={evidence.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(evidence.moduleId)}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
+                    {blueprintTypeLabels[locale][evidence.blueprintType]} · {evidence.blueprintId}
+                  </p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {blueprintReviewStatusLabels[locale][evidence.reviewStatus]}
+                </span>
+              </div>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Focus body" : "Review focus count"}</dt>
+                  <dd className="mt-1 text-slate-600">{evidence.reviewFocus.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Zistenia" : "Findings"}</dt>
+                  <dd className="mt-1 text-slate-600">{evidence.findings.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Medzery" : "Gaps"}</dt>
+                  <dd className="mt-1 text-slate-600">{evidence.gaps.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Kontrolór" : "Reviewer"}</dt>
+                  <dd className="mt-1 text-slate-600">
+                    {evidence.reviewedBy || (isSlovak ? "nepriradené" : "not assigned")}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Dátum review" : "Reviewed at"}</dt>
+                  <dd className="mt-1 text-slate-600">
+                    {evidence.reviewedAt ?? (isSlovak ? "neskontrolované" : "not reviewed")}
+                  </dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{evidence.reviewerNote}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Readiness gates blueprintov" : "Blueprint readiness gates"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Gates bránia náhodnému uvoľneniu draft lekcií alebo hodnotení do detskej časti."
+            : "Gates prevent accidental release of draft lessons or assessments into the child-facing experience."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_BLUEPRINT_READINESS_GATES.map((gate) => (
+            <article key={gate.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(gate.moduleId)}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
+                    {blueprintTypeLabels[locale][gate.blueprintType]} · {gate.blueprintId}
+                  </p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-rose-50 px-2 py-1 text-xs font-bold uppercase text-rose-800">
+                  {blueprintReadinessGateStatusLabels[locale][gate.gateStatus]}
+                </span>
+              </div>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className="font-bold text-slate-800">
+                    {isSlovak ? "Blokujúce dôvody" : "Blocking reasons"}
+                  </dt>
+                  <dd className="mt-1 text-slate-600">{gate.blockingReasons.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Povinné akcie" : "Required actions"}</dt>
+                  <dd className="mt-1 text-slate-600">{gate.requiredActions.length}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{gate.releaseNote}</p>
             </article>
           ))}
         </div>

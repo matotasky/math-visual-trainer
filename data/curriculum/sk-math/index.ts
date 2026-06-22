@@ -1,6 +1,8 @@
 import type {
   CurriculumAssessmentBlueprintStatus,
   CurriculumAreaId,
+  CurriculumBlueprintReadinessGateStatus,
+  CurriculumBlueprintReviewStatus,
   CurriculumCycleId,
   CurriculumLessonBlueprintStatus,
   CurriculumModuleOfficialMappingStatus,
@@ -15,6 +17,8 @@ import type {
   LearningPathwayId
 } from "@/types";
 import { SK_MATH_ASSESSMENT_BLUEPRINTS } from "./assessment-blueprints";
+import { SK_MATH_BLUEPRINT_READINESS_GATES } from "./blueprint-readiness-gates";
+import { SK_MATH_BLUEPRINT_REVIEW_EVIDENCE } from "./blueprint-review-evidence";
 import { SK_MATH_CURRICULUM_AREAS } from "./areas";
 import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 import { SK_MATH_LESSON_BLUEPRINTS } from "./lesson-blueprints";
@@ -31,6 +35,8 @@ export { SK_MATH_CURRICULUM_AREAS } from "./areas";
 export { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 export { SK_MATH_CURRICULUM_MODULES } from "./modules";
 export { SK_MATH_ASSESSMENT_BLUEPRINTS } from "./assessment-blueprints";
+export { SK_MATH_BLUEPRINT_READINESS_GATES } from "./blueprint-readiness-gates";
+export { SK_MATH_BLUEPRINT_REVIEW_EVIDENCE } from "./blueprint-review-evidence";
 export { SK_MATH_LESSON_BLUEPRINTS } from "./lesson-blueprints";
 export { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 export { SK_MATH_MODULE_VERIFICATION_DECISIONS } from "./module-verification-decisions";
@@ -161,6 +167,30 @@ export function getAssessmentBlueprintsByStatus(status: CurriculumAssessmentBlue
   return SK_MATH_ASSESSMENT_BLUEPRINTS.filter((blueprint) => blueprint.status === status);
 }
 
+export function getBlueprintReviewEvidenceByBlueprint(blueprintId: string) {
+  return SK_MATH_BLUEPRINT_REVIEW_EVIDENCE.filter((evidence) => evidence.blueprintId === blueprintId);
+}
+
+export function getBlueprintReviewEvidenceByModule(moduleId: string) {
+  return SK_MATH_BLUEPRINT_REVIEW_EVIDENCE.filter((evidence) => evidence.moduleId === moduleId);
+}
+
+export function getBlueprintReviewEvidenceByStatus(status: CurriculumBlueprintReviewStatus) {
+  return SK_MATH_BLUEPRINT_REVIEW_EVIDENCE.filter((evidence) => evidence.reviewStatus === status);
+}
+
+export function getBlueprintReadinessGatesByBlueprint(blueprintId: string) {
+  return SK_MATH_BLUEPRINT_READINESS_GATES.filter((gate) => gate.blueprintId === blueprintId);
+}
+
+export function getBlueprintReadinessGatesByModule(moduleId: string) {
+  return SK_MATH_BLUEPRINT_READINESS_GATES.filter((gate) => gate.moduleId === moduleId);
+}
+
+export function getBlueprintReadinessGatesByStatus(status: CurriculumBlueprintReadinessGateStatus) {
+  return SK_MATH_BLUEPRINT_READINESS_GATES.filter((gate) => gate.gateStatus === status);
+}
+
 export function getCurriculumVerificationSummary() {
   const cycleOneModules = SK_MATH_CURRICULUM_MODULES.filter((module) => module.cycleId === "cycle_1");
   const modulesWithRecordedEvidence = new Set(
@@ -184,7 +214,11 @@ export function getCurriculumVerificationSummary() {
       (guardrail) => guardrail.riskLevel === "caution"
     ).length,
     lessonBlueprintsDraft: SK_MATH_LESSON_BLUEPRINTS.filter((blueprint) => blueprint.status === "draft").length,
-    assessmentBlueprintsDraft: SK_MATH_ASSESSMENT_BLUEPRINTS.filter((blueprint) => blueprint.status === "draft").length
+    assessmentBlueprintsDraft: SK_MATH_ASSESSMENT_BLUEPRINTS.filter((blueprint) => blueprint.status === "draft").length,
+    blueprintReviewsNeedingEvidence: SK_MATH_BLUEPRINT_REVIEW_EVIDENCE.filter(
+      (evidence) => evidence.reviewStatus === "evidence_needed"
+    ).length,
+    blueprintReadinessBlocked: SK_MATH_BLUEPRINT_READINESS_GATES.filter((gate) => gate.gateStatus === "blocked").length
   };
 }
 
