@@ -184,6 +184,28 @@ It helps product review by counting modules, recorded evidence, confirmed mappin
 
 The summary does not update statuses, write to Firestore, or create curriculum claims.
 
+## Lesson Blueprints
+
+Lesson blueprints are draft product planning artifacts. They describe possible lesson flow, learning goal, prerequisites, and step intent for future curriculum lessons.
+
+They are not child-facing in the MVP, are not wired into the learning engine, and are not verified curriculum content.
+
+Before release, each lesson blueprint must be manually reviewed against recorded source evidence and the official mathematics PDF. The presence of a blueprint does not move a module to `partially_verified` or `verified`.
+
+## Assessment Blueprints
+
+Assessment blueprints are draft item plans for future checks, diagnostics, or module assessments.
+
+They are not connected to diagnostic scoring, mastery logic, or Firestore attempt persistence. Misconception probes in these files are product hypotheses until reviewed.
+
+Assessment items must be manually reviewed before they become child-facing or affect progression.
+
+## Blueprints And Verification
+
+Blueprint existence does not change `verificationStatus`.
+
+A module should only become `verified` after lesson content and assessment content have evidence, review notes, and an explicit verification decision. For `quantity_and_number_sense`, the module remains `source_identified` even though a lesson blueprint and assessment blueprint now exist.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.

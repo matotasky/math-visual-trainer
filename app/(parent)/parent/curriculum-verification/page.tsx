@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
 import {
+  SK_MATH_ASSESSMENT_BLUEPRINTS,
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
+  SK_MATH_LESSON_BLUEPRINTS,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
   SK_MATH_MODULE_VERIFICATION_DECISIONS,
   SK_MATH_OFFICIAL_CYCLE_1_OUTLINE,
@@ -14,7 +16,9 @@ import {
 } from "@/data/curriculum/sk-math";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
+  CurriculumAssessmentBlueprintStatus,
   CurriculumAreaId,
+  CurriculumLessonBlueprintStatus,
   CurriculumModuleOfficialMappingStatus,
   CurriculumModuleVerificationDecision,
   CurriculumModuleVerificationDecisionStatus,
@@ -204,6 +208,36 @@ const publicClaimRiskLabels: Record<Locale, Record<CurriculumPublicClaimRiskLeve
   }
 };
 
+const lessonBlueprintStatusLabels: Record<Locale, Record<CurriculumLessonBlueprintStatus, string>> = {
+  sk: {
+    draft: "Draft",
+    needs_review: "Treba review",
+    reviewed: "Skontrolované",
+    ready_for_child_preview: "Pripravené na child preview"
+  },
+  en: {
+    draft: "Draft",
+    needs_review: "Needs review",
+    reviewed: "Reviewed",
+    ready_for_child_preview: "Ready for child preview"
+  }
+};
+
+const assessmentBlueprintStatusLabels: Record<Locale, Record<CurriculumAssessmentBlueprintStatus, string>> = {
+  sk: {
+    draft: "Draft",
+    needs_review: "Treba review",
+    reviewed: "Skontrolované",
+    ready_for_child_preview: "Pripravené na child preview"
+  },
+  en: {
+    draft: "Draft",
+    needs_review: "Needs review",
+    reviewed: "Reviewed",
+    ready_for_child_preview: "Ready for child preview"
+  }
+};
+
 const riskOrder: CurriculumVerificationRisk[] = ["high", "medium", "low"];
 
 function getModuleTitle(moduleId: string) {
@@ -291,6 +325,14 @@ export default async function ParentCurriculumVerificationPage() {
           <MetricCard
             label={isSlovak ? "Opatrné tvrdenia" : "Caution claims"}
             value={verificationSummary.cautionPublicClaimsCount}
+          />
+          <MetricCard
+            label={isSlovak ? "Draft lekcie" : "Draft lessons"}
+            value={verificationSummary.lessonBlueprintsDraft}
+          />
+          <MetricCard
+            label={isSlovak ? "Draft hodnotenia" : "Draft assessments"}
+            value={verificationSummary.assessmentBlueprintsDraft}
           />
         </div>
       </section>
@@ -592,6 +634,84 @@ export default async function ParentCurriculumVerificationPage() {
                 </div>
               </dl>
               <p className="mt-3 text-sm leading-6 text-slate-700">{decision.decisionNotes}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Blueprinty lekcií" : "Lesson blueprints"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Draft plánovacie artefakty. Nie sú child-facing a nemenia stav overenia modulu."
+            : "Draft planning artifacts. They are not child-facing and do not change module verification status."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_LESSON_BLUEPRINTS.map((blueprint) => (
+            <article key={blueprint.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(blueprint.moduleId)}</h3>
+                  <p className="mt-1 text-sm font-semibold text-slate-700">{blueprint.title}</p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {lessonBlueprintStatusLabels[locale][blueprint.status]}
+                </span>
+              </div>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Počet krokov" : "Step count"}</dt>
+                  <dd className="mt-1 text-slate-600">{blueprint.steps.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">
+                    {isSlovak ? "Súvisiace evidence ID" : "Source evidence IDs"}
+                  </dt>
+                  <dd className="mt-1 break-words text-slate-600">{blueprint.sourceEvidenceIds.join(", ")}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{blueprint.publicReleaseNote}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Blueprinty hodnotenia" : "Assessment blueprints"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Draft plány položiek. Nie sú napojené na diagnostické skórovanie."
+            : "Draft item plans. They are not connected to diagnostic scoring."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_ASSESSMENT_BLUEPRINTS.map((blueprint) => (
+            <article key={blueprint.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(blueprint.moduleId)}</h3>
+                  <p className="mt-1 text-sm font-semibold text-slate-700">{blueprint.title}</p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {assessmentBlueprintStatusLabels[locale][blueprint.status]}
+                </span>
+              </div>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Počet položiek" : "Item count"}</dt>
+                  <dd className="mt-1 text-slate-600">{blueprint.items.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">
+                    {isSlovak ? "Súvisiace evidence ID" : "Source evidence IDs"}
+                  </dt>
+                  <dd className="mt-1 break-words text-slate-600">{blueprint.sourceEvidenceIds.join(", ")}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{blueprint.publicReleaseNote}</p>
             </article>
           ))}
         </div>

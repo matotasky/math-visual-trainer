@@ -87,6 +87,69 @@ export type CurriculumPublicWordingGuardrail = {
   rationale: string;
 };
 
+export type CurriculumLessonBlueprintStatus = "draft" | "needs_review" | "reviewed" | "ready_for_child_preview";
+
+export type CurriculumLessonBlueprintStepType =
+  | "visual_intro"
+  | "guided_practice"
+  | "independent_practice"
+  | "reflection"
+  | "remediation_link";
+
+export type CurriculumLessonBlueprintStep = {
+  id: string;
+  stepType: CurriculumLessonBlueprintStepType;
+  title: string;
+  intent: string;
+  childFacingPromptDraft: string;
+  teacherOrParentNote: string;
+  linkedSkillTags: string[];
+  verificationNote: string;
+};
+
+export type CurriculumLessonBlueprint = {
+  id: string;
+  moduleId: string;
+  status: CurriculumLessonBlueprintStatus;
+  title: string;
+  learningGoal: string;
+  prerequisites: string[];
+  steps: CurriculumLessonBlueprintStep[];
+  sourceEvidenceIds: string[];
+  verificationDecisionIds: string[];
+  publicReleaseNote: string;
+};
+
+export type CurriculumAssessmentBlueprintStatus = "draft" | "needs_review" | "reviewed" | "ready_for_child_preview";
+
+export type CurriculumAssessmentItemIntent =
+  | "concept_check"
+  | "representation_check"
+  | "comparison_check"
+  | "ordering_check"
+  | "misconception_probe";
+
+export type CurriculumAssessmentBlueprintItem = {
+  id: string;
+  intent: CurriculumAssessmentItemIntent;
+  promptDraft: string;
+  expectedUnderstanding: string;
+  commonMistakes: string[];
+  verificationNote: string;
+};
+
+export type CurriculumAssessmentBlueprint = {
+  id: string;
+  moduleId: string;
+  status: CurriculumAssessmentBlueprintStatus;
+  title: string;
+  purpose: string;
+  items: CurriculumAssessmentBlueprintItem[];
+  sourceEvidenceIds: string[];
+  verificationDecisionIds: string[];
+  publicReleaseNote: string;
+};
+
 export type CurriculumReviewStatus = "not_started" | "in_review" | "evidence_recorded" | "ready_for_decision";
 
 export type CurriculumReviewDecisionRecommendation =

@@ -1,6 +1,8 @@
 import type {
+  CurriculumAssessmentBlueprintStatus,
   CurriculumAreaId,
   CurriculumCycleId,
+  CurriculumLessonBlueprintStatus,
   CurriculumModuleOfficialMappingStatus,
   CurriculumModuleVerificationDecisionStatus,
   CurriculumModuleStatus,
@@ -12,8 +14,10 @@ import type {
   GradeId,
   LearningPathwayId
 } from "@/types";
+import { SK_MATH_ASSESSMENT_BLUEPRINTS } from "./assessment-blueprints";
 import { SK_MATH_CURRICULUM_AREAS } from "./areas";
 import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
+import { SK_MATH_LESSON_BLUEPRINTS } from "./lesson-blueprints";
 import { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 import { SK_MATH_MODULE_VERIFICATION_DECISIONS } from "./module-verification-decisions";
 import { SK_MATH_CURRICULUM_MODULES } from "./modules";
@@ -26,6 +30,8 @@ import { SK_MATH_CYCLE_1_VERIFICATION_MATRIX } from "./verification-matrix";
 export { SK_MATH_CURRICULUM_AREAS } from "./areas";
 export { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 export { SK_MATH_CURRICULUM_MODULES } from "./modules";
+export { SK_MATH_ASSESSMENT_BLUEPRINTS } from "./assessment-blueprints";
+export { SK_MATH_LESSON_BLUEPRINTS } from "./lesson-blueprints";
 export { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 export { SK_MATH_MODULE_VERIFICATION_DECISIONS } from "./module-verification-decisions";
 export { SK_MATH_OFFICIAL_SOURCES } from "./sources";
@@ -139,6 +145,22 @@ export function getPublicWordingGuardrailsByRisk(riskLevel: CurriculumPublicClai
   return SK_MATH_PUBLIC_WORDING_GUARDRAILS.filter((guardrail) => guardrail.riskLevel === riskLevel);
 }
 
+export function getLessonBlueprintsByModule(moduleId: string) {
+  return SK_MATH_LESSON_BLUEPRINTS.filter((blueprint) => blueprint.moduleId === moduleId);
+}
+
+export function getLessonBlueprintsByStatus(status: CurriculumLessonBlueprintStatus) {
+  return SK_MATH_LESSON_BLUEPRINTS.filter((blueprint) => blueprint.status === status);
+}
+
+export function getAssessmentBlueprintsByModule(moduleId: string) {
+  return SK_MATH_ASSESSMENT_BLUEPRINTS.filter((blueprint) => blueprint.moduleId === moduleId);
+}
+
+export function getAssessmentBlueprintsByStatus(status: CurriculumAssessmentBlueprintStatus) {
+  return SK_MATH_ASSESSMENT_BLUEPRINTS.filter((blueprint) => blueprint.status === status);
+}
+
 export function getCurriculumVerificationSummary() {
   const cycleOneModules = SK_MATH_CURRICULUM_MODULES.filter((module) => module.cycleId === "cycle_1");
   const modulesWithRecordedEvidence = new Set(
@@ -160,7 +182,9 @@ export function getCurriculumVerificationSummary() {
     ).length,
     cautionPublicClaimsCount: SK_MATH_PUBLIC_WORDING_GUARDRAILS.filter(
       (guardrail) => guardrail.riskLevel === "caution"
-    ).length
+    ).length,
+    lessonBlueprintsDraft: SK_MATH_LESSON_BLUEPRINTS.filter((blueprint) => blueprint.status === "draft").length,
+    assessmentBlueprintsDraft: SK_MATH_ASSESSMENT_BLUEPRINTS.filter((blueprint) => blueprint.status === "draft").length
   };
 }
 

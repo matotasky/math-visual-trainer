@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ParentSectionHeader } from "@/components/parent/ParentSectionHeader";
 import {
+  SK_MATH_ASSESSMENT_BLUEPRINTS,
   SK_MATH_CURRICULUM_MODULES,
+  SK_MATH_LESSON_BLUEPRINTS,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
   SK_MATH_MODULE_VERIFICATION_DECISIONS,
   SK_MATH_OFFICIAL_CYCLE_1_OUTLINE,
@@ -11,6 +13,10 @@ import {
 } from "@/data/curriculum/sk-math";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
+  CurriculumAssessmentBlueprintStatus,
+  CurriculumAssessmentItemIntent,
+  CurriculumLessonBlueprintStatus,
+  CurriculumLessonBlueprintStepType,
   CurriculumModuleOfficialMappingStatus,
   CurriculumModuleVerificationDecision,
   CurriculumModuleVerificationDecisionStatus,
@@ -172,6 +178,70 @@ const decisionRecommendationLabels: Record<Locale, Record<CurriculumReviewDecisi
   }
 };
 
+const lessonBlueprintStatusLabels: Record<Locale, Record<CurriculumLessonBlueprintStatus, string>> = {
+  sk: {
+    draft: "Draft",
+    needs_review: "Treba review",
+    reviewed: "Skontrolované",
+    ready_for_child_preview: "Pripravené na child preview"
+  },
+  en: {
+    draft: "Draft",
+    needs_review: "Needs review",
+    reviewed: "Reviewed",
+    ready_for_child_preview: "Ready for child preview"
+  }
+};
+
+const lessonStepTypeLabels: Record<Locale, Record<CurriculumLessonBlueprintStepType, string>> = {
+  sk: {
+    visual_intro: "Vizuálny úvod",
+    guided_practice: "Vedené precvičenie",
+    independent_practice: "Samostatné precvičenie",
+    reflection: "Reflexia",
+    remediation_link: "Remediačný odkaz"
+  },
+  en: {
+    visual_intro: "Visual intro",
+    guided_practice: "Guided practice",
+    independent_practice: "Independent practice",
+    reflection: "Reflection",
+    remediation_link: "Remediation link"
+  }
+};
+
+const assessmentBlueprintStatusLabels: Record<Locale, Record<CurriculumAssessmentBlueprintStatus, string>> = {
+  sk: {
+    draft: "Draft",
+    needs_review: "Treba review",
+    reviewed: "Skontrolované",
+    ready_for_child_preview: "Pripravené na child preview"
+  },
+  en: {
+    draft: "Draft",
+    needs_review: "Needs review",
+    reviewed: "Reviewed",
+    ready_for_child_preview: "Ready for child preview"
+  }
+};
+
+const assessmentIntentLabels: Record<Locale, Record<CurriculumAssessmentItemIntent, string>> = {
+  sk: {
+    concept_check: "Kontrola konceptu",
+    representation_check: "Kontrola reprezentácie",
+    comparison_check: "Kontrola porovnania",
+    ordering_check: "Kontrola usporiadania",
+    misconception_probe: "Sonda omylu"
+  },
+  en: {
+    concept_check: "Concept check",
+    representation_check: "Representation check",
+    comparison_check: "Comparison check",
+    ordering_check: "Ordering check",
+    misconception_probe: "Misconception probe"
+  }
+};
+
 const moduleText = {
   sk: {
     title: "Množstvo a porozumenie číslam",
@@ -196,8 +266,18 @@ export default async function QuantityAndNumberSenseReviewPage() {
   const checklistItems = reviewEvidence
     ? SK_MATH_REVIEW_CHECKLIST.filter((item) => item.reviewEvidenceId === reviewEvidence.id)
     : [];
+  const lessonBlueprint = SK_MATH_LESSON_BLUEPRINTS.find((blueprint) => blueprint.moduleId === moduleId);
+  const assessmentBlueprint = SK_MATH_ASSESSMENT_BLUEPRINTS.find((blueprint) => blueprint.moduleId === moduleId);
 
-  if (!curriculumModule || !mapping || !outlineSection || !verificationDecision || !reviewEvidence) {
+  if (
+    !curriculumModule ||
+    !mapping ||
+    !outlineSection ||
+    !verificationDecision ||
+    !reviewEvidence ||
+    !lessonBlueprint ||
+    !assessmentBlueprint
+  ) {
     return (
       <section className="py-8">
         <ParentSectionHeader
@@ -333,6 +413,147 @@ export default async function QuantityAndNumberSenseReviewPage() {
               <dd className="mt-1 leading-6 text-slate-600">{verificationDecision.decisionNotes}</dd>
             </div>
           </dl>
+        </SectionCard>
+
+        <SectionCard title={isSlovak ? "Blueprint lekcie" : "Lesson blueprint"}>
+          <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <Field label={isSlovak ? "Názov" : "Title"} value={lessonBlueprint.title} />
+            <Field
+              label={isSlovak ? "Stav" : "Status"}
+              value={lessonBlueprintStatusLabels[locale][lessonBlueprint.status]}
+            />
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">{isSlovak ? "Cieľ učenia" : "Learning goal"}</dt>
+              <dd className="mt-1 leading-6 text-slate-600">{lessonBlueprint.learningGoal}</dd>
+            </div>
+            <Field
+              label={isSlovak ? "Predpoklady" : "Prerequisites"}
+              value={lessonBlueprint.prerequisites.join(", ")}
+            />
+            <Field
+              label={isSlovak ? "Súvisiace evidence ID" : "Source evidence IDs"}
+              value={lessonBlueprint.sourceEvidenceIds.join(", ")}
+            />
+            <Field
+              label={isSlovak ? "Súvisiace decision ID" : "Verification decision IDs"}
+              value={lessonBlueprint.verificationDecisionIds.join(", ")}
+            />
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">{isSlovak ? "Poznámka k vydaniu" : "Public release note"}</dt>
+              <dd className="mt-1 leading-6 text-slate-600">{lessonBlueprint.publicReleaseNote}</dd>
+            </div>
+          </dl>
+
+          <div className="mt-5 grid gap-3">
+            {lessonBlueprint.steps.map((step) => (
+              <article key={step.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-950">{step.title}</h3>
+                    <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{step.id}</p>
+                  </div>
+                  <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                    {lessonStepTypeLabels[locale][step.stepType]}
+                  </span>
+                </div>
+                <dl className="mt-3 grid gap-3 text-sm md:grid-cols-2">
+                  <div>
+                    <dt className="font-bold text-slate-800">{isSlovak ? "Zámer" : "Intent"}</dt>
+                    <dd className="mt-1 leading-6 text-slate-600">{step.intent}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-bold text-slate-800">
+                      {isSlovak ? "Draft promptu pre dieťa" : "Child prompt draft"}
+                    </dt>
+                    <dd className="mt-1 leading-6 text-slate-600">
+                      {step.childFacingPromptDraft || (isSlovak ? "nedoplnené" : "not added")}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-bold text-slate-800">
+                      {isSlovak ? "Poznámka pre rodiča/učiteľa" : "Parent or teacher note"}
+                    </dt>
+                    <dd className="mt-1 leading-6 text-slate-600">{step.teacherOrParentNote}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-bold text-slate-800">{isSlovak ? "Skill tagy" : "Skill tags"}</dt>
+                    <dd className="mt-2 flex flex-wrap gap-2">
+                      {step.linkedSkillTags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex rounded-md bg-sky-50 px-2 py-1 text-xs font-bold uppercase text-sky-800"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </dd>
+                  </div>
+                  <div className="md:col-span-2">
+                    <dt className="font-bold text-slate-800">{isSlovak ? "Poznámka k overeniu" : "Verification note"}</dt>
+                    <dd className="mt-1 leading-6 text-slate-600">{step.verificationNote}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))}
+          </div>
+        </SectionCard>
+
+        <SectionCard title={isSlovak ? "Blueprint hodnotenia" : "Assessment blueprint"}>
+          <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <Field label={isSlovak ? "Názov" : "Title"} value={assessmentBlueprint.title} />
+            <Field
+              label={isSlovak ? "Stav" : "Status"}
+              value={assessmentBlueprintStatusLabels[locale][assessmentBlueprint.status]}
+            />
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">{isSlovak ? "Účel" : "Purpose"}</dt>
+              <dd className="mt-1 leading-6 text-slate-600">{assessmentBlueprint.purpose}</dd>
+            </div>
+            <Field
+              label={isSlovak ? "Súvisiace evidence ID" : "Source evidence IDs"}
+              value={assessmentBlueprint.sourceEvidenceIds.join(", ")}
+            />
+            <Field
+              label={isSlovak ? "Súvisiace decision ID" : "Verification decision IDs"}
+              value={assessmentBlueprint.verificationDecisionIds.join(", ")}
+            />
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">{isSlovak ? "Poznámka k vydaniu" : "Public release note"}</dt>
+              <dd className="mt-1 leading-6 text-slate-600">{assessmentBlueprint.publicReleaseNote}</dd>
+            </div>
+          </dl>
+
+          <div className="mt-5 grid gap-3">
+            {assessmentBlueprint.items.map((item) => (
+              <article key={item.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-950">{item.promptDraft}</h3>
+                    <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{item.id}</p>
+                  </div>
+                  <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                    {assessmentIntentLabels[locale][item.intent]}
+                  </span>
+                </div>
+                <dl className="mt-3 grid gap-3 text-sm md:grid-cols-2">
+                  <div>
+                    <dt className="font-bold text-slate-800">
+                      {isSlovak ? "Očakávané porozumenie" : "Expected understanding"}
+                    </dt>
+                    <dd className="mt-1 leading-6 text-slate-600">{item.expectedUnderstanding}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-bold text-slate-800">{isSlovak ? "Časté chyby" : "Common mistakes"}</dt>
+                    <dd className="mt-1 leading-6 text-slate-600">{item.commonMistakes.join(", ")}</dd>
+                  </div>
+                  <div className="md:col-span-2">
+                    <dt className="font-bold text-slate-800">{isSlovak ? "Poznámka k overeniu" : "Verification note"}</dt>
+                    <dd className="mt-1 leading-6 text-slate-600">{item.verificationNote}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))}
+          </div>
         </SectionCard>
 
         <SectionCard title={isSlovak ? "Dôkazy z manuálneho overenia" : "Review evidence"}>
