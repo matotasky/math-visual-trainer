@@ -264,6 +264,16 @@ The route is linked only from the parent/product verification detail page for `q
 
 The preview guard intentionally allows rendering while blocking scoring, progress writes, and verified claims.
 
+## Interactive Preview Boundary
+
+The visible child preview can use local React state for simple manual testing.
+
+Interactive preview activities may show local feedback after button clicks, but they must not persist attempts, create sessions, update aggregates, update mastery, or write to Firestore.
+
+The preview does not score diagnostics and does not affect parent dashboard data.
+
+Interactive prompts are for manual testing only. They are not assessment items, are not connected to diagnostic scoring, and do not change module verification status.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.

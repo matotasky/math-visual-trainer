@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { QuantityNumberSensePreview } from "@/components/curriculum/QuantityNumberSensePreview";
 import { SK_MATH_LESSON_BLUEPRINTS } from "@/data/curriculum/sk-math";
 import { getQuantityAndNumberSensePreviewGuard } from "@/lib/curriculum/preview-guards";
 import type { CurriculumLessonBlueprintStep, CurriculumLessonBlueprintStepType } from "@/types";
@@ -80,6 +81,8 @@ export default function QuantityAndNumberSensePreviewPage() {
             {previewGuard.warning}
           </p>
         </div>
+
+        <QuantityNumberSensePreview />
 
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
           <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
