@@ -871,8 +871,8 @@ export default async function QuantityAndNumberSenseReviewPage() {
             </p>
             <p className="mt-2 text-sm leading-6 text-sky-950">
               {isSlovak
-                ? "Interaktívny preview existuje iba lokálne v prehliadači. Nezapisuje pokrok, nevytvára pokusy a nemení diagnostiku."
-                : "Interactive preview exists only locally in the browser. It does not persist progress, create attempts, or change diagnostics."}
+                ? "Detské curriculum už odkazuje na túto preview lekciu. Completion je zatiaľ local-only, nezapisuje pokrok, nevytvára pokusy a nemení diagnostiku."
+                : "Child curriculum now links to this preview lesson. Completion is local-only for now, with no progress persistence, attempts, or diagnostic changes."}
             </p>
             <Link
               className="mt-3 inline-flex min-h-10 w-fit items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"

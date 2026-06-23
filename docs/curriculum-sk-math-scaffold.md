@@ -274,6 +274,18 @@ The preview does not score diagnostics and does not affect parent dashboard data
 
 Interactive prompts are for manual testing only. They are not assessment items, are not connected to diagnostic scoring, and do not change module verification status.
 
+## First Linked Child Preview
+
+`quantity_and_number_sense` is the first curriculum module linked from the child curriculum page.
+
+It remains a preview learning activity, not a scored lesson, test, diagnostic, or verified ŠVP-aligned lesson.
+
+The preview has a local completion flow so the child can finish the four activities and see a friendly completion message.
+
+Completion persistence is intentionally local-only for now. It does not write attempts, sessions, aggregates, mastery, streaks, or parent dashboard data.
+
+If persistence is added later, it should be saved as preview-only learning completion and must not affect diagnostic scoring, mastery, or curriculum verification claims.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.

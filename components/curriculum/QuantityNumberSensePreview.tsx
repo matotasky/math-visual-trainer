@@ -63,12 +63,26 @@ const feedbackByActivity: Record<ActivityId, Record<string, ActivityFeedback>> =
 
 export function QuantityNumberSensePreview() {
   const [answers, setAnswers] = useState<Partial<Record<ActivityId, string>>>({});
+  const [completionMessageVisible, setCompletionMessageVisible] = useState(false);
+
+  const completedActivities = [
+    answers.quantity === "5",
+    answers.compare === "Vpravo",
+    answers.numberLine === "4",
+    answers.reflection === "rozumiem"
+  ].filter(Boolean).length;
+  const allActivitiesComplete = completedActivities === 4;
 
   function selectAnswer(activityId: ActivityId, value: string) {
     setAnswers((currentAnswers) => ({
       ...currentAnswers,
       [activityId]: value
     }));
+  }
+
+  function completePreviewLesson() {
+    // Completion persistence intentionally skipped until child profile write path is finalized.
+    setCompletionMessageVisible(true);
   }
 
   return (
@@ -82,7 +96,7 @@ export function QuantityNumberSensePreview() {
           </p>
         </div>
         <span className="inline-flex w-fit rounded-full bg-white px-3 py-1 text-xs font-bold uppercase text-emerald-800 shadow-sm">
-          Bez skóre
+          Hotové: {completedActivities} / 4
         </span>
       </div>
 
@@ -158,6 +172,25 @@ export function QuantityNumberSensePreview() {
           </button>
         </ActivityCard>
       </div>
+
+      {allActivitiesComplete ? (
+        <section className="mt-5 rounded-2xl border border-emerald-300 bg-white p-5 shadow-sm">
+          <h3 className="text-2xl font-black text-emerald-950">Výborne, dokončil/a si ukážkovú lekciu.</h3>
+          <p className="mt-2 text-base font-semibold leading-7 text-slate-700">Výsledky neslúžia ako test.</p>
+          <button
+            className="mt-4 min-h-14 rounded-xl bg-emerald-700 px-5 py-3 text-lg font-black text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-200"
+            onClick={completePreviewLesson}
+            type="button"
+          >
+            Dokončiť lekciu
+          </button>
+          {completionMessageVisible ? (
+            <p className="mt-4 rounded-xl border border-sky-200 bg-sky-50 p-4 text-base font-bold leading-7 text-sky-950">
+              Hotovo. Táto ukážka sa zatiaľ neukladá.
+            </p>
+          ) : null}
+        </section>
+      ) : null}
     </section>
   );
 }
