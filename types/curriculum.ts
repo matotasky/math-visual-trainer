@@ -188,6 +188,42 @@ export type CurriculumBlueprintReadinessGate = {
   releaseNote: string;
 };
 
+export type CurriculumInternalPreviewStatus = "internal_only" | "blocked" | "ready_for_internal_review";
+
+export type CurriculumInternalPreviewItemType = "lesson_step_preview" | "assessment_item_preview" | "safety_note";
+
+export type CurriculumInternalPreviewItem = {
+  id: string;
+  itemType: CurriculumInternalPreviewItemType;
+  sourceBlueprintId: string;
+  sourceItemId: string;
+  title: string;
+  previewText: string;
+  safetyNote: string;
+};
+
+export type CurriculumInternalPreview = {
+  id: string;
+  moduleId: string;
+  title: string;
+  status: CurriculumInternalPreviewStatus;
+  sourceLessonBlueprintId: string;
+  sourceAssessmentBlueprintId: string;
+  items: CurriculumInternalPreviewItem[];
+  releaseWarning: string;
+};
+
+export type CurriculumInternalPreviewSafetyCheckStatus = "pass" | "warning" | "blocked";
+
+export type CurriculumInternalPreviewSafetyCheck = {
+  id: string;
+  previewId: string;
+  label: string;
+  status: CurriculumInternalPreviewSafetyCheckStatus;
+  finding: string;
+  requiredAction: string;
+};
+
 export type CurriculumReviewStatus = "not_started" | "in_review" | "evidence_recorded" | "ready_for_decision";
 
 export type CurriculumReviewDecisionRecommendation =

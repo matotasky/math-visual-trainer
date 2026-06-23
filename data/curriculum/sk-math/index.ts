@@ -4,6 +4,8 @@ import type {
   CurriculumBlueprintReadinessGateStatus,
   CurriculumBlueprintReviewStatus,
   CurriculumCycleId,
+  CurriculumInternalPreviewSafetyCheckStatus,
+  CurriculumInternalPreviewStatus,
   CurriculumLessonBlueprintStatus,
   CurriculumModuleOfficialMappingStatus,
   CurriculumModuleVerificationDecisionStatus,
@@ -21,6 +23,8 @@ import { SK_MATH_BLUEPRINT_READINESS_GATES } from "./blueprint-readiness-gates";
 import { SK_MATH_BLUEPRINT_REVIEW_EVIDENCE } from "./blueprint-review-evidence";
 import { SK_MATH_CURRICULUM_AREAS } from "./areas";
 import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
+import { SK_MATH_INTERNAL_PREVIEWS } from "./internal-previews";
+import { SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS } from "./internal-preview-safety-checks";
 import { SK_MATH_LESSON_BLUEPRINTS } from "./lesson-blueprints";
 import { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 import { SK_MATH_MODULE_VERIFICATION_DECISIONS } from "./module-verification-decisions";
@@ -38,6 +42,8 @@ export { SK_MATH_ASSESSMENT_BLUEPRINTS } from "./assessment-blueprints";
 export { SK_MATH_BLUEPRINT_READINESS_GATES } from "./blueprint-readiness-gates";
 export { SK_MATH_BLUEPRINT_REVIEW_EVIDENCE } from "./blueprint-review-evidence";
 export { SK_MATH_LESSON_BLUEPRINTS } from "./lesson-blueprints";
+export { SK_MATH_INTERNAL_PREVIEWS } from "./internal-previews";
+export { SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS } from "./internal-preview-safety-checks";
 export { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 export { SK_MATH_MODULE_VERIFICATION_DECISIONS } from "./module-verification-decisions";
 export { SK_MATH_OFFICIAL_SOURCES } from "./sources";
@@ -191,6 +197,22 @@ export function getBlueprintReadinessGatesByStatus(status: CurriculumBlueprintRe
   return SK_MATH_BLUEPRINT_READINESS_GATES.filter((gate) => gate.gateStatus === status);
 }
 
+export function getInternalPreviewsByModule(moduleId: string) {
+  return SK_MATH_INTERNAL_PREVIEWS.filter((preview) => preview.moduleId === moduleId);
+}
+
+export function getInternalPreviewsByStatus(status: CurriculumInternalPreviewStatus) {
+  return SK_MATH_INTERNAL_PREVIEWS.filter((preview) => preview.status === status);
+}
+
+export function getInternalPreviewSafetyChecksByPreview(previewId: string) {
+  return SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS.filter((check) => check.previewId === previewId);
+}
+
+export function getInternalPreviewSafetyChecksByStatus(status: CurriculumInternalPreviewSafetyCheckStatus) {
+  return SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS.filter((check) => check.status === status);
+}
+
 export function getCurriculumVerificationSummary() {
   const cycleOneModules = SK_MATH_CURRICULUM_MODULES.filter((module) => module.cycleId === "cycle_1");
   const modulesWithRecordedEvidence = new Set(
@@ -218,7 +240,16 @@ export function getCurriculumVerificationSummary() {
     blueprintReviewsNeedingEvidence: SK_MATH_BLUEPRINT_REVIEW_EVIDENCE.filter(
       (evidence) => evidence.reviewStatus === "evidence_needed"
     ).length,
-    blueprintReadinessBlocked: SK_MATH_BLUEPRINT_READINESS_GATES.filter((gate) => gate.gateStatus === "blocked").length
+    blueprintReadinessBlocked: SK_MATH_BLUEPRINT_READINESS_GATES.filter(
+      (gate) => gate.gateStatus === "blocked"
+    ).length,
+    internalPreviews: SK_MATH_INTERNAL_PREVIEWS.length,
+    internalPreviewBlockedChecks: SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS.filter(
+      (check) => check.status === "blocked"
+    ).length,
+    internalPreviewWarningChecks: SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS.filter(
+      (check) => check.status === "warning"
+    ).length
   };
 }
 

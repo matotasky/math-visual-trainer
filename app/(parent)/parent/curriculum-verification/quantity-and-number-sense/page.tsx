@@ -6,6 +6,8 @@ import {
   SK_MATH_BLUEPRINT_READINESS_GATES,
   SK_MATH_BLUEPRINT_REVIEW_EVIDENCE,
   SK_MATH_CURRICULUM_MODULES,
+  SK_MATH_INTERNAL_PREVIEWS,
+  SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS,
   SK_MATH_LESSON_BLUEPRINTS,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
   SK_MATH_MODULE_VERIFICATION_DECISIONS,
@@ -21,6 +23,9 @@ import type {
   CurriculumBlueprintReadinessGateStatus,
   CurriculumBlueprintReviewEvidence,
   CurriculumBlueprintReviewStatus,
+  CurriculumInternalPreviewSafetyCheckStatus,
+  CurriculumInternalPreviewItemType,
+  CurriculumInternalPreviewStatus,
   CurriculumLessonBlueprintStatus,
   CurriculumLessonBlueprintStepType,
   CurriculumModuleOfficialMappingStatus,
@@ -278,6 +283,48 @@ const blueprintReadinessGateStatusLabels: Record<Locale, Record<CurriculumBluepr
   }
 };
 
+const internalPreviewStatusLabels: Record<Locale, Record<CurriculumInternalPreviewStatus, string>> = {
+  sk: {
+    internal_only: "Iba interne",
+    blocked: "Blokované",
+    ready_for_internal_review: "Pripravené na interný review"
+  },
+  en: {
+    internal_only: "Internal only",
+    blocked: "Blocked",
+    ready_for_internal_review: "Ready for internal review"
+  }
+};
+
+const internalPreviewItemTypeLabels: Record<Locale, Record<CurriculumInternalPreviewItemType, string>> = {
+  sk: {
+    lesson_step_preview: "Preview kroku lekcie",
+    assessment_item_preview: "Preview hodnotiacej položky",
+    safety_note: "Bezpečnostná poznámka"
+  },
+  en: {
+    lesson_step_preview: "Lesson step preview",
+    assessment_item_preview: "Assessment item preview",
+    safety_note: "Safety note"
+  }
+};
+
+const internalPreviewSafetyCheckStatusLabels: Record<
+  Locale,
+  Record<CurriculumInternalPreviewSafetyCheckStatus, string>
+> = {
+  sk: {
+    pass: "Pass",
+    warning: "Upozornenie",
+    blocked: "Blokované"
+  },
+  en: {
+    pass: "Pass",
+    warning: "Warning",
+    blocked: "Blocked"
+  }
+};
+
 const moduleText = {
   sk: {
     title: "Množstvo a porozumenie číslam",
@@ -316,6 +363,10 @@ export default async function QuantityAndNumberSenseReviewPage() {
   const assessmentBlueprintGate = assessmentBlueprint
     ? SK_MATH_BLUEPRINT_READINESS_GATES.find((gate) => gate.blueprintId === assessmentBlueprint.id)
     : undefined;
+  const internalPreview = SK_MATH_INTERNAL_PREVIEWS.find((preview) => preview.moduleId === moduleId);
+  const internalPreviewSafetyChecks = internalPreview
+    ? SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS.filter((check) => check.previewId === internalPreview.id)
+    : [];
 
   if (
     !curriculumModule ||
@@ -328,7 +379,8 @@ export default async function QuantityAndNumberSenseReviewPage() {
     !lessonBlueprintReviewEvidence ||
     !lessonBlueprintGate ||
     !assessmentBlueprintReviewEvidence ||
-    !assessmentBlueprintGate
+    !assessmentBlueprintGate ||
+    !internalPreview
   ) {
     return (
       <section className="py-8">
@@ -623,6 +675,70 @@ export default async function QuantityAndNumberSenseReviewPage() {
               locale={locale}
             />
             <BlueprintReadinessGatePanel gate={assessmentBlueprintGate} isSlovak={isSlovak} locale={locale} />
+          </div>
+        </SectionCard>
+
+        <SectionCard title={isSlovak ? "Interné preview" : "Internal preview"}>
+          <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <Field label={isSlovak ? "Názov" : "Title"} value={internalPreview.title} />
+            <Field
+              label={isSlovak ? "Stav" : "Status"}
+              value={internalPreviewStatusLabels[locale][internalPreview.status]}
+            />
+            <Field
+              label={isSlovak ? "Zdrojový lesson blueprint" : "Source lesson blueprint"}
+              value={internalPreview.sourceLessonBlueprintId}
+            />
+            <Field
+              label={isSlovak ? "Zdrojový assessment blueprint" : "Source assessment blueprint"}
+              value={internalPreview.sourceAssessmentBlueprintId}
+            />
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">{isSlovak ? "Release warning" : "Release warning"}</dt>
+              <dd className="mt-1 leading-6 text-slate-600">{internalPreview.releaseWarning}</dd>
+            </div>
+          </dl>
+
+          <div className="mt-5 grid gap-3">
+            {internalPreview.items.map((item) => (
+              <article key={item.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-950">{item.title}</h3>
+                    <p className="mt-1 text-xs font-semibold uppercase text-slate-500">
+                      {item.sourceBlueprintId} · {item.sourceItemId}
+                    </p>
+                  </div>
+                  <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                    {internalPreviewItemTypeLabels[locale][item.itemType]}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-slate-700">{item.previewText}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{item.safetyNote}</p>
+              </article>
+            ))}
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title={isSlovak ? "Bezpečnostné kontroly interného preview" : "Internal preview safety checks"}
+        >
+          <div className="grid gap-3">
+            {internalPreviewSafetyChecks.map((check) => (
+              <article key={check.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-950">{check.label}</h3>
+                    <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{check.id}</p>
+                  </div>
+                  <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                    {internalPreviewSafetyCheckStatusLabels[locale][check.status]}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-slate-700">{check.finding}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{check.requiredAction}</p>
+              </article>
+            ))}
           </div>
         </SectionCard>
 

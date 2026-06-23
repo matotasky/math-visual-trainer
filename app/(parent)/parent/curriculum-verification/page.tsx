@@ -6,6 +6,8 @@ import {
   SK_MATH_BLUEPRINT_REVIEW_EVIDENCE,
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
+  SK_MATH_INTERNAL_PREVIEWS,
+  SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS,
   SK_MATH_LESSON_BLUEPRINTS,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
   SK_MATH_MODULE_VERIFICATION_DECISIONS,
@@ -22,6 +24,8 @@ import type {
   CurriculumAreaId,
   CurriculumBlueprintReadinessGateStatus,
   CurriculumBlueprintReviewStatus,
+  CurriculumInternalPreviewSafetyCheckStatus,
+  CurriculumInternalPreviewStatus,
   CurriculumLessonBlueprintStatus,
   CurriculumModuleOfficialMappingStatus,
   CurriculumModuleVerificationDecision,
@@ -283,6 +287,35 @@ const blueprintReadinessGateStatusLabels: Record<Locale, Record<CurriculumBluepr
   }
 };
 
+const internalPreviewStatusLabels: Record<Locale, Record<CurriculumInternalPreviewStatus, string>> = {
+  sk: {
+    internal_only: "Iba interne",
+    blocked: "Blokované",
+    ready_for_internal_review: "Pripravené na interný review"
+  },
+  en: {
+    internal_only: "Internal only",
+    blocked: "Blocked",
+    ready_for_internal_review: "Ready for internal review"
+  }
+};
+
+const internalPreviewSafetyCheckStatusLabels: Record<
+  Locale,
+  Record<CurriculumInternalPreviewSafetyCheckStatus, string>
+> = {
+  sk: {
+    pass: "Pass",
+    warning: "Upozornenie",
+    blocked: "Blokované"
+  },
+  en: {
+    pass: "Pass",
+    warning: "Warning",
+    blocked: "Blocked"
+  }
+};
+
 const riskOrder: CurriculumVerificationRisk[] = ["high", "medium", "low"];
 
 function getModuleTitle(moduleId: string) {
@@ -386,6 +419,18 @@ export default async function ParentCurriculumVerificationPage() {
           <MetricCard
             label={isSlovak ? "Blokované blueprinty" : "Blocked blueprints"}
             value={verificationSummary.blueprintReadinessBlocked}
+          />
+          <MetricCard
+            label={isSlovak ? "Interné preview" : "Internal previews"}
+            value={verificationSummary.internalPreviews}
+          />
+          <MetricCard
+            label={isSlovak ? "Blokované preview kontroly" : "Blocked preview checks"}
+            value={verificationSummary.internalPreviewBlockedChecks}
+          />
+          <MetricCard
+            label={isSlovak ? "Preview upozornenia" : "Preview warnings"}
+            value={verificationSummary.internalPreviewWarningChecks}
           />
         </div>
       </section>
@@ -861,6 +906,71 @@ export default async function ParentCurriculumVerificationPage() {
                 </div>
               </dl>
               <p className="mt-3 text-sm leading-6 text-slate-700">{gate.releaseNote}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Interné preview" : "Internal previews"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Preview je iba pre parent/product review. Nie je child-facing, nie je hodnotené a nič neoveruje."
+            : "Preview is for parent/product review only. It is not child-facing, not scored, and does not verify anything."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_INTERNAL_PREVIEWS.map((preview) => (
+            <article key={preview.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(preview.moduleId)}</h3>
+                  <p className="mt-1 text-sm font-semibold text-slate-700">{preview.title}</p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {internalPreviewStatusLabels[locale][preview.status]}
+                </span>
+              </div>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Počet položiek" : "Item count"}</dt>
+                  <dd className="mt-1 text-slate-600">{preview.items.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Preview ID" : "Preview ID"}</dt>
+                  <dd className="mt-1 break-words text-slate-600">{preview.id}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{preview.releaseWarning}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Bezpečnostné kontroly interného preview" : "Internal preview safety checks"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Tieto kontroly chránia pred predčasným uvoľnením preview do detskej časti alebo diagnostiky."
+            : "These checks protect against accidentally releasing preview content into child routes or diagnostics."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS.map((check) => (
+            <article key={check.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{check.label}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{check.previewId}</p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {internalPreviewSafetyCheckStatusLabels[locale][check.status]}
+                </span>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{check.finding}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{check.requiredAction}</p>
             </article>
           ))}
         </div>

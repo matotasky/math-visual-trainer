@@ -236,6 +236,34 @@ They are draft item plans and must remain disconnected from diagnostic scoring, 
 
 No assessment blueprint item should influence child placement, parent analytics, or progression without a separate implementation and review pass.
 
+## Internal Previews
+
+Internal previews are for parent/product review only.
+
+They provide a compact way to inspect how draft lesson steps and draft assessment items might look conceptually, but they are not child-facing, not scored, and not verified lesson content.
+
+Internal previews should never be linked from child routes until a later explicit release step changes the relevant gates and implementation.
+
+The presence of an internal preview does not mean the lesson is ready, the assessment can be scored, or the curriculum module is verified.
+
+## Internal Preview Safety Checks
+
+Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.
+
+`blocked` checks prevent accidental release and must stop child-facing or diagnostic use.
+
+`warning` checks identify wording or product risks that need manual review before release.
+
+`pass` does not mean the module or content is verified. It only means one specific safety condition is currently satisfied.
+
+## Release Boundary
+
+Internal previews do not change lesson blueprint status, assessment blueprint status, readiness gate status, module verification status, or module mapping status.
+
+They also do not write to Firestore and do not connect assessment items to diagnostic scoring.
+
+Child-facing release requires a later explicit release implementation block. Until then, internal preview data must stay inside parent/product verification UI.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.
