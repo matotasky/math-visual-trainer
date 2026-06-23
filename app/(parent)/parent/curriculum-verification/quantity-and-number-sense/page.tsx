@@ -17,6 +17,7 @@ import {
   SK_MATH_REVIEW_CHECKLIST,
   SK_MATH_REVIEW_EVIDENCE
 } from "@/data/curriculum/sk-math";
+import { getQuantityAndNumberSensePreviewGuard } from "@/lib/curriculum/preview-guards";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumAssessmentBlueprintStatus,
@@ -422,6 +423,7 @@ export default async function QuantityAndNumberSenseReviewPage() {
     ? SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS.find((resolution) => resolution.previewId === internalPreview.id)
     : undefined;
   const childFacingReleasePlan = SK_MATH_CHILD_FACING_RELEASE_PLANS.find((plan) => plan.moduleId === moduleId);
+  const previewGuard = getQuantityAndNumberSensePreviewGuard();
 
   if (
     !curriculumModule ||
@@ -863,6 +865,30 @@ export default async function QuantityAndNumberSenseReviewPage() {
             />
             <ListBlock title={isSlovak ? "Non-goals" : "Non-goals"} items={childFacingReleasePlan.nonGoals} />
           </div>
+          <div className="mt-5 rounded-md border border-sky-200 bg-sky-50 p-4">
+            <p className="text-sm font-bold text-sky-950">
+              {isSlovak ? "Preview only — bez skórovania a bez Firestore zápisov" : "Preview only — no scoring, no Firestore writes"}
+            </p>
+            <Link
+              className="mt-3 inline-flex min-h-10 w-fit items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+              href="/child/curriculum/quantity-and-number-sense"
+            >
+              {isSlovak ? "Otvoriť detský preview" : "Open child preview"}
+            </Link>
+          </div>
+        </SectionCard>
+
+        <SectionCard title={isSlovak ? "Preview guard" : "Preview guard"}>
+          <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <Field label="canRenderPreview" value={String(previewGuard.canRenderPreview)} />
+            <Field label="canScore" value={String(previewGuard.canScore)} />
+            <Field label="canWriteProgress" value={String(previewGuard.canWriteProgress)} />
+            <Field label="canClaimVerified" value={String(previewGuard.canClaimVerified)} />
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">{isSlovak ? "Upozornenie" : "Warning"}</dt>
+              <dd className="mt-1 leading-6 text-slate-600">{previewGuard.warning}</dd>
+            </div>
+          </dl>
         </SectionCard>
 
         <SectionCard title={isSlovak ? "Dôkazy z manuálneho overenia" : "Review evidence"}>

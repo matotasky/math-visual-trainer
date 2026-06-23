@@ -242,9 +242,27 @@ Internal previews are for parent/product review only.
 
 They provide a compact way to inspect how draft lesson steps and draft assessment items might look conceptually, but they are not child-facing, not scored, and not verified lesson content.
 
-Internal previews should never be linked from child routes until a later explicit release step changes the relevant gates and implementation.
+Internal previews should not be linked from general child curriculum navigation until a later explicit release step changes the relevant gates and implementation.
 
 The presence of an internal preview does not mean the lesson is ready, the assessment can be scored, or the curriculum module is verified.
+
+## Visible Child Preview
+
+The first visible child preview route is `/child/curriculum/quantity-and-number-sense`.
+
+This route can be opened directly for internal and manual testing. It is visible, but it is read-only and clearly labeled as a preview lesson.
+
+The visible child preview:
+- does not score
+- does not write to Firestore
+- does not update mastery or progression
+- does not connect assessment blueprint items to diagnostic scoring
+- does not mean the module is verified
+- does not change blueprint status, readiness gates, release plan status, or module verification status
+
+The route is linked only from the parent/product verification detail page for `quantity_and_number_sense`. It is not linked from the general child curriculum navigation yet.
+
+The preview guard intentionally allows rendering while blocking scoring, progress writes, and verified claims.
 
 ## Internal Preview Safety Checks
 
