@@ -4,9 +4,11 @@ import {
   SK_MATH_ASSESSMENT_BLUEPRINTS,
   SK_MATH_BLUEPRINT_READINESS_GATES,
   SK_MATH_BLUEPRINT_REVIEW_EVIDENCE,
+  SK_MATH_CHILD_FACING_RELEASE_PLANS,
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_CYCLE_1_VERIFICATION_MATRIX,
   SK_MATH_INTERNAL_PREVIEWS,
+  SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS,
   SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS,
   SK_MATH_LESSON_BLUEPRINTS,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
@@ -24,7 +26,10 @@ import type {
   CurriculumAreaId,
   CurriculumBlueprintReadinessGateStatus,
   CurriculumBlueprintReviewStatus,
+  CurriculumChildFacingReleasePlan,
+  CurriculumChildFacingReleasePlanStatus,
   CurriculumInternalPreviewSafetyCheckStatus,
+  CurriculumInternalPreviewReviewResolutionStatus,
   CurriculumInternalPreviewStatus,
   CurriculumLessonBlueprintStatus,
   CurriculumModuleOfficialMappingStatus,
@@ -316,6 +321,52 @@ const internalPreviewSafetyCheckStatusLabels: Record<
   }
 };
 
+const internalPreviewReviewResolutionStatusLabels: Record<
+  Locale,
+  Record<CurriculumInternalPreviewReviewResolutionStatus, string>
+> = {
+  sk: {
+    not_started: "Nezačaté",
+    issues_recorded: "Problémy zaznamenané",
+    ready_for_internal_review: "Pripravené na interný review",
+    blocked_for_release: "Blokované pre release"
+  },
+  en: {
+    not_started: "Not started",
+    issues_recorded: "Issues recorded",
+    ready_for_internal_review: "Ready for internal review",
+    blocked_for_release: "Blocked for release"
+  }
+};
+
+const childFacingReleasePlanStatusLabels: Record<Locale, Record<CurriculumChildFacingReleasePlanStatus, string>> = {
+  sk: {
+    not_started: "Nezačaté",
+    draft_plan: "Draft plán",
+    ready_for_shell: "Pripravené na shell",
+    blocked: "Blokované"
+  },
+  en: {
+    not_started: "Not started",
+    draft_plan: "Draft plan",
+    ready_for_shell: "Ready for shell",
+    blocked: "Blocked"
+  }
+};
+
+const releaseScopeLabels: Record<Locale, Record<CurriculumChildFacingReleasePlan["releaseScope"], string>> = {
+  sk: {
+    lesson_shell_only: "Iba shell lekcie",
+    lesson_with_practice: "Lekcia s precvičovaním",
+    lesson_with_assessment: "Lekcia s hodnotením"
+  },
+  en: {
+    lesson_shell_only: "Lesson shell only",
+    lesson_with_practice: "Lesson with practice",
+    lesson_with_assessment: "Lesson with assessment"
+  }
+};
+
 const riskOrder: CurriculumVerificationRisk[] = ["high", "medium", "low"];
 
 function getModuleTitle(moduleId: string) {
@@ -431,6 +482,18 @@ export default async function ParentCurriculumVerificationPage() {
           <MetricCard
             label={isSlovak ? "Preview upozornenia" : "Preview warnings"}
             value={verificationSummary.internalPreviewWarningChecks}
+          />
+          <MetricCard
+            label={isSlovak ? "Vyhodnotenia preview" : "Preview resolutions"}
+            value={verificationSummary.internalPreviewReviewResolutions}
+          />
+          <MetricCard
+            label={isSlovak ? "Draft release plány" : "Draft release plans"}
+            value={verificationSummary.childFacingReleasePlansDraft}
+          />
+          <MetricCard
+            label={isSlovak ? "Vypnuté release plány" : "Disabled release plans"}
+            value={verificationSummary.childFacingReleasePlansDisabled}
           />
         </div>
       </section>
@@ -971,6 +1034,104 @@ export default async function ParentCurriculumVerificationPage() {
               </div>
               <p className="mt-3 text-sm leading-6 text-slate-700">{check.finding}</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">{check.requiredAction}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Vyhodnotenie interného preview" : "Internal preview review resolutions"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Vyhodnotenie zaznamenáva produktové zistenia. Neznamená release do detskej časti."
+            : "Resolution records product findings. It does not mean child-facing release."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS.map((resolution) => (
+            <article key={resolution.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(resolution.moduleId)}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{resolution.previewId}</p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {internalPreviewReviewResolutionStatusLabels[locale][resolution.status]}
+                </span>
+              </div>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-5">
+                <div>
+                  <dt className="font-bold text-slate-800">
+                    {isSlovak ? "Prijaté zistenia" : "Accepted findings"}
+                  </dt>
+                  <dd className="mt-1 text-slate-600">{resolution.acceptedFindings.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Otvorené problémy" : "Open issues"}</dt>
+                  <dd className="mt-1 text-slate-600">{resolution.openIssues.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Release blokátory" : "Release blockers"}</dt>
+                  <dd className="mt-1 text-slate-600">{resolution.releaseBlockers.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Reviewer" : "Reviewer"}</dt>
+                  <dd className="mt-1 text-slate-600">{resolution.reviewedBy}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Dátum review" : "Reviewed at"}</dt>
+                  <dd className="mt-1 text-slate-600">{resolution.reviewedAt ?? "not reviewed"}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{resolution.reviewerDecision}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">
+          {isSlovak ? "Plány child-facing releasu" : "Child-facing release plans"}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          {isSlovak
+            ? "Release plán je iba plánovací artefakt. Nevytvára route a musí zostať vypnutý."
+            : "Release plan is a planning artifact only. It creates no route and must stay disabled."}
+        </p>
+        <div className="mt-4 grid gap-3">
+          {SK_MATH_CHILD_FACING_RELEASE_PLANS.map((plan) => (
+            <article key={plan.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-slate-950">{getModuleTitle(plan.moduleId)}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{plan.plannedRoute}</p>
+                </div>
+                <span className="inline-flex w-fit rounded-md bg-white px-2 py-1 text-xs font-bold uppercase text-slate-600 shadow-sm">
+                  {childFacingReleasePlanStatusLabels[locale][plan.status]}
+                </span>
+              </div>
+              <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-5">
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Scope" : "Scope"}</dt>
+                  <dd className="mt-1 text-slate-600">{releaseScopeLabels[locale][plan.releaseScope]}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Musí zostať vypnuté" : "Must stay disabled"}</dt>
+                  <dd className="mt-1 text-slate-600">{plan.mustRemainDisabled ? "true" : "false"}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">
+                    {isSlovak ? "Kroky pred enable" : "Required before enable"}
+                  </dt>
+                  <dd className="mt-1 text-slate-600">{plan.requiredBeforeEnable.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-bold text-slate-800">{isSlovak ? "Non-goals" : "Non-goals"}</dt>
+                  <dd className="mt-1 text-slate-600">{plan.nonGoals.length}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{plan.releaseNotes}</p>
             </article>
           ))}
         </div>

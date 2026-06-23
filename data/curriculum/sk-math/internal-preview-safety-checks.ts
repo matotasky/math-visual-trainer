@@ -22,7 +22,7 @@ export const SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS: CurriculumInternalPreviewSa
     previewId: "internal_preview_quantity_and_number_sense_intro",
     label: "Readiness gates remain blocked",
     status: "blocked",
-    finding: "Lesson and assessment readiness gates are still blocked.",
+    finding: "Lesson and assessment readiness gates are still blocked. Internal review may continue, but release remains blocked.",
     requiredAction: "Record blueprint review evidence and update gates only in a later explicit review/release step."
   },
   {
@@ -38,7 +38,8 @@ export const SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS: CurriculumInternalPreviewSa
     previewId: "internal_preview_quantity_and_number_sense_intro",
     label: "Wording review needed",
     status: "warning",
-    finding: "Preview text paraphrases draft prompts and is not final child-facing wording.",
+    finding:
+      "Preview text paraphrases draft prompts and is not final child-facing wording. Review resolution recorded, but wording still needs final review.",
     requiredAction: "Manually review wording against official source evidence before release."
   }
 ];

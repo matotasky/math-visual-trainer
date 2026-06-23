@@ -224,6 +224,40 @@ export type CurriculumInternalPreviewSafetyCheck = {
   requiredAction: string;
 };
 
+export type CurriculumInternalPreviewReviewResolutionStatus =
+  | "not_started"
+  | "issues_recorded"
+  | "ready_for_internal_review"
+  | "blocked_for_release";
+
+export type CurriculumInternalPreviewReviewResolution = {
+  id: string;
+  previewId: string;
+  moduleId: string;
+  status: CurriculumInternalPreviewReviewResolutionStatus;
+  acceptedFindings: string[];
+  openIssues: string[];
+  releaseBlockers: string[];
+  reviewerDecision: string;
+  reviewedBy: string;
+  reviewedAt: string | null;
+};
+
+export type CurriculumChildFacingReleasePlanStatus = "not_started" | "draft_plan" | "ready_for_shell" | "blocked";
+
+export type CurriculumChildFacingReleasePlan = {
+  id: string;
+  moduleId: string;
+  sourcePreviewId: string;
+  status: CurriculumChildFacingReleasePlanStatus;
+  plannedRoute: string;
+  releaseScope: "lesson_shell_only" | "lesson_with_practice" | "lesson_with_assessment";
+  mustRemainDisabled: boolean;
+  requiredBeforeEnable: string[];
+  nonGoals: string[];
+  releaseNotes: string;
+};
+
 export type CurriculumReviewStatus = "not_started" | "in_review" | "evidence_recorded" | "ready_for_decision";
 
 export type CurriculumReviewDecisionRecommendation =

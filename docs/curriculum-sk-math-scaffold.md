@@ -264,6 +264,34 @@ They also do not write to Firestore and do not connect assessment items to diagn
 
 Child-facing release requires a later explicit release implementation block. Until then, internal preview data must stay inside parent/product verification UI.
 
+## Internal Preview Review Resolutions
+
+Internal preview review resolutions record product-review findings after an internal preview exists.
+
+`issues_recorded` means the preview has been reviewed enough to capture useful findings, open issues, and release blockers. It does not mean the preview is ready for children.
+
+Accepted findings can confirm that the internal preview is useful for product planning. Open issues and release blockers must remain visible until a later block explicitly resolves them.
+
+Resolution data is read-only scaffold data. It does not change blueprint readiness gates, lesson or assessment blueprint status, module verification status, mapping status, or child-facing behavior.
+
+## Child-Facing Release Plans
+
+Child-facing release plans are planning artifacts only.
+
+`plannedRoute` describes where a future child-facing shell might live, but the route must not be created, linked, or enabled by the release plan itself.
+
+`mustRemainDisabled` protects against accidental route creation or linking while lesson wording, visual examples, readiness gates, and public wording are still unresolved.
+
+Release plans do not write to Firestore, do not connect assessment content to diagnostic scoring, and do not make curriculum content visible to children.
+
+## Release Discipline
+
+`ready_for_internal_review` is not the same as `ready_for_child_preview`.
+
+Internal review can continue while child release remains blocked. A child-facing release requires a later explicit implementation block that creates or links a route on purpose.
+
+Diagnostic scoring, mastery progression, Firestore attempt writes, and child-facing curriculum navigation remain out of scope for internal preview and release-plan scaffold work.
+
 ## Official Verification Workflow
 
 Modules currently remain a scaffold. The verification metadata tracks how far each module has moved toward official alignment, but it does not turn the draft map into a certified curriculum implementation.

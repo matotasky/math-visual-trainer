@@ -5,7 +5,7 @@ export const SK_MATH_INTERNAL_PREVIEWS: CurriculumInternalPreview[] = [
     id: "internal_preview_quantity_and_number_sense_intro",
     moduleId: "quantity_and_number_sense",
     title: "Internal preview: Množstvo a porozumenie číslam",
-    status: "internal_only",
+    status: "ready_for_internal_review",
     sourceLessonBlueprintId: "lesson_blueprint_quantity_and_number_sense_intro",
     sourceAssessmentBlueprintId: "assessment_blueprint_quantity_and_number_sense_intro",
     items: [
@@ -65,6 +65,6 @@ export const SK_MATH_INTERNAL_PREVIEWS: CurriculumInternalPreview[] = [
       }
     ],
     releaseWarning:
-      "Internal preview only. Not child-facing, not scored, not verified, and blocked from release until blueprint review evidence and readiness gates change."
+      "Internal preview only. Not child-facing, not scored, not verified, and blocked from release until blueprint review evidence and readiness gates change. It is ready for internal review only, not child release."
   }
 ];

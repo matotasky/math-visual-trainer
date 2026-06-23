@@ -3,7 +3,9 @@ import type {
   CurriculumAreaId,
   CurriculumBlueprintReadinessGateStatus,
   CurriculumBlueprintReviewStatus,
+  CurriculumChildFacingReleasePlanStatus,
   CurriculumCycleId,
+  CurriculumInternalPreviewReviewResolutionStatus,
   CurriculumInternalPreviewSafetyCheckStatus,
   CurriculumInternalPreviewStatus,
   CurriculumLessonBlueprintStatus,
@@ -21,9 +23,11 @@ import type {
 import { SK_MATH_ASSESSMENT_BLUEPRINTS } from "./assessment-blueprints";
 import { SK_MATH_BLUEPRINT_READINESS_GATES } from "./blueprint-readiness-gates";
 import { SK_MATH_BLUEPRINT_REVIEW_EVIDENCE } from "./blueprint-review-evidence";
+import { SK_MATH_CHILD_FACING_RELEASE_PLANS } from "./child-facing-release-plans";
 import { SK_MATH_CURRICULUM_AREAS } from "./areas";
 import { SK_MATH_CURRICULUM_CYCLES } from "./cycles";
 import { SK_MATH_INTERNAL_PREVIEWS } from "./internal-previews";
+import { SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS } from "./internal-preview-review-resolutions";
 import { SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS } from "./internal-preview-safety-checks";
 import { SK_MATH_LESSON_BLUEPRINTS } from "./lesson-blueprints";
 import { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
@@ -41,8 +45,10 @@ export { SK_MATH_CURRICULUM_MODULES } from "./modules";
 export { SK_MATH_ASSESSMENT_BLUEPRINTS } from "./assessment-blueprints";
 export { SK_MATH_BLUEPRINT_READINESS_GATES } from "./blueprint-readiness-gates";
 export { SK_MATH_BLUEPRINT_REVIEW_EVIDENCE } from "./blueprint-review-evidence";
+export { SK_MATH_CHILD_FACING_RELEASE_PLANS } from "./child-facing-release-plans";
 export { SK_MATH_LESSON_BLUEPRINTS } from "./lesson-blueprints";
 export { SK_MATH_INTERNAL_PREVIEWS } from "./internal-previews";
+export { SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS } from "./internal-preview-review-resolutions";
 export { SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS } from "./internal-preview-safety-checks";
 export { SK_MATH_MODULE_OFFICIAL_MAPPINGS } from "./module-official-mapping";
 export { SK_MATH_MODULE_VERIFICATION_DECISIONS } from "./module-verification-decisions";
@@ -213,6 +219,26 @@ export function getInternalPreviewSafetyChecksByStatus(status: CurriculumInterna
   return SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS.filter((check) => check.status === status);
 }
 
+export function getInternalPreviewReviewResolutionsByPreview(previewId: string) {
+  return SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS.filter((resolution) => resolution.previewId === previewId);
+}
+
+export function getInternalPreviewReviewResolutionsByModule(moduleId: string) {
+  return SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS.filter((resolution) => resolution.moduleId === moduleId);
+}
+
+export function getInternalPreviewReviewResolutionsByStatus(status: CurriculumInternalPreviewReviewResolutionStatus) {
+  return SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS.filter((resolution) => resolution.status === status);
+}
+
+export function getChildFacingReleasePlansByModule(moduleId: string) {
+  return SK_MATH_CHILD_FACING_RELEASE_PLANS.filter((plan) => plan.moduleId === moduleId);
+}
+
+export function getChildFacingReleasePlansByStatus(status: CurriculumChildFacingReleasePlanStatus) {
+  return SK_MATH_CHILD_FACING_RELEASE_PLANS.filter((plan) => plan.status === status);
+}
+
 export function getCurriculumVerificationSummary() {
   const cycleOneModules = SK_MATH_CURRICULUM_MODULES.filter((module) => module.cycleId === "cycle_1");
   const modulesWithRecordedEvidence = new Set(
@@ -249,6 +275,13 @@ export function getCurriculumVerificationSummary() {
     ).length,
     internalPreviewWarningChecks: SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS.filter(
       (check) => check.status === "warning"
+    ).length,
+    internalPreviewReviewResolutions: SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS.length,
+    childFacingReleasePlansDraft: SK_MATH_CHILD_FACING_RELEASE_PLANS.filter(
+      (plan) => plan.status === "draft_plan"
+    ).length,
+    childFacingReleasePlansDisabled: SK_MATH_CHILD_FACING_RELEASE_PLANS.filter(
+      (plan) => plan.mustRemainDisabled
     ).length
   };
 }

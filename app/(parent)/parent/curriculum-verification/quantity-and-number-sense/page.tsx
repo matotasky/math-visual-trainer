@@ -5,8 +5,10 @@ import {
   SK_MATH_ASSESSMENT_BLUEPRINTS,
   SK_MATH_BLUEPRINT_READINESS_GATES,
   SK_MATH_BLUEPRINT_REVIEW_EVIDENCE,
+  SK_MATH_CHILD_FACING_RELEASE_PLANS,
   SK_MATH_CURRICULUM_MODULES,
   SK_MATH_INTERNAL_PREVIEWS,
+  SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS,
   SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS,
   SK_MATH_LESSON_BLUEPRINTS,
   SK_MATH_MODULE_OFFICIAL_MAPPINGS,
@@ -23,6 +25,9 @@ import type {
   CurriculumBlueprintReadinessGateStatus,
   CurriculumBlueprintReviewEvidence,
   CurriculumBlueprintReviewStatus,
+  CurriculumChildFacingReleasePlan,
+  CurriculumChildFacingReleasePlanStatus,
+  CurriculumInternalPreviewReviewResolutionStatus,
   CurriculumInternalPreviewSafetyCheckStatus,
   CurriculumInternalPreviewItemType,
   CurriculumInternalPreviewStatus,
@@ -325,6 +330,52 @@ const internalPreviewSafetyCheckStatusLabels: Record<
   }
 };
 
+const internalPreviewReviewResolutionStatusLabels: Record<
+  Locale,
+  Record<CurriculumInternalPreviewReviewResolutionStatus, string>
+> = {
+  sk: {
+    not_started: "Nezačaté",
+    issues_recorded: "Problémy zaznamenané",
+    ready_for_internal_review: "Pripravené na interný review",
+    blocked_for_release: "Blokované pre release"
+  },
+  en: {
+    not_started: "Not started",
+    issues_recorded: "Issues recorded",
+    ready_for_internal_review: "Ready for internal review",
+    blocked_for_release: "Blocked for release"
+  }
+};
+
+const childFacingReleasePlanStatusLabels: Record<Locale, Record<CurriculumChildFacingReleasePlanStatus, string>> = {
+  sk: {
+    not_started: "Nezačaté",
+    draft_plan: "Draft plán",
+    ready_for_shell: "Pripravené na shell",
+    blocked: "Blokované"
+  },
+  en: {
+    not_started: "Not started",
+    draft_plan: "Draft plan",
+    ready_for_shell: "Ready for shell",
+    blocked: "Blocked"
+  }
+};
+
+const releaseScopeLabels: Record<Locale, Record<CurriculumChildFacingReleasePlan["releaseScope"], string>> = {
+  sk: {
+    lesson_shell_only: "Iba shell lekcie",
+    lesson_with_practice: "Lekcia s precvičovaním",
+    lesson_with_assessment: "Lekcia s hodnotením"
+  },
+  en: {
+    lesson_shell_only: "Lesson shell only",
+    lesson_with_practice: "Lesson with practice",
+    lesson_with_assessment: "Lesson with assessment"
+  }
+};
+
 const moduleText = {
   sk: {
     title: "Množstvo a porozumenie číslam",
@@ -367,6 +418,10 @@ export default async function QuantityAndNumberSenseReviewPage() {
   const internalPreviewSafetyChecks = internalPreview
     ? SK_MATH_INTERNAL_PREVIEW_SAFETY_CHECKS.filter((check) => check.previewId === internalPreview.id)
     : [];
+  const internalPreviewReviewResolution = internalPreview
+    ? SK_MATH_INTERNAL_PREVIEW_REVIEW_RESOLUTIONS.find((resolution) => resolution.previewId === internalPreview.id)
+    : undefined;
+  const childFacingReleasePlan = SK_MATH_CHILD_FACING_RELEASE_PLANS.find((plan) => plan.moduleId === moduleId);
 
   if (
     !curriculumModule ||
@@ -380,7 +435,9 @@ export default async function QuantityAndNumberSenseReviewPage() {
     !lessonBlueprintGate ||
     !assessmentBlueprintReviewEvidence ||
     !assessmentBlueprintGate ||
-    !internalPreview
+    !internalPreview ||
+    !internalPreviewReviewResolution ||
+    !childFacingReleasePlan
   ) {
     return (
       <section className="py-8">
@@ -739,6 +796,72 @@ export default async function QuantityAndNumberSenseReviewPage() {
                 <p className="mt-2 text-sm leading-6 text-slate-600">{check.requiredAction}</p>
               </article>
             ))}
+          </div>
+        </SectionCard>
+
+        <SectionCard title={isSlovak ? "Vyhodnotenie interného preview" : "Internal preview review resolution"}>
+          <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <Field
+              label={isSlovak ? "Stav" : "Status"}
+              value={internalPreviewReviewResolutionStatusLabels[locale][internalPreviewReviewResolution.status]}
+            />
+            <Field
+              label={isSlovak ? "Kontrolór" : "Reviewer"}
+              value={internalPreviewReviewResolution.reviewedBy || (isSlovak ? "nepriradené" : "not assigned")}
+            />
+            <Field
+              label={isSlovak ? "Dátum review" : "Reviewed at"}
+              value={internalPreviewReviewResolution.reviewedAt ?? (isSlovak ? "neskontrolované" : "not reviewed")}
+            />
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">{isSlovak ? "Rozhodnutie reviewera" : "Reviewer decision"}</dt>
+              <dd className="mt-1 leading-6 text-slate-600">
+                {internalPreviewReviewResolution.reviewerDecision}
+              </dd>
+            </div>
+          </dl>
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            <ListBlock
+              title={isSlovak ? "Prijaté zistenia" : "Accepted findings"}
+              items={internalPreviewReviewResolution.acceptedFindings}
+            />
+            <ListBlock
+              title={isSlovak ? "Otvorené problémy" : "Open issues"}
+              items={internalPreviewReviewResolution.openIssues}
+            />
+            <ListBlock
+              title={isSlovak ? "Release blokátory" : "Release blockers"}
+              items={internalPreviewReviewResolution.releaseBlockers}
+            />
+          </div>
+        </SectionCard>
+
+        <SectionCard title={isSlovak ? "Plán child-facing releasu" : "Child-facing release plan"}>
+          <dl className="grid gap-4 text-sm md:grid-cols-2">
+            <Field label={isSlovak ? "Plánovaná route" : "Planned route"} value={childFacingReleasePlan.plannedRoute} />
+            <Field
+              label={isSlovak ? "Stav" : "Status"}
+              value={childFacingReleasePlanStatusLabels[locale][childFacingReleasePlan.status]}
+            />
+            <Field
+              label={isSlovak ? "Rozsah releasu" : "Release scope"}
+              value={releaseScopeLabels[locale][childFacingReleasePlan.releaseScope]}
+            />
+            <Field
+              label={isSlovak ? "Musí zostať vypnuté" : "Must remain disabled"}
+              value={childFacingReleasePlan.mustRemainDisabled ? "true" : "false"}
+            />
+            <div className="md:col-span-2">
+              <dt className="font-bold text-slate-800">{isSlovak ? "Poznámka k releasu" : "Release notes"}</dt>
+              <dd className="mt-1 leading-6 text-slate-600">{childFacingReleasePlan.releaseNotes}</dd>
+            </div>
+          </dl>
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            <ListBlock
+              title={isSlovak ? "Potrebné pred zapnutím" : "Required before enable"}
+              items={childFacingReleasePlan.requiredBeforeEnable}
+            />
+            <ListBlock title={isSlovak ? "Non-goals" : "Non-goals"} items={childFacingReleasePlan.nonGoals} />
           </div>
         </SectionCard>
 
