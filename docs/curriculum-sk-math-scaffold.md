@@ -280,11 +280,21 @@ Interactive prompts are for manual testing only. They are not assessment items, 
 
 It remains a preview learning activity, not a scored lesson, test, diagnostic, or verified ŠVP-aligned lesson.
 
-The preview has a local completion flow so the child can finish the four activities and see a friendly completion message.
+The preview has a local completion flow so the child can finish the mini-module activities and see a friendly completion message.
 
 Completion persistence is intentionally local-only for now. It does not write attempts, sessions, aggregates, mastery, streaks, or parent dashboard data.
 
 If persistence is added later, it should be saved as preview-only learning completion and must not affect diagnostic scoring, mastery, or curriculum verification claims.
+
+## First Interactive Mini-Module
+
+The first linked lesson now behaves like a small local-only mini-module with six activities.
+
+It shows one activity at a time, uses Back/Next navigation, and tracks local completion as `Hotové: X / 6`.
+
+The activities cover quantity recognition, comparison, same quantity in different layouts, number after, number before, and a reflection step.
+
+All state stays in local React state. The module does not persist completion, score diagnostics, update mastery, create attempts, create sessions, update aggregates, or affect parent dashboard data.
 
 ## Internal Preview Safety Checks
 

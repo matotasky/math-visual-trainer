@@ -1,83 +1,141 @@
 "use client";
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
-type ActivityId = "quantity" | "compare" | "numberLine" | "reflection";
+type ActivityId = "quantity" | "compare" | "sameQuantity" | "afterNumber" | "beforeNumber" | "reflection";
 
 type ActivityFeedback = {
   tone: "success" | "gentle";
   message: string;
 };
 
-const feedbackByActivity: Record<ActivityId, Record<string, ActivityFeedback>> = {
-  quantity: {
-    "3": {
-      tone: "gentle",
-      message: "Skús ich spočítať ešte raz. Výsledky sa neukladajú."
-    },
-    "5": {
-      tone: "success",
-      message: "Áno, je ich 5."
-    },
-    "6": {
-      tone: "gentle",
-      message: "Skús ich spočítať ešte raz. Výsledky sa neukladajú."
-    }
-  },
-  compare: {
-    "Vľavo": {
-      tone: "gentle",
-      message: "Pozri sa ešte raz na obe skupiny. Výsledky sa neukladajú."
-    },
-    "Vpravo": {
-      tone: "success",
-      message: "Áno, vpravo je viac bodiek."
-    },
-    Rovnako: {
-      tone: "gentle",
-      message: "Skús porovnať počet bodiek v oboch skupinách ešte raz."
-    }
-  },
-  numberLine: {
-    "2": {
-      tone: "gentle",
-      message: "Skús sa pozrieť na číslo hneď napravo od 3."
-    },
-    "4": {
-      tone: "success",
-      message: "Áno, hneď za číslom 3 je číslo 4."
-    },
-    "5": {
-      tone: "gentle",
-      message: "Si blízko. Hľadaj číslo hneď za 3, nie ďalej."
-    }
-  },
-  reflection: {
-    rozumiem: {
-      tone: "success",
-      message: "Výborne. Toto je iba ukážka bez hodnotenia."
-    }
-  }
+type Activity = {
+  id: ActivityId;
+  title: string;
+  prompt: string;
+  options: string[];
+  correctAnswer: string;
+  successMessage: string;
+  gentleMessage: string;
+  visual: ReactNode;
 };
+
+const activities: Activity[] = [
+  {
+    id: "quantity",
+    title: "1. Množstvo",
+    prompt: "Koľko bodiek vidíš?",
+    options: ["3", "5", "6"],
+    correctAnswer: "5",
+    successMessage: "Áno, je ich 5.",
+    gentleMessage: "Skús ich spočítať ešte raz. Výsledky sa neukladajú.",
+    visual: <DotGroup count={5} />
+  },
+  {
+    id: "compare",
+    title: "2. Porovnaj skupiny",
+    prompt: "Kde je viac?",
+    options: ["Vľavo", "Vpravo", "Rovnako"],
+    correctAnswer: "Vpravo",
+    successMessage: "Áno, vpravo je viac bodiek.",
+    gentleMessage: "Pozri sa ešte raz na obe skupiny. Výsledky sa neukladajú.",
+    visual: (
+      <div className="grid grid-cols-2 gap-5">
+        <VisualGroup label="Vľavo">
+          <DotGroup count={4} />
+        </VisualGroup>
+        <VisualGroup label="Vpravo">
+          <DotGroup count={6} />
+        </VisualGroup>
+      </div>
+    )
+  },
+  {
+    id: "sameQuantity",
+    title: "3. Rovnaký počet",
+    prompt: "Majú skupiny rovnaký počet?",
+    options: ["Áno", "Nie"],
+    correctAnswer: "Áno",
+    successMessage: "Áno. Aj keď vyzerajú inak, počet je rovnaký.",
+    gentleMessage: "Skús spočítať bodky v oboch skupinách. Výsledky sa neukladajú.",
+    visual: (
+      <div className="grid grid-cols-2 gap-5">
+        <VisualGroup label="Roztiahnuté">
+          <SpreadDotGroup />
+        </VisualGroup>
+        <VisualGroup label="Pri sebe">
+          <DotGroup count={5} />
+        </VisualGroup>
+      </div>
+    )
+  },
+  {
+    id: "afterNumber",
+    title: "4. Číslo za",
+    prompt: "Čo je hneď za číslom 3?",
+    options: ["2", "4", "5"],
+    correctAnswer: "4",
+    successMessage: "Áno, hneď za číslom 3 je číslo 4.",
+    gentleMessage: "Skús sa pozrieť na číslo hneď napravo od 3.",
+    visual: <NumberLine focus="after" />
+  },
+  {
+    id: "beforeNumber",
+    title: "5. Číslo pred",
+    prompt: "Čo je hneď pred číslom 3?",
+    options: ["1", "2", "4"],
+    correctAnswer: "2",
+    successMessage: "Áno, hneď pred číslom 3 je číslo 2.",
+    gentleMessage: "Skús sa pozrieť na číslo hneď naľavo od 3.",
+    visual: <NumberLine focus="before" />
+  },
+  {
+    id: "reflection",
+    title: "6. Premýšľaj o čísle",
+    prompt: "Povedz si nahlas: Číslo 4 môže znamenať štyri veci alebo štvrté miesto.",
+    options: ["Rozumiem"],
+    correctAnswer: "Rozumiem",
+    successMessage: "Výborne. Toto je iba ukážka bez hodnotenia.",
+    gentleMessage: "Skús si vetu povedať pokojne nahlas.",
+    visual: (
+      <div className="rounded-xl bg-white p-5 text-center shadow-sm">
+        <p className="text-6xl font-black text-slate-950">4</p>
+        <p className="mt-2 text-base font-bold text-slate-700">štyri veci · štvrté miesto</p>
+      </div>
+    )
+  }
+];
+
+const totalActivities = activities.length;
 
 export function QuantityNumberSensePreview() {
   const [answers, setAnswers] = useState<Partial<Record<ActivityId, string>>>({});
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [completionMessageVisible, setCompletionMessageVisible] = useState(false);
 
-  const completedActivities = [
-    answers.quantity === "5",
-    answers.compare === "Vpravo",
-    answers.numberLine === "4",
-    answers.reflection === "rozumiem"
-  ].filter(Boolean).length;
-  const allActivitiesComplete = completedActivities === 4;
+  const currentActivity = activities[currentStepIndex];
+  const completedActivities = activities.filter((activity) => answers[activity.id] === activity.correctAnswer).length;
+  const allActivitiesComplete = completedActivities === totalActivities;
+  const selectedAnswer = answers[currentActivity.id];
+  const currentFeedback = getFeedback(currentActivity, selectedAnswer);
+  const currentStepComplete = selectedAnswer === currentActivity.correctAnswer;
 
   function selectAnswer(activityId: ActivityId, value: string) {
     setAnswers((currentAnswers) => ({
       ...currentAnswers,
       [activityId]: value
     }));
+    setCompletionMessageVisible(false);
+  }
+
+  function goToPreviousStep() {
+    setCurrentStepIndex((index) => Math.max(0, index - 1));
+  }
+
+  function goToNextStep() {
+    setCurrentStepIndex((index) => Math.min(totalActivities - 1, index + 1));
   }
 
   function completePreviewLesson() {
@@ -90,100 +148,108 @@ export function QuantityNumberSensePreview() {
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-bold uppercase text-emerald-800">Preview lekcia — výsledky sa neukladajú.</p>
-          <h2 className="mt-1 text-2xl font-black text-slate-950">Skús si to nanečisto</h2>
+          <h2 className="mt-1 text-2xl font-black text-slate-950">Mini lekcia krok za krokom</h2>
           <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-emerald-950">
             Klikni na odpoveď a uvidíš len priateľskú spätnú väzbu. Nič sa nehodnotí a nič sa nikam nezapisuje.
           </p>
         </div>
-        <span className="inline-flex w-fit rounded-full bg-white px-3 py-1 text-xs font-bold uppercase text-emerald-800 shadow-sm">
-          Hotové: {completedActivities} / 4
-        </span>
+        <div className="flex flex-wrap gap-2">
+          <span className="inline-flex w-fit rounded-full bg-white px-3 py-1 text-xs font-bold uppercase text-emerald-800 shadow-sm">
+            Krok {currentStepIndex + 1} z {totalActivities}
+          </span>
+          <span className="inline-flex w-fit rounded-full bg-white px-3 py-1 text-xs font-bold uppercase text-emerald-800 shadow-sm">
+            Hotové: {completedActivities} / {totalActivities}
+          </span>
+        </div>
       </div>
 
-      <div className="mt-5 grid gap-4">
-        <ActivityCard
-          feedback={getFeedback("quantity", answers.quantity)}
-          prompt="Koľko bodiek vidíš?"
-          title="1. Množstvo"
-          visual={<DotGroup count={5} />}
-        >
-          <AnswerButtons
-            activityId="quantity"
-            options={["3", "5", "6"]}
-            selectedAnswer={answers.quantity}
-            selectAnswer={selectAnswer}
-          />
-        </ActivityCard>
-
-        <ActivityCard
-          feedback={getFeedback("compare", answers.compare)}
-          prompt="Kde je viac?"
-          title="2. Porovnaj skupiny"
-          visual={
-            <div className="grid grid-cols-2 gap-5">
-              <VisualGroup label="Vľavo">
-                <DotGroup count={4} />
-              </VisualGroup>
-              <VisualGroup label="Vpravo">
-                <DotGroup count={6} />
-              </VisualGroup>
+      <article className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-center">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-xl font-black text-slate-950">{currentActivity.title}</h3>
+              {currentStepComplete ? (
+                <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-black uppercase text-emerald-800">
+                  hotovo
+                </span>
+              ) : null}
             </div>
-          }
-        >
-          <AnswerButtons
-            activityId="compare"
-            options={["Vľavo", "Vpravo", "Rovnako"]}
-            selectedAnswer={answers.compare}
-            selectAnswer={selectAnswer}
-          />
-        </ActivityCard>
-
-        <ActivityCard
-          feedback={getFeedback("numberLine", answers.numberLine)}
-          prompt="Čo je hneď za číslom 3?"
-          title="3. Číselná os"
-          visual={<NumberLine />}
-        >
-          <AnswerButtons
-            activityId="numberLine"
-            options={["2", "4", "5"]}
-            selectedAnswer={answers.numberLine}
-            selectAnswer={selectAnswer}
-          />
-        </ActivityCard>
-
-        <ActivityCard
-          feedback={getFeedback("reflection", answers.reflection)}
-          prompt="Povedz si nahlas: Číslo 4 môže znamenať štyri veci alebo štvrté miesto."
-          title="4. Premýšľaj o čísle"
-          visual={
-            <div className="rounded-xl bg-white p-5 text-center shadow-sm">
-              <p className="text-6xl font-black text-slate-950">4</p>
-              <p className="mt-2 text-base font-bold text-slate-700">štyri veci · štvrté miesto</p>
+            <p className="mt-3 text-2xl font-black leading-9 text-slate-900">{currentActivity.prompt}</p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              {currentActivity.options.map((option) => (
+                <button
+                  className={`min-h-14 min-w-24 rounded-xl border px-5 py-3 text-xl font-black transition focus:outline-none focus:ring-4 focus:ring-sky-200 ${
+                    selectedAnswer === option
+                      ? "border-slate-950 bg-slate-950 text-white"
+                      : "border-slate-200 bg-white text-slate-950 hover:border-sky-400 hover:bg-sky-50"
+                  }`}
+                  key={option}
+                  onClick={() => selectAnswer(currentActivity.id, option)}
+                  type="button"
+                >
+                  {option}
+                </button>
+              ))}
             </div>
-          }
-        >
+            {currentFeedback ? (
+              <p
+                className={`mt-4 rounded-xl border p-4 text-base font-bold leading-7 ${
+                  currentFeedback.tone === "success"
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+                    : "border-sky-200 bg-sky-50 text-sky-950"
+                }`}
+              >
+                {currentFeedback.message}
+              </p>
+            ) : null}
+          </div>
+          <div>{currentActivity.visual}</div>
+        </div>
+
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <button
-            className="min-h-14 rounded-xl bg-slate-950 px-5 py-3 text-lg font-black text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300"
-            onClick={() => selectAnswer("reflection", "rozumiem")}
+            className="min-h-12 rounded-xl border border-slate-300 bg-white px-5 py-3 text-base font-black text-slate-800 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={currentStepIndex === 0}
+            onClick={goToPreviousStep}
             type="button"
           >
-            Rozumiem
+            Späť
           </button>
-        </ActivityCard>
-      </div>
+          <button
+            className="min-h-12 rounded-xl bg-slate-950 px-5 py-3 text-base font-black text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={currentStepIndex === totalActivities - 1}
+            onClick={goToNextStep}
+            type="button"
+          >
+            Ďalej
+          </button>
+        </div>
+      </article>
 
       {allActivitiesComplete ? (
         <section className="mt-5 rounded-2xl border border-emerald-300 bg-white p-5 shadow-sm">
-          <h3 className="text-2xl font-black text-emerald-950">Výborne, dokončil/a si ukážkovú lekciu.</h3>
-          <p className="mt-2 text-base font-semibold leading-7 text-slate-700">Výsledky neslúžia ako test.</p>
-          <button
-            className="mt-4 min-h-14 rounded-xl bg-emerald-700 px-5 py-3 text-lg font-black text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-200"
-            onClick={completePreviewLesson}
-            type="button"
-          >
-            Dokončiť lekciu
-          </button>
+          <h3 className="text-2xl font-black text-emerald-950">Dokončil/a si mini lekciu.</h3>
+          <ul className="mt-4 grid gap-2 text-base font-semibold leading-7 text-slate-700">
+            <li>Rozumieš, že číslo môže znamenať počet.</li>
+            <li>Vieš porovnať dve skupiny.</li>
+            <li>Vieš, že rozloženie bodiek nemusí meniť počet.</li>
+            <li>Vieš nájsť číslo pred a za na číselnej osi.</li>
+          </ul>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <button
+              className="min-h-14 rounded-xl bg-emerald-700 px-5 py-3 text-lg font-black text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-200"
+              onClick={completePreviewLesson}
+              type="button"
+            >
+              Dokončiť lekciu
+            </button>
+            <Link
+              className="inline-flex min-h-14 items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-lg font-black text-white transition hover:bg-slate-800"
+              href="/child/curriculum"
+            >
+              Späť na školské učivo
+            </Link>
+          </div>
           {completionMessageVisible ? (
             <p className="mt-4 rounded-xl border border-sky-200 bg-sky-50 p-4 text-base font-bold leading-7 text-sky-950">
               Hotovo. Táto ukážka sa zatiaľ neukladá.
@@ -193,71 +259,6 @@ export function QuantityNumberSensePreview() {
       ) : null}
     </section>
   );
-}
-
-function ActivityCard({
-  children,
-  feedback,
-  prompt,
-  title,
-  visual
-}: {
-  children: ReactNode;
-  feedback?: ActivityFeedback;
-  prompt: string;
-  title: string;
-  visual: ReactNode;
-}) {
-  return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
-        <div>
-          <h3 className="text-xl font-black text-slate-950">{title}</h3>
-          <p className="mt-3 text-2xl font-black leading-9 text-slate-900">{prompt}</p>
-          <div className="mt-4 flex flex-wrap gap-3">{children}</div>
-          {feedback ? (
-            <p
-              className={`mt-4 rounded-xl border p-4 text-base font-bold leading-7 ${
-                feedback.tone === "success"
-                  ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-                  : "border-sky-200 bg-sky-50 text-sky-950"
-              }`}
-            >
-              {feedback.message}
-            </p>
-          ) : null}
-        </div>
-        <div>{visual}</div>
-      </div>
-    </article>
-  );
-}
-
-function AnswerButtons({
-  activityId,
-  options,
-  selectedAnswer,
-  selectAnswer
-}: {
-  activityId: ActivityId;
-  options: string[];
-  selectedAnswer?: string;
-  selectAnswer: (activityId: ActivityId, value: string) => void;
-}) {
-  return options.map((option) => (
-    <button
-      className={`min-h-14 min-w-24 rounded-xl border px-5 py-3 text-xl font-black transition focus:outline-none focus:ring-4 focus:ring-sky-200 ${
-        selectedAnswer === option
-          ? "border-slate-950 bg-slate-950 text-white"
-          : "border-slate-200 bg-white text-slate-950 hover:border-sky-400 hover:bg-sky-50"
-      }`}
-      key={option}
-      onClick={() => selectAnswer(activityId, option)}
-      type="button"
-    >
-      {option}
-    </button>
-  ));
 }
 
 function DotGroup({ count }: { count: number }) {
@@ -270,7 +271,22 @@ function DotGroup({ count }: { count: number }) {
   );
 }
 
-function NumberLine() {
+function SpreadDotGroup() {
+  return (
+    <div className="mx-auto grid w-36 grid-cols-4 gap-3">
+      {[0, 1, 2, 3, 4].map((dot) => (
+        <span
+          key={dot}
+          className={`size-8 rounded-full bg-emerald-500 shadow-sm ${dot === 1 ? "translate-y-3" : ""} ${
+            dot === 3 ? "translate-x-3" : ""
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function NumberLine({ focus }: { focus: "before" | "after" }) {
   return (
     <div className="rounded-xl bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between border-b-4 border-slate-300 pb-3">
@@ -285,7 +301,9 @@ function NumberLine() {
           </span>
         ))}
       </div>
-      <p className="mt-3 text-center text-sm font-bold text-slate-700">Hľadáme číslo hneď za 3.</p>
+      <p className="mt-3 text-center text-sm font-bold text-slate-700">
+        {focus === "before" ? "Hľadáme číslo hneď pred 3." : "Hľadáme číslo hneď za 3."}
+      </p>
     </div>
   );
 }
@@ -299,10 +317,20 @@ function VisualGroup({ children, label }: { children: ReactNode; label: string }
   );
 }
 
-function getFeedback(activityId: ActivityId, selectedAnswer?: string) {
+function getFeedback(activity: Activity, selectedAnswer?: string): ActivityFeedback | undefined {
   if (!selectedAnswer) {
     return undefined;
   }
 
-  return feedbackByActivity[activityId][selectedAnswer];
+  if (selectedAnswer === activity.correctAnswer) {
+    return {
+      tone: "success",
+      message: activity.successMessage
+    };
+  }
+
+  return {
+    tone: "gentle",
+    message: activity.gentleMessage
+  };
 }
