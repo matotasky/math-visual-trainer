@@ -190,6 +190,23 @@ const moduleTextSk: Record<string, { title: string; description: string }> = {
   }
 };
 
+const previewLessonByModuleId: Record<string, { href: string; copy: Record<Locale, string> }> = {
+  quantity_and_number_sense: {
+    href: "/child/curriculum/quantity-and-number-sense",
+    copy: {
+      sk: "Prvá ukážková lekcia bez hodnotenia.",
+      en: "First preview lesson without scoring."
+    }
+  },
+  number_line_and_comparison: {
+    href: "/child/curriculum/number-line-and-comparison",
+    copy: {
+      sk: "Druhá ukážková lekcia bez hodnotenia.",
+      en: "Second preview lesson without scoring."
+    }
+  }
+};
+
 function getStatusLabel(status: CurriculumModuleStatus, locale: Locale): string {
   if (locale === "sk") {
     return status === "active" ? "Aktívne" : status === "planned" ? "Plánované" : "Čoskoro";
@@ -259,8 +276,8 @@ export default async function CurriculumPage() {
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               {isSlovak
-                ? "Moduly sú zoskupené podľa oblasti. Prvá ukážková lekcia je už dostupná bez hodnotenia."
-                : "Modules are grouped by area. The first preview lesson is now available without scoring."}
+                ? "Moduly sú zoskupené podľa oblasti. Ukážkové lekcie sú dostupné bez hodnotenia."
+                : "Modules are grouped by area. Preview lessons are available without scoring."}
             </p>
           </div>
           <span className="inline-flex rounded-md bg-white px-3 py-1 text-xs font-bold uppercase text-slate-700 shadow-sm">
@@ -283,7 +300,7 @@ export default async function CurriculumPage() {
                 <div className="mt-4 grid gap-3">
                   {modules.map((module) => {
                     const text = getModuleText(module, locale);
-                    const hasPreviewLesson = module.id === "quantity_and_number_sense";
+                    const previewLesson = previewLessonByModuleId[module.id];
 
                     return (
                       <article key={module.id} className="rounded-md border border-slate-200 bg-slate-50 p-4">
@@ -296,7 +313,7 @@ export default async function CurriculumPage() {
                             <span className="inline-flex rounded-md bg-sky-50 px-3 py-1 text-xs font-bold uppercase text-sky-800">
                               {getStatusLabel(module.status, locale)}
                             </span>
-                            {hasPreviewLesson ? (
+                            {previewLesson ? (
                               <span className="inline-flex rounded-md bg-emerald-50 px-3 py-1 text-xs font-bold uppercase text-emerald-800">
                                 {isSlovak ? "Ukážková lekcia" : "Preview lesson"}
                               </span>
@@ -314,16 +331,14 @@ export default async function CurriculumPage() {
                             </span>
                           ))}
                         </div>
-                        {hasPreviewLesson ? (
+                        {previewLesson ? (
                           <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
                             <p className="text-sm font-semibold leading-6 text-emerald-950">
-                              {isSlovak
-                                ? "Prvá ukážková lekcia bez hodnotenia."
-                                : "First preview lesson without scoring."}
+                              {previewLesson.copy[locale]}
                             </p>
                             <Link
                               className="mt-3 inline-flex min-h-11 items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800"
-                              href="/child/curriculum/quantity-and-number-sense"
+                              href={previewLesson.href}
                             >
                               {isSlovak ? "Otvoriť lekciu" : "Open lesson"}
                             </Link>

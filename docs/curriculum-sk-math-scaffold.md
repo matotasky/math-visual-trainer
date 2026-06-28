@@ -296,6 +296,16 @@ The activities cover quantity recognition, comparison, same quantity in differen
 
 All state stays in local React state. The module does not persist completion, score diagnostics, update mastery, create attempts, create sessions, update aggregates, or affect parent dashboard data.
 
+## Second Interactive Mini-Module
+
+`number_line_and_comparison` is the second linked child curriculum preview lesson.
+
+It has six local-only activities covering number line position, bigger/smaller comparison, ordering, before/after neighbors, and a reflection step.
+
+It does not persist completion, score diagnostics, update mastery, create attempts, create sessions, update aggregates, or affect parent dashboard data.
+
+The module remains preview content, not verified curriculum content.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.
