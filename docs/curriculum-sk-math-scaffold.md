@@ -306,6 +306,16 @@ It does not persist completion, score diagnostics, update mastery, create attemp
 
 The module remains preview content, not verified curriculum content.
 
+## Third Interactive Mini-Module
+
+`addition_subtraction_to_20` is the third linked child curriculum preview lesson.
+
+It has six local-only activities introducing joining groups, number-line addition, taking away, number-line subtraction, make-10 thinking, and a reflection step.
+
+It does not persist completion, score diagnostics, update mastery, create attempts, create sessions, update aggregates, or affect parent dashboard data.
+
+The module remains preview content, not verified curriculum content.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.

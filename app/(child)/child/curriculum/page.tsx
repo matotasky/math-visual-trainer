@@ -204,6 +204,13 @@ const previewLessonByModuleId: Record<string, { href: string; copy: Record<Local
       sk: "Druhá ukážková lekcia bez hodnotenia.",
       en: "Second preview lesson without scoring."
     }
+  },
+  addition_subtraction_to_20: {
+    href: "/child/curriculum/addition-subtraction-to-20",
+    copy: {
+      sk: "Tretia ukážková lekcia bez hodnotenia.",
+      en: "Third preview lesson without scoring."
+    }
   }
 };
 
