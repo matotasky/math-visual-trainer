@@ -316,6 +316,16 @@ It does not persist completion, score diagnostics, update mastery, create attemp
 
 The module remains preview content, not verified curriculum content.
 
+## First Child Learning Path
+
+The child curriculum page now shows a three-step local-only preview path.
+
+The path links the first three preview mini-modules: `quantity_and_number_sense`, `number_line_and_comparison`, and `addition_subtraction_to_20`.
+
+This path is a child-friendly navigation aid. It does not represent verified curriculum progression and must not be described as official ŠVP sequencing.
+
+It does not persist progress, score diagnostics, update mastery, create attempts, create sessions, update aggregates, or affect parent dashboard data.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.

@@ -54,6 +54,13 @@ export default function QuantityAndNumberSensePreviewPage() {
 
         <QuantityNumberSensePreview />
 
+        <NextStepCard
+          buttonLabel="Pokračovať"
+          href="/child/curriculum/number-line-and-comparison"
+          text="Pokračuj na číselnú os a porovnávanie."
+          title="Ďalší krok"
+        />
+
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <BackLink />
           <p className="text-sm leading-6 text-slate-500">
@@ -67,6 +74,32 @@ export default function QuantityAndNumberSensePreviewPage() {
 
 function InfoPill({ text }: { text: string }) {
   return <p className="rounded-xl bg-white p-3 text-sm font-bold leading-6 text-slate-700 shadow-sm">{text}</p>;
+}
+
+function NextStepCard({
+  buttonLabel,
+  href,
+  text,
+  title
+}: {
+  buttonLabel: string;
+  href: string;
+  text: string;
+  title: string;
+}) {
+  return (
+    <section className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm md:p-6">
+      <p className="text-sm font-bold uppercase text-emerald-700">Ukážková cesta</p>
+      <h2 className="mt-2 text-2xl font-black text-slate-950">{title}</h2>
+      <p className="mt-2 text-base font-semibold leading-7 text-emerald-950">{text}</p>
+      <Link
+        className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-base font-black text-white transition hover:bg-slate-800 sm:w-fit"
+        href={href}
+      >
+        {buttonLabel}
+      </Link>
+    </section>
+  );
 }
 
 function BackLink() {

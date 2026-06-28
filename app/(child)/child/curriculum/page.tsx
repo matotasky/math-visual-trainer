@@ -214,6 +214,63 @@ const previewLessonByModuleId: Record<string, { href: string; copy: Record<Local
   }
 };
 
+const learningPathPreviewLessons: Array<{
+  step: number;
+  title: Record<Locale, string>;
+  description: Record<Locale, string>;
+  href: string;
+  buttonLabel: Record<Locale, string>;
+}> = [
+  {
+    step: 1,
+    title: {
+      sk: "Množstvo a porozumenie číslam",
+      en: "Quantity and number sense"
+    },
+    description: {
+      sk: "Najprv si ukážeme, že číslo znamená počet, poradie a miesto na číselnej osi.",
+      en: "First, we show that a number can mean quantity, order, and a place on the number line."
+    },
+    href: "/child/curriculum/quantity-and-number-sense",
+    buttonLabel: {
+      sk: "Začať",
+      en: "Start"
+    }
+  },
+  {
+    step: 2,
+    title: {
+      sk: "Číselná os a porovnávanie",
+      en: "Number line and comparison"
+    },
+    description: {
+      sk: "Potom budeme hľadať čísla na osi, porovnávať ich a usporiadať.",
+      en: "Then we find numbers on the line, compare them, and put them in order."
+    },
+    href: "/child/curriculum/number-line-and-comparison",
+    buttonLabel: {
+      sk: "Pokračovať",
+      en: "Continue"
+    }
+  },
+  {
+    step: 3,
+    title: {
+      sk: "Sčítanie a odčítanie do 20",
+      en: "Addition and subtraction to 20"
+    },
+    description: {
+      sk: "Nakoniec spojíme skupiny, budeme uberať a dopĺňať do 10.",
+      en: "Finally, we join groups, take away, and make 10."
+    },
+    href: "/child/curriculum/addition-subtraction-to-20",
+    buttonLabel: {
+      sk: "Pokračovať",
+      en: "Continue"
+    }
+  }
+];
+
 function getStatusLabel(status: CurriculumModuleStatus, locale: Locale): string {
   if (locale === "sk") {
     return status === "active" ? "Aktívne" : status === "planned" ? "Plánované" : "Čoskoro";
@@ -256,6 +313,51 @@ export default async function CurriculumPage() {
             : "School curriculum content is being prepared. We are checking topics against official sources first."}
         </p>
       </div>
+
+      <section className="mt-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-bold uppercase text-emerald-700">{isSlovak ? "Ukážková cesta" : "Preview path"}</p>
+            <h2 className="mt-2 text-3xl font-black text-slate-950">{isSlovak ? "Začni tu" : "Start here"}</h2>
+            <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-slate-700">
+              {isSlovak
+                ? "Od porozumenia číslam k prvému počítaniu."
+                : "From understanding numbers to first calculations."}
+            </p>
+          </div>
+          <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold leading-6 text-emerald-950">
+            {isSlovak
+              ? "Bez hodnotenia. Výsledky sa zatiaľ neukladajú."
+              : "No scoring. Results are not saved yet."}
+          </p>
+        </div>
+
+        <div className="mt-5 grid gap-4 lg:grid-cols-3">
+          {learningPathPreviewLessons.map((lesson) => (
+            <article
+              className="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm"
+              key={lesson.href}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <span className="inline-flex size-11 items-center justify-center rounded-full bg-emerald-600 text-lg font-black text-white">
+                  {lesson.step}
+                </span>
+                <span className="inline-flex rounded-md bg-emerald-50 px-3 py-1 text-xs font-bold uppercase text-emerald-800">
+                  {isSlovak ? "Ukážka" : "Preview"}
+                </span>
+              </div>
+              <h3 className="mt-4 text-xl font-black leading-7 text-slate-950">{lesson.title[locale]}</h3>
+              <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{lesson.description[locale]}</p>
+              <Link
+                className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-4 py-2 text-base font-black text-white transition hover:bg-slate-800"
+                href={lesson.href}
+              >
+                {lesson.buttonLabel[locale]}
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {SK_MATH_CURRICULUM_CYCLES.map((cycle) => {
