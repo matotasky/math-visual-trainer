@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useState } from "react";
+import { markPreviewLessonCompleted } from "@/lib/curriculum/local-preview-progress";
 
 type ActivityId = "findNumber" | "biggerNumber" | "smallerNumber" | "orderNumbers" | "neighbors" | "reflection";
 
@@ -121,7 +122,7 @@ export function NumberLineComparisonPreview() {
   }
 
   function completePreviewLesson() {
-    // Completion is intentionally local-only; no scoring or progress write happens here.
+    markPreviewLessonCompleted("number_line_and_comparison");
     setCompletionMessageVisible(true);
   }
 
@@ -129,10 +130,12 @@ export function NumberLineComparisonPreview() {
     <section className="mt-6 rounded-2xl border border-sky-200 bg-sky-50 p-5 shadow-sm md:p-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase text-sky-800">Preview lekcia — výsledky sa neukladajú.</p>
+          <p className="text-sm font-bold uppercase text-sky-800">
+            Preview lekcia — iba lokálne v tomto prehliadači.
+          </p>
           <h2 className="mt-1 text-2xl font-black text-slate-950">Mini lekcia krok za krokom</h2>
           <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-sky-950">
-            Klikni na odpoveď a uvidíš len priateľskú spätnú väzbu. Nič sa nehodnotí a nič sa nikam nezapisuje.
+            Klikni na odpoveď a uvidíš len priateľskú spätnú väzbu. Nie je to test a do účtu sa nič nezapisuje.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -234,7 +237,7 @@ export function NumberLineComparisonPreview() {
           </div>
           {completionMessageVisible ? (
             <p className="mt-4 rounded-xl border border-sky-200 bg-sky-50 p-4 text-base font-bold leading-7 text-sky-950">
-              Hotovo. Táto ukážka sa zatiaľ neukladá.
+              Hotovo. Táto ukážka je uložená iba v tomto prehliadači.
             </p>
           ) : null}
         </section>

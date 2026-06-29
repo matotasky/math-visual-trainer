@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PreviewLearningPathProgress } from "@/components/curriculum/PreviewLearningPathProgress";
 import {
   SK_MATH_CURRICULUM_CYCLES,
   getCurriculumModulesByCycle
@@ -14,6 +15,7 @@ import type {
   LearningPathwayId,
   Locale
 } from "@/types";
+import type { PreviewLessonId } from "@/lib/curriculum/local-preview-progress";
 
 const pathway = getLearningPathway("school_curriculum");
 
@@ -228,6 +230,7 @@ const previewLessonByModuleId: Record<string, { href: string; copy: Record<Local
 };
 
 const learningPathPreviewLessons: Array<{
+  id: PreviewLessonId;
   step: number;
   title: Record<Locale, string>;
   description: Record<Locale, string>;
@@ -235,6 +238,7 @@ const learningPathPreviewLessons: Array<{
   buttonLabel: Record<Locale, string>;
 }> = [
   {
+    id: "quantity_and_number_sense",
     step: 1,
     title: {
       sk: "Množstvo a porozumenie číslam",
@@ -251,6 +255,7 @@ const learningPathPreviewLessons: Array<{
     }
   },
   {
+    id: "number_line_and_comparison",
     step: 2,
     title: {
       sk: "Číselná os a porovnávanie",
@@ -267,6 +272,7 @@ const learningPathPreviewLessons: Array<{
     }
   },
   {
+    id: "addition_subtraction_to_20",
     step: 3,
     title: {
       sk: "Sčítanie a odčítanie do 20",
@@ -300,6 +306,14 @@ export default async function CurriculumPage() {
   const locale = await getRequestLocale();
   const isSlovak = locale === "sk";
   const cycleOneModules = getCurriculumModulesByCycle("cycle_1");
+  const localizedLearningPathPreviewLessons = learningPathPreviewLessons.map((lesson) => ({
+    id: lesson.id,
+    step: lesson.step,
+    title: lesson.title[locale],
+    description: lesson.description[locale],
+    href: lesson.href,
+    buttonLabel: lesson.buttonLabel[locale]
+  }));
 
   return (
     <section className="py-8">
@@ -340,36 +354,22 @@ export default async function CurriculumPage() {
           </div>
           <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold leading-6 text-emerald-950">
             {isSlovak
-              ? "Bez hodnotenia. Výsledky sa zatiaľ neukladajú."
-              : "No scoring. Results are not saved yet."}
+              ? "Bez hodnotenia. Výsledky sa ukladajú iba v tomto prehliadači."
+              : "No scoring. Results are saved only in this browser."}
           </p>
         </div>
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-3">
-          {learningPathPreviewLessons.map((lesson) => (
-            <article
-              className="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm"
-              key={lesson.href}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <span className="inline-flex size-11 items-center justify-center rounded-full bg-emerald-600 text-lg font-black text-white">
-                  {lesson.step}
-                </span>
-                <span className="inline-flex rounded-md bg-emerald-50 px-3 py-1 text-xs font-bold uppercase text-emerald-800">
-                  {isSlovak ? "Ukážka" : "Preview"}
-                </span>
-              </div>
-              <h3 className="mt-4 text-xl font-black leading-7 text-slate-950">{lesson.title[locale]}</h3>
-              <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{lesson.description[locale]}</p>
-              <Link
-                className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-4 py-2 text-base font-black text-white transition hover:bg-slate-800"
-                href={lesson.href}
-              >
-                {lesson.buttonLabel[locale]}
-              </Link>
-            </article>
-          ))}
-        </div>
+        <PreviewLearningPathProgress
+          labels={{
+            progressLabel: isSlovak ? "Lokálny progres" : "Local progress",
+            clearProgressLabel: isSlovak ? "Vymazať lokálny progres" : "Clear local progress",
+            completedLabel: isSlovak ? "Hotové" : "Done",
+            currentLabel: isSlovak ? "Pokračuj" : "Continue",
+            readyLabel: isSlovak ? "Pripravené" : "Ready",
+            previewBadgeLabel: isSlovak ? "Ukážka" : "Preview"
+          }}
+          lessons={localizedLearningPathPreviewLessons}
+        />
 
         <p className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm font-semibold leading-6 text-slate-700 shadow-sm">
           {isSlovak

@@ -324,7 +324,7 @@ The path links the first three preview mini-modules: `quantity_and_number_sense`
 
 This path is a child-friendly navigation aid. It does not represent verified curriculum progression and must not be described as official ŠVP sequencing.
 
-It does not persist progress, score diagnostics, update mastery, create attempts, create sessions, update aggregates, or affect parent dashboard data.
+It does not persist account progress, score diagnostics, update mastery, create attempts, create sessions, update aggregates, or affect parent dashboard data.
 
 ## Child-Facing Cycle Wording
 
@@ -337,6 +337,16 @@ Child-facing wording must not imply official verified sequencing or full ŠVP al
 The preview learning path is practical navigation only. It does not represent verified curriculum progression.
 
 No progress, scoring, mastery, Firestore, sessions, attempts, aggregates, or parent dashboard behavior is changed by cycle wording.
+
+## Local Preview Progress
+
+Completed preview lessons in the first child learning path are stored only in browser `localStorage`.
+
+This is not account progress, Firestore data, diagnostic scoring, mastery, progression, attempts, sessions, aggregates, or parent dashboard data.
+
+The local progress can disappear when browser storage is cleared or when the child uses another browser or device.
+
+This exists only as a lightweight UX helper for private/manual MVP testing of the preview mini-modules.
 
 ## Internal Preview Safety Checks
 
