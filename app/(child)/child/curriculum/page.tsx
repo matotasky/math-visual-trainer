@@ -21,15 +21,15 @@ const cycleLabels: Record<Locale, Record<CurriculumCycleId, { title: string; gra
   sk: {
     cycle_1: {
       title: "1. cyklus",
-      grades: "1. - 3. ročník"
+      grades: "1. – 3. ročník"
     },
     cycle_2: {
       title: "2. cyklus",
-      grades: "4. - 5. ročník"
+      grades: "4. – 5. ročník"
     },
     cycle_3: {
       title: "3. cyklus",
-      grades: "6. - 9. ročník"
+      grades: "6. – 9. ročník"
     }
   },
   en: {
@@ -45,6 +45,19 @@ const cycleLabels: Record<Locale, Record<CurriculumCycleId, { title: string; gra
       title: "3rd cycle",
       grades: "6th - 9th grade"
     }
+  }
+};
+
+const cycleDescriptions: Record<Locale, Record<CurriculumCycleId, string>> = {
+  sk: {
+    cycle_1: "Základy čísel, porovnávanie, prvé počítanie, tvary a jednoduché dáta.",
+    cycle_2: "Rozšírenie počítania, stratégie, meranie, geometria a práca s dátami.",
+    cycle_3: "Vyššia matematika, vzťahy, algebraické myslenie, geometria a štatistika."
+  },
+  en: {
+    cycle_1: "Number foundations, comparison, first calculations, shapes, and simple data.",
+    cycle_2: "Extended calculation, strategies, measurement, geometry, and work with data.",
+    cycle_3: "Higher mathematics, relationships, algebraic thinking, geometry, and statistics."
   }
 };
 
@@ -357,25 +370,40 @@ export default async function CurriculumPage() {
             </article>
           ))}
         </div>
+
+        <p className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm font-semibold leading-6 text-slate-700 shadow-sm">
+          {isSlovak
+            ? "Toto je praktická ukážková cesta učenia, nie oficiálne overené poradie celého učiva."
+            : "This is a practical preview learning path, not an officially verified sequence of the whole curriculum."}
+        </p>
       </section>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        {SK_MATH_CURRICULUM_CYCLES.map((cycle) => {
-          const label = cycleLabels[locale][cycle.id];
+      <section className="mt-8">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl font-black text-slate-950">
+            {isSlovak ? "Vzdelávacie cykly" : "Learning cycles"}
+          </h2>
+          <p className="mt-3 text-sm font-semibold leading-6 text-slate-700">
+            {isSlovak
+              ? "Vzdelávacie cykly rozdeľujú učivo na väčšie obdobia. Nemusia byť rovnako dlhé. V appke ich používame ako orientačnú mapu tém, nie ako tvrdý zámok podľa ročníka."
+              : "Learning cycles divide curriculum into broader stages. They do not have to be equal-length blocks. In the app, we use them as an orientation map of topics, not as a hard grade lock."}
+          </p>
+        </div>
 
-          return (
-            <section key={cycle.id} className="rounded-lg border border-sky-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xl font-bold text-slate-950">{label.title}</h2>
-              <p className="mt-1 text-sm font-semibold text-sky-700">{label.grades}</p>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                {isSlovak
-                  ? "Budúce moduly budú naviazané na cyklus, nie tvrdý zámok podľa ročníka."
-                  : cycle.description}
-              </p>
-            </section>
-          );
-        })}
-      </div>
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          {SK_MATH_CURRICULUM_CYCLES.map((cycle) => {
+            const label = cycleLabels[locale][cycle.id];
+
+            return (
+              <section key={cycle.id} className="rounded-lg border border-sky-200 bg-white p-5 shadow-sm">
+                <h3 className="text-xl font-bold text-slate-950">{label.title}</h3>
+                <p className="mt-1 text-sm font-semibold text-sky-700">{label.grades}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{cycleDescriptions[locale][cycle.id]}</p>
+              </section>
+            );
+          })}
+        </div>
+      </section>
 
       <section className="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -385,8 +413,8 @@ export default async function CurriculumPage() {
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               {isSlovak
-                ? "Moduly sú zoskupené podľa oblasti. Ukážkové lekcie sú dostupné bez hodnotenia."
-                : "Modules are grouped by area. Preview lessons are available without scoring."}
+                ? "Zatiaľ ide o pracovný náhľad tém. Ukážkové lekcie budeme postupne rozširovať."
+                : "This is a working topic preview for now. Preview lessons will expand gradually."}
             </p>
           </div>
           <span className="inline-flex rounded-md bg-white px-3 py-1 text-xs font-bold uppercase text-slate-700 shadow-sm">

@@ -326,6 +326,18 @@ This path is a child-friendly navigation aid. It does not represent verified cur
 
 It does not persist progress, score diagnostics, update mastery, create attempts, create sessions, update aggregates, or affect parent dashboard data.
 
+## Child-Facing Cycle Wording
+
+Cycles may be shown in child-facing curriculum UI, but they must be explained as broader learning stages.
+
+The UI should not make cycles look like equal-length blocks or hard grade locks. Cycle labels and grade ranges are orientation aids for parents and children.
+
+Child-facing wording must not imply official verified sequencing or full ŠVP alignment.
+
+The preview learning path is practical navigation only. It does not represent verified curriculum progression.
+
+No progress, scoring, mastery, Firestore, sessions, attempts, aggregates, or parent dashboard behavior is changed by cycle wording.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.
