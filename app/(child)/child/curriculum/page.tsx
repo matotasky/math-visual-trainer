@@ -233,6 +233,13 @@ const previewLessonByModuleId: Record<string, { href: string; copy: Record<Local
       sk: "Štvrtá ukážková lekcia bez hodnotenia.",
       en: "Fourth preview lesson without scoring."
     }
+  },
+  addition_subtraction_to_100: {
+    href: "/child/curriculum/addition-subtraction-to-100",
+    copy: {
+      sk: "Piata ukážková lekcia bez hodnotenia.",
+      en: "Fifth preview lesson without scoring."
+    }
   }
 };
 
@@ -307,6 +314,23 @@ const learningPathPreviewLessons: Array<{
       en: "We practice splitting numbers, making 10, and first calculations across 10."
     },
     href: "/child/curriculum/make-10-and-bridge-through-10",
+    buttonLabel: {
+      sk: "Pokračovať",
+      en: "Continue"
+    }
+  },
+  {
+    id: "addition_subtraction_to_100",
+    step: 5,
+    title: {
+      sk: "Sčítanie a odčítanie do 100",
+      en: "Addition and subtraction to 100"
+    },
+    description: {
+      sk: "Začneme pracovať s desiatkami a jednotkami pri dvojciferných číslach.",
+      en: "We start working with tens and ones in two-digit numbers."
+    },
+    href: "/child/curriculum/addition-subtraction-to-100",
     buttonLabel: {
       sk: "Pokračovať",
       en: "Continue"

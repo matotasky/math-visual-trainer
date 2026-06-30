@@ -376,6 +376,18 @@ This remains preview content. It does not persist to account progress, Firestore
 
 It is not verified curriculum content and must not be described as official ŠVP-aligned lesson content.
 
+## Fifth Interactive Mini-Module
+
+`addition_subtraction_to_100` is the fifth linked child curriculum preview lesson.
+
+It extends the first local preview learning path to five lessons and expands browser `localStorage` preview progress to `X / 5`.
+
+The lesson introduces tens and ones, adding whole tens, subtracting whole tens, and adding ones without crossing a ten.
+
+This remains local-only preview content. It does not persist to account progress, Firestore, diagnostics, mastery, sessions, attempts, aggregates, or parent dashboard data.
+
+It is not verified curriculum content and must not be described as official ŠVP-aligned lesson content.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.
