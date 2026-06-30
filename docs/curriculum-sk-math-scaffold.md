@@ -356,6 +356,14 @@ The completion action can mark the preview lesson complete in browser `localStor
 
 This remains local-only. It does not write to account progress, Firestore, diagnostics, mastery, sessions, attempts, aggregates, or parent dashboard data.
 
+## Shared Preview Completion UI
+
+Preview mini-modules share a presentational completion panel for the saved-in-this-browser message and next-step card.
+
+The shared panel has no local state, no `localStorage` access, and no Firebase or Firestore imports. The local completion write remains inside each mini-module component.
+
+This refactor changes UI structure only. It does not alter scoring, diagnostics, mastery, parent dashboard, or backend behavior.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.
