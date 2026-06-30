@@ -348,6 +348,16 @@ The local progress can disappear when browser storage is cleared or when the chi
 
 This exists only as a lightweight UX helper for private/manual MVP testing of the preview mini-modules.
 
+## Local Preview Skills Summary
+
+The child curriculum page can show a friendly `Čo už vieš` summary based only on preview lessons completed in browser `localStorage`.
+
+The summary is derived from the local preview lesson ids and their product-defined skill labels. It is not assessment, mastery, diagnosis, account progress, attempts, sessions, aggregates, or parent dashboard data.
+
+It does not write to Firestore or any backend service. Clearing browser storage can remove the completed lesson state and the derived skills summary.
+
+This exists only as a UX helper for private/manual MVP testing of the child preview learning path.
+
 ## Preview Completion Navigation
 
 Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.

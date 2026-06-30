@@ -338,6 +338,29 @@ const learningPathPreviewLessons: Array<{
   }
 ];
 
+const previewSkillsByLesson: Record<PreviewLessonId, Record<Locale, string[]>> = {
+  quantity_and_number_sense: {
+    sk: ["Rozpoznáš množstvo.", "Vieš porovnať dve skupiny.", "Vieš nájsť číslo pred a za."],
+    en: ["You can recognize quantity.", "You can compare two groups.", "You can find the number before and after."]
+  },
+  number_line_and_comparison: {
+    sk: ["Vieš použiť číselnú os.", "Vieš porovnať väčšie a menšie číslo.", "Vieš usporiadať čísla."],
+    en: ["You can use a number line.", "You can compare bigger and smaller numbers.", "You can order numbers."]
+  },
+  addition_subtraction_to_20: {
+    sk: ["Vieš spojiť dve skupiny.", "Vieš odobrať časť skupiny.", "Vieš doplniť do 10."],
+    en: ["You can join two groups.", "You can take away part of a group.", "You can make 10."]
+  },
+  make_10_and_bridge_through_10: {
+    sk: ["Vieš doplniť číslo do 10.", "Vieš rozložiť číslo na časti.", "Vieš použiť 10 ako pomocný krok."],
+    en: ["You can complete a number to 10.", "You can split a number into parts.", "You can use 10 as a helper step."]
+  },
+  addition_subtraction_to_100: {
+    sk: ["Vieš rozlíšiť desiatky a jednotky.", "Vieš sčítať celé desiatky.", "Vieš pridať alebo odobrať desiatky."],
+    en: ["You can tell tens and ones apart.", "You can add whole tens.", "You can add or take away tens."]
+  }
+};
+
 function getStatusLabel(status: CurriculumModuleStatus, locale: Locale): string {
   if (locale === "sk") {
     return status === "active" ? "Aktívne" : status === "planned" ? "Plánované" : "Čoskoro";
@@ -362,6 +385,13 @@ export default async function CurriculumPage() {
     href: lesson.href,
     buttonLabel: lesson.buttonLabel[locale]
   }));
+  const localizedPreviewSkillsByLesson: Record<PreviewLessonId, string[]> = {
+    quantity_and_number_sense: previewSkillsByLesson.quantity_and_number_sense[locale],
+    number_line_and_comparison: previewSkillsByLesson.number_line_and_comparison[locale],
+    addition_subtraction_to_20: previewSkillsByLesson.addition_subtraction_to_20[locale],
+    make_10_and_bridge_through_10: previewSkillsByLesson.make_10_and_bridge_through_10[locale],
+    addition_subtraction_to_100: previewSkillsByLesson.addition_subtraction_to_100[locale]
+  };
 
   return (
     <section className="py-8">
@@ -414,9 +444,20 @@ export default async function CurriculumPage() {
             completedLabel: isSlovak ? "Hotové" : "Done",
             currentLabel: isSlovak ? "Pokračuj" : "Continue",
             readyLabel: isSlovak ? "Pripravené" : "Ready",
-            previewBadgeLabel: isSlovak ? "Ukážka" : "Preview"
+            previewBadgeLabel: isSlovak ? "Ukážka" : "Preview",
+            skillsTitle: isSlovak ? "Čo už vieš" : "What you already know",
+            skillsSubtitle: isSlovak
+              ? "Podľa ukážkových lekcií dokončených v tomto prehliadači."
+              : "Based on preview lessons completed in this browser.",
+            skillsEmptyMessage: isSlovak
+              ? "Dokonči prvú ukážkovú lekciu a tu sa zobrazí, čo si už precvičil/a."
+              : "Complete the first preview lesson and this area will show what you have practiced.",
+            skillsLocalOnlyNote: isSlovak
+              ? "Toto je iba lokálny prehľad, nie hodnotenie."
+              : "This is only a local summary, not an assessment."
           }}
           lessons={localizedLearningPathPreviewLessons}
+          skillsByLesson={localizedPreviewSkillsByLesson}
         />
 
         <p className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm font-semibold leading-6 text-slate-700 shadow-sm">

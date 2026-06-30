@@ -24,11 +24,16 @@ type PreviewLearningPathProgressLabels = {
   currentLabel: string;
   readyLabel: string;
   previewBadgeLabel: string;
+  skillsTitle: string;
+  skillsSubtitle: string;
+  skillsEmptyMessage: string;
+  skillsLocalOnlyNote: string;
 };
 
 type PreviewLearningPathProgressProps = {
   lessons: PreviewLearningPathLesson[];
   labels?: Partial<PreviewLearningPathProgressLabels>;
+  skillsByLesson?: Partial<Record<PreviewLessonId, string[]>>;
 };
 
 const defaultLabels: PreviewLearningPathProgressLabels = {
@@ -37,10 +42,18 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
   completedLabel: "Hotové",
   currentLabel: "Pokračuj",
   readyLabel: "Pripravené",
-  previewBadgeLabel: "Ukážka"
+  previewBadgeLabel: "Ukážka",
+  skillsTitle: "Čo už vieš",
+  skillsSubtitle: "Podľa ukážkových lekcií dokončených v tomto prehliadači.",
+  skillsEmptyMessage: "Dokonči prvú ukážkovú lekciu a tu sa zobrazí, čo si už precvičil/a.",
+  skillsLocalOnlyNote: "Toto je iba lokálny prehľad, nie hodnotenie."
 };
 
-export function PreviewLearningPathProgress({ labels = {}, lessons }: PreviewLearningPathProgressProps) {
+export function PreviewLearningPathProgress({
+  labels = {},
+  lessons,
+  skillsByLesson
+}: PreviewLearningPathProgressProps) {
   const resolvedLabels = { ...defaultLabels, ...labels };
   const [completedLessons, setCompletedLessons] = useState<PreviewLessonId[]>([]);
 
@@ -54,6 +67,11 @@ export function PreviewLearningPathProgress({ labels = {}, lessons }: PreviewLea
 
   const completedCount = lessons.filter((lesson) => completedLessons.includes(lesson.id)).length;
   const firstIncompleteIndex = lessons.findIndex((lesson) => !completedLessons.includes(lesson.id));
+  const completedLessonIds = new Set(completedLessons);
+  const completedSkills = lessons.flatMap((lesson) =>
+    completedLessonIds.has(lesson.id) ? (skillsByLesson?.[lesson.id] ?? []) : []
+  );
+  const uniqueCompletedSkills = [...new Set(completedSkills)];
 
   function clearLocalProgress() {
     clearPreviewLessonProgress();
@@ -120,6 +138,43 @@ export function PreviewLearningPathProgress({ labels = {}, lessons }: PreviewLea
           );
         })}
       </div>
+
+      {skillsByLesson ? (
+        <section className="mt-5 rounded-2xl border border-sky-200 bg-sky-50 p-4 md:p-5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h3 className="text-2xl font-black text-slate-950">{resolvedLabels.skillsTitle}</h3>
+              <p className="mt-1 text-sm font-semibold leading-6 text-sky-950">
+                {resolvedLabels.skillsSubtitle}
+              </p>
+            </div>
+            <span className="inline-flex w-fit rounded-full bg-white px-3 py-1 text-xs font-black uppercase text-sky-800 shadow-sm">
+              {completedCount} / {lessons.length}
+            </span>
+          </div>
+
+          {uniqueCompletedSkills.length > 0 ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {uniqueCompletedSkills.map((skill) => (
+                <span
+                  className="rounded-xl border border-white bg-white px-3 py-2 text-sm font-bold leading-6 text-slate-800 shadow-sm"
+                  key={skill}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-4 rounded-xl border border-white bg-white p-4 text-sm font-bold leading-6 text-slate-700 shadow-sm">
+              {resolvedLabels.skillsEmptyMessage}
+            </p>
+          )}
+
+          <p className="mt-4 text-xs font-bold uppercase tracking-wide text-sky-800">
+            {resolvedLabels.skillsLocalOnlyNote}
+          </p>
+        </section>
+      ) : null}
     </div>
   );
 }
