@@ -358,6 +358,16 @@ It does not write to Firestore or any backend service. Clearing browser storage 
 
 This exists only as a UX helper for private/manual MVP testing of the child preview learning path.
 
+## Local Recommended Next Step
+
+The child curriculum page can show an `Odporúčaný ďalší krok` panel derived only from completed preview lessons in browser `localStorage`.
+
+The recommendation points to the first incomplete preview lesson, or back to the first lesson when the current preview path is complete.
+
+This is not adaptive mastery, diagnostic scoring, account progress, attempts, sessions, aggregates, or parent dashboard data.
+
+It does not persist to Firestore or any backend service. It is only a UX helper for private/manual MVP testing of the local preview learning path.
+
 ## Preview Completion Navigation
 
 Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.

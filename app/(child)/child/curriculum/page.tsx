@@ -454,7 +454,18 @@ export default async function CurriculumPage() {
               : "Complete the first preview lesson and this area will show what you have practiced.",
             skillsLocalOnlyNote: isSlovak
               ? "Toto je iba lokálny prehľad, nie hodnotenie."
-              : "This is only a local summary, not an assessment."
+              : "This is only a local summary, not an assessment.",
+            recommendedTitle: isSlovak ? "Odporúčaný ďalší krok" : "Recommended next step",
+            recommendedContinuePrefix: isSlovak ? "Pokračuj lekciou:" : "Continue with:",
+            recommendedAllDone: isSlovak
+              ? "Výborne, dokončil/a si aktuálnu ukážkovú cestu."
+              : "Great, you completed the current preview path.",
+            recommendedRestartLabel: isSlovak ? "Zopakovať od začiatku" : "Start again",
+            recommendedStartLabel: isSlovak ? "Začať" : "Start",
+            recommendedContinueLabel: isSlovak ? "Pokračovať" : "Continue",
+            recommendedLocalOnlyNote: isSlovak
+              ? "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
+              : "This recommendation is based only on local progress in this browser."
           }}
           lessons={localizedLearningPathPreviewLessons}
           skillsByLesson={localizedPreviewSkillsByLesson}

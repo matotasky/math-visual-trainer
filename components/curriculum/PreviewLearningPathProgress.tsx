@@ -28,6 +28,13 @@ type PreviewLearningPathProgressLabels = {
   skillsSubtitle: string;
   skillsEmptyMessage: string;
   skillsLocalOnlyNote: string;
+  recommendedTitle: string;
+  recommendedContinuePrefix: string;
+  recommendedAllDone: string;
+  recommendedRestartLabel: string;
+  recommendedStartLabel: string;
+  recommendedContinueLabel: string;
+  recommendedLocalOnlyNote: string;
 };
 
 type PreviewLearningPathProgressProps = {
@@ -46,7 +53,14 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
   skillsTitle: "Čo už vieš",
   skillsSubtitle: "Podľa ukážkových lekcií dokončených v tomto prehliadači.",
   skillsEmptyMessage: "Dokonči prvú ukážkovú lekciu a tu sa zobrazí, čo si už precvičil/a.",
-  skillsLocalOnlyNote: "Toto je iba lokálny prehľad, nie hodnotenie."
+  skillsLocalOnlyNote: "Toto je iba lokálny prehľad, nie hodnotenie.",
+  recommendedTitle: "Odporúčaný ďalší krok",
+  recommendedContinuePrefix: "Pokračuj lekciou:",
+  recommendedAllDone: "Výborne, dokončil/a si aktuálnu ukážkovú cestu.",
+  recommendedRestartLabel: "Zopakovať od začiatku",
+  recommendedStartLabel: "Začať",
+  recommendedContinueLabel: "Pokračovať",
+  recommendedLocalOnlyNote: "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
 };
 
 export function PreviewLearningPathProgress({
@@ -67,6 +81,10 @@ export function PreviewLearningPathProgress({
 
   const completedCount = lessons.filter((lesson) => completedLessons.includes(lesson.id)).length;
   const firstIncompleteIndex = lessons.findIndex((lesson) => !completedLessons.includes(lesson.id));
+  const firstIncompleteLesson = firstIncompleteIndex >= 0 ? lessons[firstIncompleteIndex] : undefined;
+  const firstLesson = lessons[0];
+  const recommendedButtonLabel =
+    completedCount === 0 ? resolvedLabels.recommendedStartLabel : resolvedLabels.recommendedContinueLabel;
   const completedLessonIds = new Set(completedLessons);
   const completedSkills = lessons.flatMap((lesson) =>
     completedLessonIds.has(lesson.id) ? (skillsByLesson?.[lesson.id] ?? []) : []
@@ -92,6 +110,42 @@ export function PreviewLearningPathProgress({
           {resolvedLabels.clearProgressLabel}
         </button>
       </div>
+
+      <section className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 md:p-5">
+        <p className="text-sm font-black uppercase text-amber-800">{resolvedLabels.recommendedTitle}</p>
+        {firstIncompleteLesson ? (
+          <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+            <div>
+              <p className="text-sm font-bold leading-6 text-amber-950">
+                {resolvedLabels.recommendedContinuePrefix}
+              </p>
+              <h3 className="mt-1 text-2xl font-black leading-8 text-slate-950">{firstIncompleteLesson.title}</h3>
+              <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
+                {firstIncompleteLesson.description}
+              </p>
+            </div>
+            <Link
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-base font-black text-white transition hover:bg-slate-800 md:w-fit"
+              href={firstIncompleteLesson.href}
+            >
+              {recommendedButtonLabel}
+            </Link>
+          </div>
+        ) : firstLesson ? (
+          <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+            <p className="text-base font-bold leading-7 text-amber-950">{resolvedLabels.recommendedAllDone}</p>
+            <Link
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-base font-black text-white transition hover:bg-slate-800 md:w-fit"
+              href={firstLesson.href}
+            >
+              {resolvedLabels.recommendedRestartLabel}
+            </Link>
+          </div>
+        ) : null}
+        <p className="mt-4 text-xs font-bold uppercase tracking-wide text-amber-800">
+          {resolvedLabels.recommendedLocalOnlyNote}
+        </p>
+      </section>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         {lessons.map((lesson, index) => {
