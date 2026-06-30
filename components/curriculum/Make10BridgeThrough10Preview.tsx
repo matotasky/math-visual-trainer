@@ -4,6 +4,7 @@ import { PreviewCompletionPanel, type PreviewCompletionNextStep } from "@/compon
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { markPreviewLessonCompleted } from "@/lib/curriculum/local-preview-progress";
+import { localPreviewWordingSk } from "@/lib/curriculum/preview-wording";
 
 type ActivityId = "makeTenFromEight" | "splitSeven" | "bridgeEightFive" | "finishEightFive" | "bridgeNineFour" | "reflection";
 
@@ -137,11 +138,12 @@ export function Make10BridgeThrough10Preview({ nextStep }: PreviewCompletionProp
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-bold uppercase text-emerald-800">
-            Preview lekcia — iba lokálne v tomto prehliadači.
+            Preview lekcia — {localPreviewWordingSk.localOnlyShort}
           </p>
           <h2 className="mt-1 text-2xl font-black text-slate-950">Mini lekcia krok za krokom</h2>
           <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-emerald-950">
-            Klikni na odpoveď a uvidíš len priateľskú spätnú väzbu. Nie je to test a do účtu sa nič nezapisuje.
+            Klikni na odpoveď a uvidíš len priateľskú spätnú väzbu. {localPreviewWordingSk.notEvaluation}{" "}
+            {localPreviewWordingSk.notAccountProgress}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

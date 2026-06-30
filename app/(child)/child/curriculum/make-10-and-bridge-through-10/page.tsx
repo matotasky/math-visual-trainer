@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Make10BridgeThrough10Preview } from "@/components/curriculum/Make10BridgeThrough10Preview";
+import { localPreviewWordingSk } from "@/lib/curriculum/preview-wording";
 
 export default function Make10AndBridgeThrough10PreviewPage() {
   return (
@@ -19,19 +20,19 @@ export default function Make10AndBridgeThrough10PreviewPage() {
               </p>
             </div>
             <div className="rounded-xl bg-white p-4 shadow-sm">
-              <p className="text-sm font-bold uppercase text-slate-500">Bez skóre</p>
-              <p className="mt-1 text-sm leading-6 text-slate-700">Nebudeš hodnotený/á.</p>
+              <p className="text-sm font-bold uppercase text-slate-500">Bez hodnotenia</p>
+              <p className="mt-1 text-sm leading-6 text-slate-700">{localPreviewWordingSk.notAccountProgress}</p>
             </div>
           </div>
 
           <div className="mt-6 grid gap-3 md:grid-cols-3">
             <InfoPill text="Táto lekcia je ukážka." />
-            <InfoPill text="Dokončenie sa uloží iba v tomto prehliadači." />
-            <InfoPill text="Bez časového tlaku." />
+            <InfoPill text={localPreviewWordingSk.localOnlyShort} />
+            <InfoPill text={localPreviewWordingSk.notEvaluation} />
           </div>
 
           <p className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold leading-6 text-amber-950">
-            Táto lekcia je ukážka. Dokončenie sa uloží iba v tomto prehliadači.
+            {localPreviewWordingSk.localProgressNote}
           </p>
         </div>
 
@@ -46,7 +47,7 @@ export default function Make10AndBridgeThrough10PreviewPage() {
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <BackLink />
           <p className="text-sm leading-6 text-slate-500">
-            Toto je iba náhľad lekcie. Nezapisuje pokrok do účtu a nie je súčasťou diagnostiky.
+            {localPreviewWordingSk.notAccountProgress} {localPreviewWordingSk.notDiagnostic}
           </p>
         </div>
       </div>

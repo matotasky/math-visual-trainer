@@ -5,6 +5,7 @@ import {
   getCurriculumModulesByCycle
 } from "@/data/curriculum/sk-math";
 import { getLearningPathway } from "@/data/pathways";
+import { localPreviewWordingSk } from "@/lib/curriculum/preview-wording";
 import { getRequestLocale } from "@/lib/i18n/server";
 import type {
   CurriculumAreaId,
@@ -432,7 +433,7 @@ export default async function CurriculumPage() {
           </div>
           <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold leading-6 text-emerald-950">
             {isSlovak
-              ? "Bez hodnotenia. Výsledky sa ukladajú iba v tomto prehliadači."
+              ? localPreviewWordingSk.localProgressNote
               : "No scoring. Results are saved only in this browser."}
           </p>
         </div>

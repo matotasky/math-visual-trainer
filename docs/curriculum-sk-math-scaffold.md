@@ -348,6 +348,16 @@ The local progress can disappear when browser storage is cleared or when the chi
 
 This exists only as a lightweight UX helper for private/manual MVP testing of the preview mini-modules.
 
+## Local Preview Wording
+
+Child-facing preview wording intentionally avoids implying evaluation, diagnostics, mastery, or account progress.
+
+Local preview progress means browser-only `localStorage`. It can help the child continue the preview path, but it is not saved to the user account and is not visible in the parent dashboard.
+
+The wording should consistently explain that preview lessons are not assessments, are not part of diagnostics, and do not write to Firestore.
+
+This wording-only layer does not change scoring, diagnostics, mastery, Firestore, sessions, attempts, aggregates, or parent dashboard behavior.
+
 ## Local Preview Skills Summary
 
 The child curriculum page can show a friendly `Čo už vieš` summary based only on preview lessons completed in browser `localStorage`.

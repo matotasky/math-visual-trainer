@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { localPreviewWordingSk } from "@/lib/curriculum/preview-wording";
 
 export type PreviewCompletionNextStep = {
   href: string;
@@ -27,10 +28,10 @@ export function PreviewCompletionPanel({
     <div className="mt-4 grid gap-3">
       <div className="rounded-xl border border-sky-200 bg-sky-50 p-4">
         <p className="text-base font-bold leading-7 text-sky-950">
-          Hotovo. Táto ukážka je uložená iba v tomto prehliadači.
+          Hotovo. Uložené iba v tomto prehliadači.
         </p>
         <p className="mt-2 text-sm font-semibold leading-6 text-sky-900">
-          Nie je to test. Do účtu sa nič nezapisuje.
+          {localPreviewWordingSk.notEvaluation} {localPreviewWordingSk.notAccountProgress}
         </p>
       </div>
 
