@@ -348,6 +348,14 @@ The local progress can disappear when browser storage is cleared or when the chi
 
 This exists only as a lightweight UX helper for private/manual MVP testing of the preview mini-modules.
 
+## Preview Completion Navigation
+
+Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.
+
+The completion action can mark the preview lesson complete in browser `localStorage`, then show the next recommended lesson or the return-to-path action.
+
+This remains local-only. It does not write to account progress, Firestore, diagnostics, mastery, sessions, attempts, aggregates, or parent dashboard data.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.

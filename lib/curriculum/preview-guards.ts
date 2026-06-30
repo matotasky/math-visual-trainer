@@ -12,6 +12,7 @@ export function getQuantityAndNumberSensePreviewGuard(): CurriculumPreviewGuardR
     canScore: false,
     canWriteProgress: false,
     canClaimVerified: false,
-    warning: "Toto je ukážková lekcia. Nie je hodnotená, nezapisuje pokrok a ešte nie je finálne overená."
+    warning:
+      "Toto je ukážková lekcia. Nie je hodnotená, nezapisuje pokrok do účtu a ešte nie je finálne overená."
   };
 }
