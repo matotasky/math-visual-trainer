@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { AdditionSubtractionTo20Preview } from "@/components/curriculum/AdditionSubtractionTo20Preview";
+import { Make10BridgeThrough10Preview } from "@/components/curriculum/Make10BridgeThrough10Preview";
 
-export default function AdditionSubtractionTo20PreviewPage() {
+export default function Make10AndBridgeThrough10PreviewPage() {
   return (
     <section className="py-6">
       <div className="mx-auto max-w-5xl">
@@ -12,10 +12,10 @@ export default function AdditionSubtractionTo20PreviewPage() {
                 Preview lekcia
               </span>
               <h1 className="mt-4 text-3xl font-black text-slate-950 md:text-5xl">
-                Sčítanie a odčítanie do 20
+                Doplnenie do 10 a prechod cez 10
               </h1>
               <p className="mt-4 max-w-2xl text-lg font-semibold leading-8 text-slate-700">
-                Učíme sa spájať skupiny, uberať, posúvať sa po číselnej osi a dopĺňať do 10.
+                Učíme sa rozkladať čísla, dopĺňať do 10 a počítať cez desiatku pokojne krok za krokom.
               </p>
             </div>
             <div className="rounded-xl bg-white p-4 shadow-sm">
@@ -35,11 +35,11 @@ export default function AdditionSubtractionTo20PreviewPage() {
           </p>
         </div>
 
-        <AdditionSubtractionTo20Preview
+        <Make10BridgeThrough10Preview
           nextStep={{
-            href: "/child/curriculum/make-10-and-bridge-through-10",
-            label: "Pokračovať na ďalšiu lekciu",
-            description: "Ďalej si vyskúšaš doplnenie do 10 a prechod cez 10."
+            href: "/child/curriculum",
+            label: "Späť na učebnú cestu",
+            description: "Dokončil/a si prvú ukážkovú cestu."
           }}
         />
 

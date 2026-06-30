@@ -364,6 +364,18 @@ The shared panel has no local state, no `localStorage` access, and no Firebase o
 
 This refactor changes UI structure only. It does not alter scoring, diagnostics, mastery, parent dashboard, or backend behavior.
 
+## Fourth Interactive Mini-Module
+
+`make_10_and_bridge_through_10` is the fourth linked child curriculum preview lesson.
+
+It extends the first local preview learning path to four lessons and expands browser `localStorage` preview progress to `X / 4`.
+
+The lesson introduces make-10 and bridge-through-10 thinking through local-only activities: filling a ten-frame, splitting numbers, making 10 first, and adding the remaining part.
+
+This remains preview content. It does not persist to account progress, Firestore, diagnostics, mastery, sessions, attempts, aggregates, or parent dashboard data.
+
+It is not verified curriculum content and must not be described as official ŠVP-aligned lesson content.
+
 ## Internal Preview Safety Checks
 
 Internal preview safety checks record whether specific release risks are currently satisfied, blocked, or need attention.

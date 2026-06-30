@@ -1,14 +1,16 @@
 export type PreviewLessonId =
   | "quantity_and_number_sense"
   | "number_line_and_comparison"
-  | "addition_subtraction_to_20";
+  | "addition_subtraction_to_20"
+  | "make_10_and_bridge_through_10";
 
 const STORAGE_KEY = "math_visual_trainer_preview_progress_v1";
 
 const previewLessonIds = new Set<PreviewLessonId>([
   "quantity_and_number_sense",
   "number_line_and_comparison",
-  "addition_subtraction_to_20"
+  "addition_subtraction_to_20",
+  "make_10_and_bridge_through_10"
 ]);
 
 function isPreviewLessonId(value: unknown): value is PreviewLessonId {

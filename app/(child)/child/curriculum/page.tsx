@@ -226,6 +226,13 @@ const previewLessonByModuleId: Record<string, { href: string; copy: Record<Local
       sk: "Tretia ukážková lekcia bez hodnotenia.",
       en: "Third preview lesson without scoring."
     }
+  },
+  make_10_and_bridge_through_10: {
+    href: "/child/curriculum/make-10-and-bridge-through-10",
+    copy: {
+      sk: "Štvrtá ukážková lekcia bez hodnotenia.",
+      en: "Fourth preview lesson without scoring."
+    }
   }
 };
 
@@ -283,6 +290,23 @@ const learningPathPreviewLessons: Array<{
       en: "Finally, we join groups, take away, and make 10."
     },
     href: "/child/curriculum/addition-subtraction-to-20",
+    buttonLabel: {
+      sk: "Pokračovať",
+      en: "Continue"
+    }
+  },
+  {
+    id: "make_10_and_bridge_through_10",
+    step: 4,
+    title: {
+      sk: "Doplnenie do 10 a prechod cez 10",
+      en: "Make 10 and bridge through 10"
+    },
+    description: {
+      sk: "Precvičíme rozklad čísla, doplnenie do 10 a prvé počítanie cez desiatku.",
+      en: "We practice splitting numbers, making 10, and first calculations across 10."
+    },
+    href: "/child/curriculum/make-10-and-bridge-through-10",
     buttonLabel: {
       sk: "Pokračovať",
       en: "Continue"
@@ -348,8 +372,8 @@ export default async function CurriculumPage() {
             <h2 className="mt-2 text-3xl font-black text-slate-950">{isSlovak ? "Začni tu" : "Start here"}</h2>
             <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-slate-700">
               {isSlovak
-                ? "Od porozumenia číslam k prvému počítaniu."
-                : "From understanding numbers to first calculations."}
+                ? "Od porozumenia číslam k prvým stratégiám počítania."
+                : "From understanding numbers to first calculation strategies."}
             </p>
           </div>
           <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold leading-6 text-emerald-950">
