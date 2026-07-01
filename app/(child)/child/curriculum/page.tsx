@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { ChildQuickStart } from "@/components/curriculum/ChildQuickStart";
 import { ParentObservationTips } from "@/components/curriculum/ParentObservationTips";
 import { ParentPreviewGuide } from "@/components/curriculum/ParentPreviewGuide";
 import { PreviewLearningPathProgress } from "@/components/curriculum/PreviewLearningPathProgress";
@@ -366,6 +367,34 @@ const previewSkillsByLesson: Record<PreviewLessonId, Record<Locale, string[]>> =
   }
 };
 
+const childQuickStartText: Record<
+  Locale,
+  {
+    title: string;
+    steps: string[];
+    note: string;
+  }
+> = {
+  sk: {
+    title: "Rýchly štart",
+    steps: [
+      "Klikni na odporúčanú lekciu.",
+      "Pozeraj sa na obrázky a vyber odpoveď.",
+      "Po dokončení sa vráť späť na túto cestu."
+    ],
+    note: "Nemusíš sa ponáhľať. Toto nie je známka ani test."
+  },
+  en: {
+    title: "Quick start",
+    steps: [
+      "Click the recommended lesson.",
+      "Look at the pictures and choose an answer.",
+      "After finishing, return to this path."
+    ],
+    note: "You do not need to hurry. This is not a grade or a test."
+  }
+};
+
 const parentPreviewGuideText: Record<
   Locale,
   {
@@ -552,6 +581,8 @@ export default async function CurriculumPage() {
               : "No scoring. Results are saved only in this browser."}
           </p>
         </div>
+
+        <ChildQuickStart {...childQuickStartText[locale]} />
 
         <Suspense fallback={null}>
           <PreviewReturnNotice />

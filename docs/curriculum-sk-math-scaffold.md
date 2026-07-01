@@ -394,6 +394,16 @@ The notice is local UI only. It reads the URL query parameter, can be dismissed 
 
 It only reassures the child or parent that browser-local progress was updated by the lesson completion action.
 
+## Child Quick Start
+
+The child curriculum page includes a static child-facing quick start panel near the preview learning path.
+
+It tells the child to open the recommended lesson, look at the pictures, choose an answer, and return to the path after finishing.
+
+The panel does not read or write progress, inspect answers, inspect performance, or access `localStorage`.
+
+It does not change diagnostics, scoring, mastery, Firestore, dashboard, attempts, sessions, aggregates, or account progress.
+
 ## Parent Preview Guide
 
 The child curriculum page includes a static parent-facing guide for using the preview path at home.
