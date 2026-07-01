@@ -35,6 +35,8 @@ type PreviewLearningPathProgressLabels = {
   recommendedStartLabel: string;
   recommendedContinueLabel: string;
   recommendedLocalOnlyNote: string;
+  compactListTitle: string;
+  compactOpenLabel: string;
 };
 
 type PreviewLearningPathProgressProps = {
@@ -60,6 +62,8 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
   recommendedRestartLabel: "Zopakovať od začiatku",
   recommendedStartLabel: "Začať",
   recommendedContinueLabel: "Pokračovať",
+  compactListTitle: "Lekcie v tejto ceste",
+  compactOpenLabel: "Otvoriť",
   recommendedLocalOnlyNote: "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
 };
 
@@ -145,6 +149,50 @@ export function PreviewLearningPathProgress({
         <p className="mt-4 text-xs font-bold uppercase tracking-wide text-amber-800">
           {resolvedLabels.recommendedLocalOnlyNote}
         </p>
+      </section>
+
+      <section className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <h3 className="text-base font-black text-slate-950">{resolvedLabels.compactListTitle}</h3>
+        <div className="mt-3 grid gap-2">
+          {lessons.map((lesson, index) => {
+            const isCompleted = completedLessons.includes(lesson.id);
+            const isCurrent = !isCompleted && index === firstIncompleteIndex;
+            const statusLabel = isCompleted
+              ? resolvedLabels.completedLabel
+              : isCurrent
+                ? resolvedLabels.currentLabel
+                : resolvedLabels.readyLabel;
+
+            return (
+              <div
+                className="grid gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] sm:items-center"
+                key={lesson.id}
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-black text-white">
+                  {lesson.step}
+                </span>
+                <p className="text-sm font-black leading-6 text-slate-900">{lesson.title}</p>
+                <span
+                  className={`inline-flex w-fit rounded-md px-3 py-1 text-xs font-black uppercase ${
+                    isCompleted
+                      ? "bg-emerald-700 text-white"
+                      : isCurrent
+                        ? "bg-sky-100 text-sky-800"
+                        : "bg-slate-100 text-slate-700"
+                  }`}
+                >
+                  {statusLabel}
+                </span>
+                <Link
+                  className="inline-flex min-h-10 w-fit items-center justify-center rounded-lg bg-slate-950 px-3 py-2 text-sm font-black text-white transition hover:bg-slate-800"
+                  href={lesson.href}
+                >
+                  {resolvedLabels.compactOpenLabel}
+                </Link>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3">

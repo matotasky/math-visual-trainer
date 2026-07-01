@@ -378,6 +378,16 @@ This is not adaptive mastery, diagnostic scoring, account progress, attempts, se
 
 It does not persist to Firestore or any backend service. It is only a UX helper for private/manual MVP testing of the local preview learning path.
 
+## Compact Preview Lesson List
+
+The child curriculum page can show a compact lesson list inside the local preview progress panel.
+
+The compact list uses the same completed lesson state already read by `PreviewLearningPathProgress` from browser `localStorage`.
+
+It is UI-only. It does not add persistence, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, aggregates, or account progress.
+
+It does not replace the existing lesson cards; it gives mobile users a faster way to scan the preview path and open a lesson.
+
 ## Preview Completion Navigation
 
 Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.
