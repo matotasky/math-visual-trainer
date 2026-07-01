@@ -404,6 +404,16 @@ The panel does not read or write progress, inspect answers, inspect performance,
 
 It does not change diagnostics, scoring, mastery, Firestore, dashboard, attempts, sessions, aggregates, or account progress.
 
+## Child and Parent Section Grouping
+
+The `/child/curriculum` page visually separates child-facing and parent-facing content.
+
+The `Pre dieťa` group contains the quick start, return notice, local preview progress, recommended next step, and local skills summary.
+
+The `Pre rodiča` group contains static guidance and observation tips for calm home practice.
+
+This grouping is visual and explanatory only. It does not change `localStorage`, account progress, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, or aggregates.
+
 ## Parent Preview Guide
 
 The child curriculum page includes a static parent-facing guide for using the preview path at home.

@@ -582,6 +582,17 @@ export default async function CurriculumPage() {
           </p>
         </div>
 
+        <div className="mt-6 max-w-3xl">
+          <p className="text-sm font-black uppercase text-emerald-700">
+            {isSlovak ? "Pre dieťa" : "For the child"}
+          </p>
+          <p className="mt-2 text-base font-semibold leading-7 text-slate-700">
+            {isSlovak
+              ? "Začni odporúčanou lekciou a pracuj pokojne krok za krokom."
+              : "Start with the recommended lesson and work calmly step by step."}
+          </p>
+        </div>
+
         <ChildQuickStart {...childQuickStartText[locale]} />
 
         <Suspense fallback={null}>
@@ -629,8 +640,26 @@ export default async function CurriculumPage() {
         </p>
       </section>
 
-      <ParentPreviewGuide {...parentPreviewGuideText[locale]} />
-      <ParentObservationTips {...parentObservationTipsText[locale]} />
+      <section className="mt-8">
+        <div className="max-w-3xl">
+          <p className="text-sm font-black uppercase text-indigo-700">
+            {isSlovak ? "Pre rodiča" : "For the parent"}
+          </p>
+          <h2 className="mt-2 text-2xl font-black text-slate-950">
+            {isSlovak
+              ? "Ako dieťa sprevádzať"
+              : "How to support the child"}
+          </h2>
+          <p className="mt-3 text-sm font-semibold leading-6 text-slate-700">
+            {isSlovak
+              ? "Krátke odporúčania, ako dieťa sprevádzať bez tlaku na rýchlosť alebo hodnotenie."
+              : "Short suggestions for supporting the child without pressure for speed or grading."}
+          </p>
+        </div>
+
+        <ParentPreviewGuide {...parentPreviewGuideText[locale]} />
+        <ParentObservationTips {...parentObservationTipsText[locale]} />
+      </section>
 
       <section className="mt-8">
         <div className="max-w-3xl">
