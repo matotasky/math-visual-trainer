@@ -394,6 +394,16 @@ The notice is local UI only. It reads the URL query parameter, can be dismissed 
 
 It only reassures the child or parent that browser-local progress was updated by the lesson completion action.
 
+## Parent Preview Guide
+
+The child curriculum page includes a static parent-facing guide for using the preview path at home.
+
+The guide gives calm at-home usage tips: let the child explain what they see, return to visuals after mistakes, avoid speed pressure, and take short breaks.
+
+It does not inspect child data or `localStorage`, and it does not change progress, scoring, diagnostics, mastery, Firestore, attempts, sessions, aggregates, or parent dashboard behavior.
+
+The guide is explanatory product UI only. It is not medical, psychological, or specialist educational advice.
+
 ## Shared Preview Completion UI
 
 Preview mini-modules share a presentational completion panel for the saved-in-this-browser message and next-step card.

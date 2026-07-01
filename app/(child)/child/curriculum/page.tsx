@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { ParentPreviewGuide } from "@/components/curriculum/ParentPreviewGuide";
 import { PreviewLearningPathProgress } from "@/components/curriculum/PreviewLearningPathProgress";
 import { PreviewReturnNotice } from "@/components/curriculum/PreviewReturnNotice";
 import {
@@ -364,6 +365,45 @@ const previewSkillsByLesson: Record<PreviewLessonId, Record<Locale, string[]>> =
   }
 };
 
+const parentPreviewGuideText: Record<
+  Locale,
+  {
+    title: string;
+    intro: string;
+    bullets: string[];
+    note: string;
+  }
+> = {
+  sk: {
+    title: "Ako túto ukážkovú cestu používať doma",
+    intro:
+      "Táto cesta je určená na pokojné precvičovanie. Dieťa nemusí ísť rýchlo ani všetko zvládnuť na prvýkrát.",
+    bullets: [
+      "Nechajte dieťa nahlas povedať, čo vidí.",
+      "Ak sa pomýli, vráťte sa k obrázku alebo číselnej osi.",
+      "Neriešte čas. Dôležité je porozumenie.",
+      "Po jednej lekcii si dajte krátku pauzu.",
+      "Lokálny progres je iba pomôcka v tomto prehliadači."
+    ],
+    note:
+      "Táto ukážková cesta nie je diagnostika ani hodnotenie. Nenahrádza školu, učiteľa ani odborné vyšetrenie."
+  },
+  en: {
+    title: "How to use this preview path at home",
+    intro:
+      "This path is meant for calm practice. The child does not need to be fast or get everything right on the first try.",
+    bullets: [
+      "Let the child say out loud what they see.",
+      "If they make a mistake, return to the picture or number line.",
+      "Do not focus on speed. Understanding matters most.",
+      "After one lesson, take a short break.",
+      "Local progress is only a helper in this browser."
+    ],
+    note:
+      "This preview path is not diagnostics or assessment. It does not replace school, a teacher, or professional evaluation."
+  }
+};
+
 function getStatusLabel(status: CurriculumModuleStatus, locale: Locale): string {
   if (locale === "sk") {
     return status === "active" ? "Aktívne" : status === "planned" ? "Plánované" : "Čoskoro";
@@ -484,6 +524,8 @@ export default async function CurriculumPage() {
             : "This is a practical preview learning path, not an officially verified sequence of the whole curriculum."}
         </p>
       </section>
+
+      <ParentPreviewGuide {...parentPreviewGuideText[locale]} />
 
       <section className="mt-8">
         <div className="max-w-3xl">
