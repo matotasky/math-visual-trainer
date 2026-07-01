@@ -388,6 +388,14 @@ It is UI-only. It does not add persistence, scoring, diagnostics, mastery, Fires
 
 It does not replace the existing lesson cards; it gives mobile users a faster way to scan the preview path and open a lesson.
 
+## Current Lesson Highlight
+
+The current lesson highlight is UI-only.
+
+It uses the existing first incomplete lesson logic inside `PreviewLearningPathProgress` to make the recommended lesson easier to spot in both the compact list and the larger lesson cards.
+
+It does not change progress, `localStorage`, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, aggregates, or account progress.
+
 ## Preview Completion Navigation
 
 Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.

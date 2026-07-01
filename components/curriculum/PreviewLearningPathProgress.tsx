@@ -37,6 +37,7 @@ type PreviewLearningPathProgressLabels = {
   recommendedLocalOnlyNote: string;
   compactListTitle: string;
   compactOpenLabel: string;
+  currentRecommendedLabel: string;
 };
 
 type PreviewLearningPathProgressProps = {
@@ -64,6 +65,7 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
   recommendedContinueLabel: "Pokračovať",
   compactListTitle: "Lekcie v tejto ceste",
   compactOpenLabel: "Otvoriť",
+  currentRecommendedLabel: "Odporúčané",
   recommendedLocalOnlyNote: "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
 };
 
@@ -165,13 +167,24 @@ export function PreviewLearningPathProgress({
 
             return (
               <div
-                className="grid gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] sm:items-center"
+                className={`grid gap-3 rounded-xl border p-3 shadow-sm sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] sm:items-center ${
+                  isCurrent
+                    ? "border-amber-300 bg-amber-50 ring-1 ring-amber-200"
+                    : "border-slate-200 bg-white"
+                }`}
                 key={lesson.id}
               >
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-black text-white">
                   {lesson.step}
                 </span>
-                <p className="text-sm font-black leading-6 text-slate-900">{lesson.title}</p>
+                <div>
+                  <p className="text-sm font-black leading-6 text-slate-900">{lesson.title}</p>
+                  {isCurrent ? (
+                    <p className="mt-1 text-xs font-black uppercase tracking-wide text-amber-800">
+                      {resolvedLabels.currentRecommendedLabel}
+                    </p>
+                  ) : null}
+                </div>
                 <span
                   className={`inline-flex w-fit rounded-md px-3 py-1 text-xs font-black uppercase ${
                     isCompleted
@@ -206,7 +219,19 @@ export function PreviewLearningPathProgress({
               : resolvedLabels.readyLabel;
 
           return (
-            <article className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm" key={lesson.id}>
+            <article
+              className={`rounded-2xl border p-5 shadow-sm ${
+                isCurrent
+                  ? "border-amber-300 bg-amber-50 ring-1 ring-amber-200"
+                  : "border-emerald-200 bg-emerald-50"
+              }`}
+              key={lesson.id}
+            >
+              {isCurrent ? (
+                <span className="mb-3 inline-flex rounded-full bg-amber-200 px-3 py-1 text-xs font-black uppercase text-amber-900">
+                  {resolvedLabels.currentRecommendedLabel}
+                </span>
+              ) : null}
               <div className="flex items-start justify-between gap-3">
                 <span className="inline-flex size-11 items-center justify-center rounded-full bg-emerald-600 text-lg font-black text-white">
                   {lesson.step}

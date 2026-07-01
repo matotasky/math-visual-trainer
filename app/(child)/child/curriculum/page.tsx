@@ -629,7 +629,8 @@ export default async function CurriculumPage() {
               ? "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
               : "This recommendation is based only on local progress in this browser.",
             compactListTitle: isSlovak ? "Lekcie v tejto ceste" : "Lessons in this path",
-            compactOpenLabel: isSlovak ? "Otvoriť" : "Open"
+            compactOpenLabel: isSlovak ? "Otvoriť" : "Open",
+            currentRecommendedLabel: isSlovak ? "Odporúčané" : "Recommended"
           }}
           lessons={localizedLearningPathPreviewLessons}
           skillsByLesson={localizedPreviewSkillsByLesson}
