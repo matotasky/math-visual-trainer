@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { PreviewLearningPathProgress } from "@/components/curriculum/PreviewLearningPathProgress";
+import { PreviewReturnNotice } from "@/components/curriculum/PreviewReturnNotice";
 import {
   SK_MATH_CURRICULUM_CYCLES,
   getCurriculumModulesByCycle
@@ -437,6 +439,10 @@ export default async function CurriculumPage() {
               : "No scoring. Results are saved only in this browser."}
           </p>
         </div>
+
+        <Suspense fallback={null}>
+          <PreviewReturnNotice />
+        </Suspense>
 
         <PreviewLearningPathProgress
           labels={{

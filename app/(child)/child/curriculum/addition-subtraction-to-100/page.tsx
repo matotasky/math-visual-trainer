@@ -38,7 +38,7 @@ export default function AdditionSubtractionTo100PreviewPage() {
 
         <AdditionSubtractionTo100Preview
           nextStep={{
-            href: "/child/curriculum",
+            href: "/child/curriculum?previewCompleted=1",
             label: "Späť na učebnú cestu",
             description: "Dokončil/a si aktuálnu ukážkovú cestu."
           }}

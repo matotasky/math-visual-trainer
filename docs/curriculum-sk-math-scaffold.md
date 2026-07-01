@@ -386,6 +386,14 @@ The completion action can mark the preview lesson complete in browser `localStor
 
 This remains local-only. It does not write to account progress, Firestore, diagnostics, mastery, sessions, attempts, aggregates, or parent dashboard data.
 
+## Preview Return Notice
+
+The child curriculum page can show a short return notice when the child lands on `/child/curriculum?previewCompleted=1` after completing a preview lesson.
+
+The notice is local UI only. It reads the URL query parameter, can be dismissed in React state, and does not write to `localStorage`, Firestore, account progress, diagnostics, mastery, attempts, sessions, aggregates, or parent dashboard data.
+
+It only reassures the child or parent that browser-local progress was updated by the lesson completion action.
+
 ## Shared Preview Completion UI
 
 Preview mini-modules share a presentational completion panel for the saved-in-this-browser message and next-step card.
