@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { ParentObservationTips } from "@/components/curriculum/ParentObservationTips";
 import { ParentPreviewGuide } from "@/components/curriculum/ParentPreviewGuide";
 import { PreviewLearningPathProgress } from "@/components/curriculum/PreviewLearningPathProgress";
 import { PreviewReturnNotice } from "@/components/curriculum/PreviewReturnNotice";
@@ -404,6 +405,78 @@ const parentPreviewGuideText: Record<
   }
 };
 
+const parentObservationTipsText: Record<
+  Locale,
+  {
+    title: string;
+    intro: string;
+    tips: Array<{
+      label: string;
+      description: string;
+    }>;
+    note: string;
+  }
+> = {
+  sk: {
+    title: "Na čo sa pozerať pri dieťati",
+    intro:
+      "Pri domácom precvičovaní si všímajte skôr spôsob rozmýšľania než počet správnych odpovedí.",
+    tips: [
+      {
+        label: "Vie vysvetliť, čo vidí?",
+        description:
+          "Nech dieťa ukáže skupiny, body, číselnú os alebo desiatky a jednotky vlastnými slovami."
+      },
+      {
+        label: "Pomáha mu obrázok?",
+        description:
+          "Ak odpoveď nevie hneď, vráťte sa k vizuálu. Cieľom je porozumenie, nie hádanie."
+      },
+      {
+        label: "Používa stratégiu?",
+        description:
+          "Všímajte si, či si pomáha doplnením do 10, rozkladom čísla alebo číselnou osou."
+      },
+      {
+        label: "Nie je toho naraz veľa?",
+        description:
+          "Ak dieťa stráca pozornosť, ukončite lekciu a pokračujte neskôr."
+      }
+    ],
+    note:
+      "Toto nie je diagnostika. Panel slúži iba ako pomôcka pre rodiča pri pokojnom domácom precvičovaní."
+  },
+  en: {
+    title: "What to notice while your child practices",
+    intro:
+      "During home practice, focus more on how the child thinks than on the number of correct answers.",
+    tips: [
+      {
+        label: "Can they explain what they see?",
+        description:
+          "Let the child point to groups, dots, the number line, or tens and ones in their own words."
+      },
+      {
+        label: "Does the visual help?",
+        description:
+          "If they do not know the answer right away, return to the visual. The goal is understanding, not guessing."
+      },
+      {
+        label: "Are they using a strategy?",
+        description:
+          "Notice whether they use making 10, splitting a number, or the number line."
+      },
+      {
+        label: "Is it too much at once?",
+        description:
+          "If the child loses attention, stop the lesson and continue later."
+      }
+    ],
+    note:
+      "This is not diagnostics. The panel is only a parent helper for calm home practice."
+  }
+};
+
 function getStatusLabel(status: CurriculumModuleStatus, locale: Locale): string {
   if (locale === "sk") {
     return status === "active" ? "Aktívne" : status === "planned" ? "Plánované" : "Čoskoro";
@@ -526,6 +599,7 @@ export default async function CurriculumPage() {
       </section>
 
       <ParentPreviewGuide {...parentPreviewGuideText[locale]} />
+      <ParentObservationTips {...parentObservationTipsText[locale]} />
 
       <section className="mt-8">
         <div className="max-w-3xl">

@@ -404,6 +404,16 @@ It does not inspect child data or `localStorage`, and it does not change progres
 
 The guide is explanatory product UI only. It is not medical, psychological, or specialist educational advice.
 
+## Parent Observation Tips
+
+The child curriculum page includes static parent-facing observation tips for calm home practice.
+
+The tips help a parent notice whether the child explains what they see, uses visuals, uses strategies, or needs a shorter session.
+
+They do not inspect answers, child data, `localStorage`, or performance. They are not diagnostic, medical, psychological, or specialist educational advice.
+
+They do not change progress, scoring, diagnostics, mastery, Firestore, attempts, sessions, aggregates, or parent dashboard behavior.
+
 ## Shared Preview Completion UI
 
 Preview mini-modules share a presentational completion panel for the saved-in-this-browser message and next-step card.
