@@ -646,7 +646,10 @@ export default async function CurriculumPage() {
               : "Nothing is completed yet. Start with the first recommended lesson.",
             allCompleteProgressNote: isSlovak
               ? "Výborne, všetky ukážkové lekcie v tejto ceste sú dokončené."
-              : "Great, all preview lessons in this path are complete."
+              : "Great, all preview lessons in this path are complete.",
+            clearProgressHelpText: isSlovak
+              ? "Vymaže sa iba lokálny prehľad v tomto prehliadači."
+              : "Only the local summary in this browser will be cleared."
           }}
           lessons={localizedLearningPathPreviewLessons}
           skillsByLesson={localizedPreviewSkillsByLesson}

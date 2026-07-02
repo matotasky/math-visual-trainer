@@ -412,6 +412,14 @@ These notes are derived only from the existing `completedCount` value in `Previe
 
 They are UI-only and do not change `localStorage`, progress, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, aggregates, or account progress.
 
+## Clear Local Progress Help Text
+
+The clear-progress action can show a short helper note explaining that it clears only browser-local preview data.
+
+This is UI copy only. It does not add a modal, confirmation flow, or any change to the existing `localStorage` clearing behavior.
+
+It does not affect account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
+
 ## Preview Completion Navigation
 
 Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.

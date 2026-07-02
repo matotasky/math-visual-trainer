@@ -44,6 +44,7 @@ type PreviewLearningPathProgressLabels = {
   openLessonAriaPrefix: string;
   zeroProgressNote: string;
   allCompleteProgressNote: string;
+  clearProgressHelpText: string;
 };
 
 type PreviewLearningPathProgressProps = {
@@ -78,6 +79,7 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
   openLessonAriaPrefix: "Otvoriť lekciu",
   zeroProgressNote: "Ešte nič nie je dokončené. Začni prvou odporúčanou lekciou.",
   allCompleteProgressNote: "Výborne, všetky ukážkové lekcie v tejto ceste sú dokončené.",
+  clearProgressHelpText: "Vymaže sa iba lokálny prehľad v tomto prehliadači.",
   recommendedLocalOnlyNote: "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
 };
 
@@ -126,14 +128,19 @@ export function PreviewLearningPathProgress({
         <p className="text-sm font-black uppercase text-emerald-800">
           {resolvedLabels.progressLabel}: {completedCount} / {lessons.length}
         </p>
-        <button
-          aria-label={resolvedLabels.clearProgressAriaLabel}
-          className="min-h-10 w-fit rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
-          onClick={clearLocalProgress}
-          type="button"
-        >
-          {resolvedLabels.clearProgressLabel}
-        </button>
+        <div className="flex flex-col gap-1 sm:items-end">
+          <button
+            aria-label={resolvedLabels.clearProgressAriaLabel}
+            className="min-h-10 w-fit rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
+            onClick={clearLocalProgress}
+            type="button"
+          >
+            {resolvedLabels.clearProgressLabel}
+          </button>
+          <p className="max-w-64 text-xs font-semibold leading-5 text-slate-500 sm:text-right">
+            {resolvedLabels.clearProgressHelpText}
+          </p>
+        </div>
       </div>
       {progressStateNote ? (
         <p className="mt-3 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-bold leading-6 text-emerald-950">
