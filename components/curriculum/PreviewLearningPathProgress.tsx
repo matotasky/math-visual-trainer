@@ -42,6 +42,8 @@ type PreviewLearningPathProgressLabels = {
   recommendedOpenAriaPrefix: string;
   restartAriaLabel: string;
   openLessonAriaPrefix: string;
+  zeroProgressNote: string;
+  allCompleteProgressNote: string;
 };
 
 type PreviewLearningPathProgressProps = {
@@ -74,6 +76,8 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
   recommendedOpenAriaPrefix: "Otvoriť odporúčanú lekciu",
   restartAriaLabel: "Zopakovať ukážkovú cestu od začiatku",
   openLessonAriaPrefix: "Otvoriť lekciu",
+  zeroProgressNote: "Ešte nič nie je dokončené. Začni prvou odporúčanou lekciou.",
+  allCompleteProgressNote: "Výborne, všetky ukážkové lekcie v tejto ceste sú dokončené.",
   recommendedLocalOnlyNote: "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
 };
 
@@ -97,6 +101,12 @@ export function PreviewLearningPathProgress({
   const firstIncompleteIndex = lessons.findIndex((lesson) => !completedLessons.includes(lesson.id));
   const firstIncompleteLesson = firstIncompleteIndex >= 0 ? lessons[firstIncompleteIndex] : undefined;
   const firstLesson = lessons[0];
+  const progressStateNote =
+    completedCount === 0
+      ? resolvedLabels.zeroProgressNote
+      : lessons.length > 0 && completedCount === lessons.length
+        ? resolvedLabels.allCompleteProgressNote
+        : null;
   const recommendedButtonLabel =
     completedCount === 0 ? resolvedLabels.recommendedStartLabel : resolvedLabels.recommendedContinueLabel;
   const completedLessonIds = new Set(completedLessons);
@@ -125,6 +135,11 @@ export function PreviewLearningPathProgress({
           {resolvedLabels.clearProgressLabel}
         </button>
       </div>
+      {progressStateNote ? (
+        <p className="mt-3 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-bold leading-6 text-emerald-950">
+          {progressStateNote}
+        </p>
+      ) : null}
 
       <section className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 md:p-5">
         <p className="text-sm font-black uppercase text-amber-800">{resolvedLabels.recommendedTitle}</p>

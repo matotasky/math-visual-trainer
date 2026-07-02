@@ -640,7 +640,13 @@ export default async function CurriculumPage() {
             restartAriaLabel: isSlovak
               ? "Zopakovať ukážkovú cestu od začiatku"
               : "Restart the preview path from the beginning",
-            openLessonAriaPrefix: isSlovak ? "Otvoriť lekciu" : "Open lesson"
+            openLessonAriaPrefix: isSlovak ? "Otvoriť lekciu" : "Open lesson",
+            zeroProgressNote: isSlovak
+              ? "Ešte nič nie je dokončené. Začni prvou odporúčanou lekciou."
+              : "Nothing is completed yet. Start with the first recommended lesson.",
+            allCompleteProgressNote: isSlovak
+              ? "Výborne, všetky ukážkové lekcie v tejto ceste sú dokončené."
+              : "Great, all preview lessons in this path are complete."
           }}
           lessons={localizedLearningPathPreviewLessons}
           skillsByLesson={localizedPreviewSkillsByLesson}

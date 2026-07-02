@@ -404,6 +404,14 @@ The labels add lesson-specific context for opening a lesson, opening the recomme
 
 This is accessibility/UI-only. It does not change `localStorage`, progress, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, aggregates, or account progress.
 
+## Preview Progress State Notes
+
+The local progress header can show friendly notes for zero-progress and all-complete states.
+
+These notes are derived only from the existing `completedCount` value in `PreviewLearningPathProgress`.
+
+They are UI-only and do not change `localStorage`, progress, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, aggregates, or account progress.
+
 ## Preview Completion Navigation
 
 Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.
