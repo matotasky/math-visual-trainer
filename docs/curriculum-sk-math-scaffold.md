@@ -396,6 +396,14 @@ It uses the existing first incomplete lesson logic inside `PreviewLearningPathPr
 
 It does not change progress, `localStorage`, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, aggregates, or account progress.
 
+## Preview Path Accessibility Labels
+
+Action buttons and links in the preview learning path include clearer `aria-label` text for assistive technology.
+
+The labels add lesson-specific context for opening a lesson, opening the recommended next lesson, restarting the preview path, and clearing local preview progress.
+
+This is accessibility/UI-only. It does not change `localStorage`, progress, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, aggregates, or account progress.
+
 ## Preview Completion Navigation
 
 Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.

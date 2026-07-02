@@ -630,7 +630,17 @@ export default async function CurriculumPage() {
               : "This recommendation is based only on local progress in this browser.",
             compactListTitle: isSlovak ? "Lekcie v tejto ceste" : "Lessons in this path",
             compactOpenLabel: isSlovak ? "Otvoriť" : "Open",
-            currentRecommendedLabel: isSlovak ? "Odporúčané" : "Recommended"
+            currentRecommendedLabel: isSlovak ? "Odporúčané" : "Recommended",
+            clearProgressAriaLabel: isSlovak
+              ? "Vymazať lokálny progres tejto ukážkovej cesty"
+              : "Clear local progress for this preview path",
+            recommendedOpenAriaPrefix: isSlovak
+              ? "Otvoriť odporúčanú lekciu"
+              : "Open recommended lesson",
+            restartAriaLabel: isSlovak
+              ? "Zopakovať ukážkovú cestu od začiatku"
+              : "Restart the preview path from the beginning",
+            openLessonAriaPrefix: isSlovak ? "Otvoriť lekciu" : "Open lesson"
           }}
           lessons={localizedLearningPathPreviewLessons}
           skillsByLesson={localizedPreviewSkillsByLesson}

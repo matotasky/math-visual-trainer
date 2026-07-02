@@ -38,6 +38,10 @@ type PreviewLearningPathProgressLabels = {
   compactListTitle: string;
   compactOpenLabel: string;
   currentRecommendedLabel: string;
+  clearProgressAriaLabel: string;
+  recommendedOpenAriaPrefix: string;
+  restartAriaLabel: string;
+  openLessonAriaPrefix: string;
 };
 
 type PreviewLearningPathProgressProps = {
@@ -66,6 +70,10 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
   compactListTitle: "Lekcie v tejto ceste",
   compactOpenLabel: "Otvoriť",
   currentRecommendedLabel: "Odporúčané",
+  clearProgressAriaLabel: "Vymazať lokálny progres tejto ukážkovej cesty",
+  recommendedOpenAriaPrefix: "Otvoriť odporúčanú lekciu",
+  restartAriaLabel: "Zopakovať ukážkovú cestu od začiatku",
+  openLessonAriaPrefix: "Otvoriť lekciu",
   recommendedLocalOnlyNote: "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
 };
 
@@ -109,6 +117,7 @@ export function PreviewLearningPathProgress({
           {resolvedLabels.progressLabel}: {completedCount} / {lessons.length}
         </p>
         <button
+          aria-label={resolvedLabels.clearProgressAriaLabel}
           className="min-h-10 w-fit rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
           onClick={clearLocalProgress}
           type="button"
@@ -131,6 +140,7 @@ export function PreviewLearningPathProgress({
               </p>
             </div>
             <Link
+              aria-label={`${resolvedLabels.recommendedOpenAriaPrefix}: ${firstIncompleteLesson.title}`}
               className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-base font-black text-white transition hover:bg-slate-800 md:w-fit"
               href={firstIncompleteLesson.href}
             >
@@ -141,6 +151,7 @@ export function PreviewLearningPathProgress({
           <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
             <p className="text-base font-bold leading-7 text-amber-950">{resolvedLabels.recommendedAllDone}</p>
             <Link
+              aria-label={resolvedLabels.restartAriaLabel}
               className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-base font-black text-white transition hover:bg-slate-800 md:w-fit"
               href={firstLesson.href}
             >
@@ -197,6 +208,7 @@ export function PreviewLearningPathProgress({
                   {statusLabel}
                 </span>
                 <Link
+                  aria-label={`${resolvedLabels.openLessonAriaPrefix}: ${lesson.title}`}
                   className="inline-flex min-h-10 w-fit items-center justify-center rounded-lg bg-slate-950 px-3 py-2 text-sm font-black text-white transition hover:bg-slate-800"
                   href={lesson.href}
                 >
@@ -256,6 +268,7 @@ export function PreviewLearningPathProgress({
               <h3 className="mt-4 text-xl font-black leading-7 text-slate-950">{lesson.title}</h3>
               <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">{lesson.description}</p>
               <Link
+                aria-label={`${resolvedLabels.openLessonAriaPrefix}: ${lesson.title}`}
                 className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-4 py-2 text-base font-black text-white transition hover:bg-slate-800"
                 href={lesson.href}
               >
