@@ -649,7 +649,22 @@ export default async function CurriculumPage() {
               : "Great, all preview lessons in this path are complete.",
             clearProgressHelpText: isSlovak
               ? "Vymaže sa iba lokálny prehľad v tomto prehliadači."
-              : "Only the local summary in this browser will be cleared."
+              : "Only the local summary in this browser will be cleared.",
+            allCompleteHelperTitle: isSlovak ? "Čo ďalej?" : "What next?",
+            allCompleteHelperItems: isSlovak
+              ? [
+                  "Zopakuj si cestu od začiatku.",
+                  "Vyber si lekciu, ktorá bola ťažšia.",
+                  "Daj si krátku pauzu a vráť sa neskôr."
+                ]
+              : [
+                  "Review the path from the beginning.",
+                  "Choose a lesson that felt harder.",
+                  "Take a short break and come back later."
+                ],
+            allCompleteHelperNote: isSlovak
+              ? "Toto je iba lokálne odporúčanie, nie hodnotenie."
+              : "This is only a local suggestion, not an assessment."
           }}
           lessons={localizedLearningPathPreviewLessons}
           skillsByLesson={localizedPreviewSkillsByLesson}

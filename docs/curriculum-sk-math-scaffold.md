@@ -420,6 +420,14 @@ This is UI copy only. It does not add a modal, confirmation flow, or any change 
 
 It does not affect account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
 
+## All-Complete Helper Panel
+
+When all preview lessons in the local path are complete, `PreviewLearningPathProgress` can show a small "what next" helper panel.
+
+The panel is derived only from the existing `completedCount` value and the preview lesson list length.
+
+It is UI-only and does not change progress, `localStorage`, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, aggregates, account progress, or curriculum verification state. It is not assessment.
+
 ## Preview Completion Navigation
 
 Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.

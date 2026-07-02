@@ -45,6 +45,9 @@ type PreviewLearningPathProgressLabels = {
   zeroProgressNote: string;
   allCompleteProgressNote: string;
   clearProgressHelpText: string;
+  allCompleteHelperTitle: string;
+  allCompleteHelperItems: string[];
+  allCompleteHelperNote: string;
 };
 
 type PreviewLearningPathProgressProps = {
@@ -80,6 +83,13 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
   zeroProgressNote: "Ešte nič nie je dokončené. Začni prvou odporúčanou lekciou.",
   allCompleteProgressNote: "Výborne, všetky ukážkové lekcie v tejto ceste sú dokončené.",
   clearProgressHelpText: "Vymaže sa iba lokálny prehľad v tomto prehliadači.",
+  allCompleteHelperTitle: "Čo ďalej?",
+  allCompleteHelperItems: [
+    "Zopakuj si cestu od začiatku.",
+    "Vyber si lekciu, ktorá bola ťažšia.",
+    "Daj si krátku pauzu a vráť sa neskôr."
+  ],
+  allCompleteHelperNote: "Toto je iba lokálne odporúčanie, nie hodnotenie.",
   recommendedLocalOnlyNote: "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
 };
 
@@ -100,13 +110,14 @@ export function PreviewLearningPathProgress({
   }, []);
 
   const completedCount = lessons.filter((lesson) => completedLessons.includes(lesson.id)).length;
+  const isAllComplete = lessons.length > 0 && completedCount === lessons.length;
   const firstIncompleteIndex = lessons.findIndex((lesson) => !completedLessons.includes(lesson.id));
   const firstIncompleteLesson = firstIncompleteIndex >= 0 ? lessons[firstIncompleteIndex] : undefined;
   const firstLesson = lessons[0];
   const progressStateNote =
     completedCount === 0
       ? resolvedLabels.zeroProgressNote
-      : lessons.length > 0 && completedCount === lessons.length
+      : isAllComplete
         ? resolvedLabels.allCompleteProgressNote
         : null;
   const recommendedButtonLabel =
@@ -185,6 +196,22 @@ export function PreviewLearningPathProgress({
           {resolvedLabels.recommendedLocalOnlyNote}
         </p>
       </section>
+
+      {isAllComplete ? (
+        <section className="mt-4 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 md:p-5">
+          <h3 className="text-lg font-black text-slate-950">{resolvedLabels.allCompleteHelperTitle}</h3>
+          <ul className="mt-3 grid gap-2">
+            {resolvedLabels.allCompleteHelperItems.map((item) => (
+              <li className="rounded-xl bg-white px-3 py-2 text-sm font-bold leading-6 text-slate-700 shadow-sm" key={item}>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs font-bold uppercase tracking-wide text-indigo-800">
+            {resolvedLabels.allCompleteHelperNote}
+          </p>
+        </section>
+      ) : null}
 
       <section className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
         <h3 className="text-base font-black text-slate-950">{resolvedLabels.compactListTitle}</h3>
