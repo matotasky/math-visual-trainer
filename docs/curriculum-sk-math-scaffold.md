@@ -428,6 +428,28 @@ The panel is derived only from the existing `completedCount` value and the previ
 
 It is UI-only and does not change progress, `localStorage`, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, aggregates, account progress, or curriculum verification state. It is not assessment.
 
+## Completed Lesson Review Actions
+
+Completed preview lessons can show review or repeat labels in the compact lesson list and large lesson cards.
+
+These labels still link to the same preview lesson routes. They do not reset progress, do not track repeats, and do not create attempts, sessions, aggregates, diagnostics, or mastery updates.
+
+This is UI-only.
+
+## Parent Local Progress Note
+
+The child curriculum page includes a static parent-facing explanation of browser-local progress.
+
+The panel does not inspect child data, does not read or write `localStorage`, and does not connect to Firestore.
+
+It explains that local preview progress is not account progress, not dashboard data, not assessment, and not diagnostics.
+
+## Progress Local-Only Note
+
+The progress header can show a short browser-only wording note.
+
+This is UI copy only. It does not change persistence, `localStorage`, account progress, scoring, diagnostics, mastery, Firestore, dashboard, attempts, sessions, or aggregates.
+
 ## Preview Completion Navigation
 
 Next-step navigation for the first preview learning path is shown only after the child completes a mini-module locally and clicks `Dokončiť lekciu`.

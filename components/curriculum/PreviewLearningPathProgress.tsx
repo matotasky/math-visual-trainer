@@ -37,6 +37,7 @@ type PreviewLearningPathProgressLabels = {
   recommendedLocalOnlyNote: string;
   compactListTitle: string;
   compactOpenLabel: string;
+  compactReviewLabel: string;
   currentRecommendedLabel: string;
   clearProgressAriaLabel: string;
   recommendedOpenAriaPrefix: string;
@@ -48,6 +49,8 @@ type PreviewLearningPathProgressLabels = {
   allCompleteHelperTitle: string;
   allCompleteHelperItems: string[];
   allCompleteHelperNote: string;
+  progressLocalOnlyNote: string;
+  reviewCompletedLessonLabel: string;
 };
 
 type PreviewLearningPathProgressProps = {
@@ -75,6 +78,7 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
   recommendedContinueLabel: "Pokračovať",
   compactListTitle: "Lekcie v tejto ceste",
   compactOpenLabel: "Otvoriť",
+  compactReviewLabel: "Zopakovať",
   currentRecommendedLabel: "Odporúčané",
   clearProgressAriaLabel: "Vymazať lokálny progres tejto ukážkovej cesty",
   recommendedOpenAriaPrefix: "Otvoriť odporúčanú lekciu",
@@ -90,6 +94,8 @@ const defaultLabels: PreviewLearningPathProgressLabels = {
     "Daj si krátku pauzu a vráť sa neskôr."
   ],
   allCompleteHelperNote: "Toto je iba lokálne odporúčanie, nie hodnotenie.",
+  progressLocalOnlyNote: "Ukladá sa iba v tomto prehliadači.",
+  reviewCompletedLessonLabel: "Zopakovať",
   recommendedLocalOnlyNote: "Toto odporúčanie vychádza iba z lokálneho progresu v tomto prehliadači."
 };
 
@@ -136,9 +142,14 @@ export function PreviewLearningPathProgress({
   return (
     <div className="mt-5 rounded-2xl border border-emerald-200 bg-white p-4 shadow-sm md:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm font-black uppercase text-emerald-800">
-          {resolvedLabels.progressLabel}: {completedCount} / {lessons.length}
-        </p>
+        <div>
+          <p className="text-sm font-black uppercase text-emerald-800">
+            {resolvedLabels.progressLabel}: {completedCount} / {lessons.length}
+          </p>
+          <p className="mt-1 text-xs font-bold uppercase tracking-wide text-emerald-700">
+            {resolvedLabels.progressLocalOnlyNote}
+          </p>
+        </div>
         <div className="flex flex-col gap-1 sm:items-end">
           <button
             aria-label={resolvedLabels.clearProgressAriaLabel}
@@ -261,7 +272,7 @@ export function PreviewLearningPathProgress({
                   className="inline-flex min-h-10 w-fit items-center justify-center rounded-lg bg-slate-950 px-3 py-2 text-sm font-black text-white transition hover:bg-slate-800"
                   href={lesson.href}
                 >
-                  {resolvedLabels.compactOpenLabel}
+                  {isCompleted ? resolvedLabels.compactReviewLabel : resolvedLabels.compactOpenLabel}
                 </Link>
               </div>
             );
@@ -321,7 +332,7 @@ export function PreviewLearningPathProgress({
                 className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-4 py-2 text-base font-black text-white transition hover:bg-slate-800"
                 href={lesson.href}
               >
-                {lesson.buttonLabel}
+                {isCompleted ? resolvedLabels.reviewCompletedLessonLabel : lesson.buttonLabel}
               </Link>
             </article>
           );

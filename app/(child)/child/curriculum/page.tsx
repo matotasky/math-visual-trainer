@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { ChildQuickStart } from "@/components/curriculum/ChildQuickStart";
+import { ParentLocalProgressNote } from "@/components/curriculum/ParentLocalProgressNote";
 import { ParentObservationTips } from "@/components/curriculum/ParentObservationTips";
 import { ParentPreviewGuide } from "@/components/curriculum/ParentPreviewGuide";
 import { PreviewLearningPathProgress } from "@/components/curriculum/PreviewLearningPathProgress";
@@ -434,6 +435,40 @@ const parentPreviewGuideText: Record<
   }
 };
 
+const parentLocalProgressNoteText: Record<
+  Locale,
+  {
+    title: string;
+    description: string;
+    items: string[];
+    note: string;
+  }
+> = {
+  sk: {
+    title: "Ako funguje lokálny progres",
+    description: "Ukážková cesta si pamätá dokončené lekcie iba v tomto prehliadači.",
+    items: [
+      "Neukladá sa do účtu.",
+      "Nezobrazuje sa v rodičovskom dashboarde.",
+      "Nie je to hodnotenie ani diagnostika.",
+      "Po vymazaní dát prehliadača môže zmiznúť."
+    ],
+    note:
+      "Lokálny progres slúži iba na pohodlné pokračovanie v tejto ukážkovej ceste."
+  },
+  en: {
+    title: "How local progress works",
+    description: "The preview path remembers completed lessons only in this browser.",
+    items: [
+      "It is not saved to the account.",
+      "It is not shown in the parent dashboard.",
+      "It is not assessment or diagnostics.",
+      "It may disappear when browser data is cleared."
+    ],
+    note: "Local progress is only a helper for continuing this preview path."
+  }
+};
+
 const parentObservationTipsText: Record<
   Locale,
   {
@@ -630,6 +665,7 @@ export default async function CurriculumPage() {
               : "This recommendation is based only on local progress in this browser.",
             compactListTitle: isSlovak ? "Lekcie v tejto ceste" : "Lessons in this path",
             compactOpenLabel: isSlovak ? "Otvoriť" : "Open",
+            compactReviewLabel: isSlovak ? "Zopakovať" : "Review",
             currentRecommendedLabel: isSlovak ? "Odporúčané" : "Recommended",
             clearProgressAriaLabel: isSlovak
               ? "Vymazať lokálny progres tejto ukážkovej cesty"
@@ -664,7 +700,11 @@ export default async function CurriculumPage() {
                 ],
             allCompleteHelperNote: isSlovak
               ? "Toto je iba lokálne odporúčanie, nie hodnotenie."
-              : "This is only a local suggestion, not an assessment."
+              : "This is only a local suggestion, not an assessment.",
+            progressLocalOnlyNote: isSlovak
+              ? "Ukladá sa iba v tomto prehliadači."
+              : "Saved only in this browser.",
+            reviewCompletedLessonLabel: isSlovak ? "Zopakovať" : "Review again"
           }}
           lessons={localizedLearningPathPreviewLessons}
           skillsByLesson={localizedPreviewSkillsByLesson}
@@ -695,6 +735,7 @@ export default async function CurriculumPage() {
         </div>
 
         <ParentPreviewGuide {...parentPreviewGuideText[locale]} />
+        <ParentLocalProgressNote {...parentLocalProgressNoteText[locale]} />
         <ParentObservationTips {...parentObservationTipsText[locale]} />
       </section>
 
