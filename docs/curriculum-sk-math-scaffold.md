@@ -444,6 +444,18 @@ The panel does not inspect child data, does not read or write `localStorage`, an
 
 It explains that local preview progress is not account progress, not dashboard data, not assessment, and not diagnostics.
 
+It also explains that browser-local progress may not transfer to another browser or device.
+
+## Preview Copy Organization
+
+Child and parent preview copy is stored in `data/curriculum/sk-math/preview-copy.ts`.
+
+Preview path progress labels are built by `getPreviewLearningPathLabels(locale)` in `lib/curriculum/preview-learning-path-labels.ts`.
+
+The `/child/curriculum` page composes those copy modules into UI components.
+
+This is an organization-only refactor. It does not change `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
+
 ## Progress Local-Only Note
 
 The progress header can show a short browser-only wording note.
