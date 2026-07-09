@@ -480,6 +480,14 @@ Draft paths are planning data only. They are not official curriculum alignment c
 
 Draft paths do not change `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
 
+## Internal Preview Path Index
+
+The internal route `/internal/preview-paths` shows preview path metadata and validation issues for developer/product review.
+
+The route is read-only. It does not change the selected path in `/child/curriculum`, does not expose draft paths in the child flow, and does not write any data.
+
+It does not change `localStorage`, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
+
 ## Preview Path Validation Helper
 
 `validatePreviewLearningPaths()` in `lib/curriculum/preview-path-validation.ts` performs static structure checks for preview path data.

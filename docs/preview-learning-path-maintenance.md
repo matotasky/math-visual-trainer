@@ -41,6 +41,16 @@ Do not render draft paths publicly until a later block intentionally enables the
 - Do not add mastery progression.
 - Do not add paid services or paid APIs.
 
+## Read-only Internal Preview Path Index
+
+The internal route `/internal/preview-paths` lists active and draft preview learning paths for developer/product review.
+
+It shows path metadata, localized copy, lesson rows, and validation issues from `validatePreviewLearningPaths()`.
+
+The route must remain read-only. Do not add forms, mutation buttons, Firestore writes, account progress, diagnostics, mastery updates, or dashboard updates.
+
+Do not link this route from child-facing UI unless a later explicit product decision intentionally enables that.
+
 ## Copy Localization
 
 - Every path needs Slovak and English title and description.
