@@ -468,6 +468,16 @@ This structure supports future preview paths without rewriting `/child/curriculu
 
 The implementation remains local-only. It does not change `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
 
+## Preview Path Validation Helper
+
+`validatePreviewLearningPaths()` in `lib/curriculum/preview-path-validation.ts` performs static structure checks for preview path data.
+
+It can be used by future tests or manual developer checks, but it is not wired into runtime UI.
+
+The helper returns an array of issues instead of throwing. It checks path ids, localized path copy, lesson order, lesson copy, hrefs, button labels, and localized skills.
+
+This is developer-only validation. It does not access `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
+
 ## Curriculum Page Copy Organization
 
 Remaining static curriculum page copy is stored in `data/curriculum/sk-math/page-copy.ts`.
