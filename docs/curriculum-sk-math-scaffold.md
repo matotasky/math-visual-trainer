@@ -456,6 +456,16 @@ The `/child/curriculum` page composes those copy modules into UI components.
 
 This is an organization-only refactor. It does not change `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
 
+## Curriculum Page Copy Organization
+
+Remaining static curriculum page copy is stored in `data/curriculum/sk-math/page-copy.ts`.
+
+Small display helpers in `lib/curriculum/curriculum-page-copy.ts` localize cycle labels, cycle descriptions, grade labels, area copy, module status labels, remediation labels, and module preview text.
+
+The `/child/curriculum` page now composes imported copy and helpers with UI components.
+
+This is an organization-only refactor. It does not change `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
+
 ## Progress Local-Only Note
 
 The progress header can show a short browser-only wording note.
