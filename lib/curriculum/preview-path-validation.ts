@@ -7,6 +7,7 @@ export type PreviewPathValidationIssue = {
 };
 
 const requiredLocales: Locale[] = ["sk", "en"];
+const validStatuses = new Set(["active", "draft"]);
 
 function hasText(value: string | undefined): boolean {
   return typeof value === "string" && value.trim().length > 0;
@@ -43,11 +44,20 @@ export function validatePreviewLearningPaths(): PreviewPathValidationIssue[] {
 
     addLocalizedTextIssues(issues, pathId, "Preview path title", path.title);
     addLocalizedTextIssues(issues, pathId, "Preview path description", path.description);
+    addLocalizedTextIssues(issues, pathId, "Preview path audience note", path.audienceNote);
+    addLocalizedTextIssues(issues, pathId, "Preview path local-only note", path.localOnlyNote);
 
-    if (path.lessons.length === 0) {
+    if (!validStatuses.has(path.status)) {
       issues.push({
         pathId,
-        message: "Preview path must contain at least one lesson."
+        message: `Preview path status "${path.status}" must be active or draft.`
+      });
+    }
+
+    if (path.status === "active" && path.lessons.length === 0) {
+      issues.push({
+        pathId,
+        message: "Active preview path must contain at least one lesson."
       });
     }
 

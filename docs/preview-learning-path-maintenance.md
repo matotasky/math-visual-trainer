@@ -7,12 +7,20 @@ Preview paths are not diagnostics, account progress, mastery, Firestore data, or
 ## Add a New Preview Path
 
 - Add the path id to `PreviewPathId` in `data/curriculum/sk-math/preview-paths.ts`.
+- Choose `active` or `draft` status.
 - Add localized path `title` and `description` for `sk` and `en`.
+- Add localized `audienceNote` and `localOnlyNote`.
 - Add ordered lessons with stable `step` values from `1..n`.
 - Keep all lesson `href` values stable and route-backed.
 - Add localized skill summaries for every lesson.
 - Run `validatePreviewLearningPaths()` manually or through a future test.
 - Update related documentation.
+
+Draft paths may have no lessons while routes and lesson content are still being planned.
+
+Active paths must have at least one lesson.
+
+Do not render draft paths publicly until a later block intentionally enables them.
 
 ## Add a New Lesson
 
@@ -57,6 +65,7 @@ Preview paths are not diagnostics, account progress, mastery, Firestore data, or
 - Do not claim official curriculum alignment unless the module and content have been manually reviewed.
 - Do not change `verificationStatus` as part of preview path maintenance.
 - Do not describe Visual Arithmetic remediation as an official curriculum requirement.
+- Do not imply official verification from a draft preview path.
 
 ## Manual Smoke Test for `/child/curriculum`
 

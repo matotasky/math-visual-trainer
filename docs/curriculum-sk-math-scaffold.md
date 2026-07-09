@@ -468,6 +468,18 @@ This structure supports future preview paths without rewriting `/child/curriculu
 
 The implementation remains local-only. It does not change `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
 
+## Draft Preview Paths
+
+The preview path model supports `active` and `draft` paths.
+
+Active paths are allowed to appear in child-facing UI when explicitly selected by the page. They must contain at least one lesson.
+
+Draft paths may be defined before lesson routes exist and may have an empty lesson list. They are not shown in `/child/curriculum` by default and should not be publicly rendered until a later block intentionally enables them.
+
+Draft paths are planning data only. They are not official curriculum alignment claims and do not change module verification status.
+
+Draft paths do not change `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
+
 ## Preview Path Validation Helper
 
 `validatePreviewLearningPaths()` in `lib/curriculum/preview-path-validation.ts` performs static structure checks for preview path data.

@@ -25,6 +25,13 @@ This folder contains read-only curriculum and preview-path scaffold data for Mat
 
 The current path is `cycle_1_number_foundations`.
 
+Preview paths can be `active` or `draft`.
+
+- `active`: may be selected by child-facing UI and must contain at least one lesson.
+- `draft`: planning data only; may have zero lessons while routes and lesson content are not ready.
+
+Each path also includes localized `audienceNote` and `localOnlyNote` metadata. These notes describe who the path is for and reinforce that preview progress is browser-local only.
+
 ## Preview Copy
 
 `preview-copy.ts` stores localized child and parent copy used by the preview path UI. It keeps `/child/curriculum` focused on composition instead of large inline copy objects.
@@ -50,7 +57,9 @@ Do not add these here:
 ## Adding a Future Preview Path Safely
 
 1. Add a new path id to `PreviewPathId`.
-2. Add lessons with localized `title`, `description`, `buttonLabel`, and `skills`.
-3. Keep lesson `href` values stable and route-backed.
-4. Verify no backend writes, account progress, diagnostics, mastery updates, or dashboard updates are introduced.
-5. Update `docs/curriculum-sk-math-scaffold.md` and `docs/preview-learning-path-maintenance.md`.
+2. Choose `active` or `draft` status.
+3. Add localized `title`, `description`, `audienceNote`, and `localOnlyNote`.
+4. Add lessons with localized `title`, `description`, `buttonLabel`, and `skills` when the path is active or when draft lessons are stable.
+5. Keep lesson `href` values stable and route-backed.
+6. Verify no backend writes, account progress, diagnostics, mastery updates, or dashboard updates are introduced.
+7. Update `docs/curriculum-sk-math-scaffold.md` and `docs/preview-learning-path-maintenance.md`.

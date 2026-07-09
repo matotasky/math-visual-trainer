@@ -10,8 +10,11 @@ export function getLocalizedPreviewPath(pathId: PreviewPathId, locale: Locale) {
 
   return {
     id: path.id,
+    status: path.status,
     title: path.title[locale],
     description: path.description[locale],
+    audienceNote: path.audienceNote[locale],
+    localOnlyNote: path.localOnlyNote[locale],
     lessons: path.lessons.map((lesson) => ({
       id: lesson.id,
       step: lesson.step,
