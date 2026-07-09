@@ -21,11 +21,9 @@ import {
 } from "@/data/curriculum/sk-math/page-copy";
 import {
   childQuickStartCopy,
-  learningPathPreviewLessonsCopy,
   parentLocalProgressNoteCopy,
   parentObservationTipsCopy,
-  parentPreviewGuideCopy,
-  previewSkillsByLessonCopy
+  parentPreviewGuideCopy
 } from "@/data/curriculum/sk-math/preview-copy";
 import {
   getCurriculumPreviewLesson,
@@ -38,8 +36,8 @@ import {
   getLocalizedGradeLabel
 } from "@/lib/curriculum/curriculum-page-copy";
 import { getPreviewLearningPathLabels } from "@/lib/curriculum/preview-learning-path-labels";
+import { getLocalizedPreviewPath } from "@/lib/curriculum/preview-paths";
 import { getRequestLocale } from "@/lib/i18n/server";
-import type { PreviewLessonId } from "@/lib/curriculum/local-preview-progress";
 
 export default async function CurriculumPage() {
   const locale = await getRequestLocale();
@@ -50,17 +48,7 @@ export default async function CurriculumPage() {
   const cycleSectionCopy = curriculumCycleSectionCopy[locale];
   const modulePreviewCopy = curriculumModulePreviewCopy[locale];
   const cycleOneModules = getCurriculumModulesByCycle("cycle_1");
-  const localizedLearningPathPreviewLessons = learningPathPreviewLessonsCopy.map((lesson) => ({
-    id: lesson.id,
-    step: lesson.step,
-    title: lesson.title[locale],
-    description: lesson.description[locale],
-    href: lesson.href,
-    buttonLabel: lesson.buttonLabel[locale]
-  }));
-  const localizedPreviewSkillsByLesson = Object.fromEntries(
-    learningPathPreviewLessonsCopy.map((lesson) => [lesson.id, previewSkillsByLessonCopy[lesson.id][locale]])
-  ) as Record<PreviewLessonId, string[]>;
+  const localizedPreviewPath = getLocalizedPreviewPath("cycle_1_number_foundations", locale);
 
   return (
     <section className="py-8">
@@ -87,6 +75,9 @@ export default async function CurriculumPage() {
             <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-slate-700">
               {previewPathCopy.subtitle}
             </p>
+            <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-emerald-800">
+              {localizedPreviewPath.description}
+            </p>
           </div>
           <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-bold leading-6 text-emerald-950">
             {previewPathCopy.localOnlyNote}
@@ -108,8 +99,8 @@ export default async function CurriculumPage() {
 
         <PreviewLearningPathProgress
           labels={getPreviewLearningPathLabels(locale)}
-          lessons={localizedLearningPathPreviewLessons}
-          skillsByLesson={localizedPreviewSkillsByLesson}
+          lessons={localizedPreviewPath.lessons}
+          skillsByLesson={localizedPreviewPath.skillsByLesson}
         />
 
         <p className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm font-semibold leading-6 text-slate-700 shadow-sm">

@@ -456,6 +456,18 @@ The `/child/curriculum` page composes those copy modules into UI components.
 
 This is an organization-only refactor. It does not change `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
 
+## Preview Learning Path Model
+
+Preview learning paths are defined in `data/curriculum/sk-math/preview-paths.ts`.
+
+`getLocalizedPreviewPath(pathId, locale)` prepares a localized lesson list and skills map for the preview progress component.
+
+The first path is `cycle_1_number_foundations`, which contains the current five local-only preview mini-modules.
+
+This structure supports future preview paths without rewriting `/child/curriculum`.
+
+The implementation remains local-only. It does not change `localStorage`, persistence, account progress, Firestore, diagnostics, mastery, dashboard, attempts, sessions, aggregates, or curriculum verification state.
+
 ## Curriculum Page Copy Organization
 
 Remaining static curriculum page copy is stored in `data/curriculum/sk-math/page-copy.ts`.
