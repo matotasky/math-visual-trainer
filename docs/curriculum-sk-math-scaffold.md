@@ -719,3 +719,15 @@ This shell is UI, navigation, and copy only. It does not change `localStorage`, 
 The child-facing shell links only to the active preview experience. Draft preview paths and internal review tools remain separate.
 
 The internal preview path index remains read-only and must not be exposed as child-facing navigation.
+
+## Preview Lesson Shell
+
+The five child preview lessons use a shared lesson shell and shared completion surface for consistent child-facing structure.
+
+The shell is UI-only. It provides the friendly header, local-only/no-pressure wording, parent tip area, concept badges, back link, and page footer.
+
+Visual helper components under `components/curriculum/visuals` are presentational only. They do not hold state, write progress, score answers, or connect to Firestore.
+
+Completion remains local-only and explicit inside each mini-lesson component. The shell and visual helpers do not write progress automatically.
+
+No scoring, diagnostics, mastery, backend behavior, attempts, sessions, aggregates, dashboard data, or module verification status changes are introduced by the lesson shell.

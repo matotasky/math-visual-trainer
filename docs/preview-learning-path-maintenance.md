@@ -68,6 +68,14 @@ Do not add `/internal/preview-paths` to public, child, or parent MVP navigation.
 - Do not repurpose a route for a different lesson meaning.
 - Keep completed local progress ids stable unless an explicit migration plan exists.
 
+## Shared Lesson Shell and Visual Helpers
+
+- Preview lesson route pages should use the shared lesson shell for consistent child-facing structure.
+- The shared shell must remain presentational and must not write local progress automatically.
+- Lesson completion writes must stay explicit inside the lesson component and must remain browser-local only.
+- Visual helpers must remain presentational. Do not add state, `localStorage`, Firestore, diagnostic scoring, mastery, attempts, sessions, aggregates, or dashboard behavior to them.
+- Do not use visual helpers to imply verified curriculum alignment.
+
 ## Skills Mapping
 
 - Skills are friendly summaries, not assessment outcomes.

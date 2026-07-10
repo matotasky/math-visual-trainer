@@ -19,6 +19,14 @@ Math Visual Trainer is now shaped as a visibly launchable MVP shell around the e
 - Local preview progress is not mastery or progression.
 - Local preview progress does not write to Firestore, attempts, sessions, aggregates, or the parent dashboard.
 
+## Child Lesson Experience
+
+All five preview lessons now share a consistent lesson shell, calm local-only wording, parent tips, and a visible route back to the preview path.
+
+Activities inside a lesson use local React state for the current step, selected answers, and friendly feedback.
+
+Lesson completion remains browser-local preview completion through the existing local preview progress helper. It does not change diagnostics, mastery, Firestore, attempts, sessions, aggregates, account progress, or dashboard data.
+
 ## Not Yet Production-Grade
 
 - The local preview path is not a full curriculum product.
