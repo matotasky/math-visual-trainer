@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { LocalChildGreeting } from "@/components/profile/LocalChildGreeting";
+import { LocalChildProfileSetup } from "@/components/profile/LocalChildProfileSetup";
+import { LocalPreviewProgressSummary } from "@/components/profile/LocalPreviewProgressSummary";
 import { MarketingCard } from "@/components/ui/MarketingCard";
 import { MvpCallout } from "@/components/ui/MvpCallout";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getRequestLocale } from "@/lib/i18n/server";
+
+export const metadata: Metadata = {
+  title: "Detská ukážka | Math Visual Trainer"
+};
 
 const copy = {
   en: {
@@ -40,6 +48,7 @@ export default async function ChildHomePage() {
   return (
     <section className="space-y-8 py-6">
       <SectionHeader title={labels.title} description={labels.subtitle} eyebrow="Dieťa" />
+      <LocalChildGreeting fallbackSubtitle={labels.subtitle} fallbackTitle="Ahoj" />
 
       <section className="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-6 shadow-sm sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
@@ -67,6 +76,11 @@ export default async function ChildHomePage() {
           </div>
         </div>
       </section>
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,380px)]">
+        <LocalChildProfileSetup />
+        <LocalPreviewProgressSummary />
+      </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         {labels.cards.map(([title, description, badge]) => (

@@ -76,6 +76,14 @@ Do not add `/internal/preview-paths` to public, child, or parent MVP navigation.
 - Visual helpers must remain presentational. Do not add state, `localStorage`, Firestore, diagnostic scoring, mastery, attempts, sessions, aggregates, or dashboard behavior to them.
 - Do not use visual helpers to imply verified curriculum alignment.
 
+## Local Child Profile
+
+- The local child profile may personalize wording, greeting, and parent-facing MVP context.
+- It must not change preview path selection automatically.
+- The local grade is a parent-friendly hint only, not a hard curriculum gate.
+- Do not use local grade to unlock, lock, skip, reorder, or hide lessons until an explicit product decision is made.
+- The profile must stay separate from account data, Firestore, diagnostics, mastery, attempts, sessions, aggregates, and dashboard behavior.
+
 ## Skills Mapping
 
 - Skills are friendly summaries, not assessment outcomes.

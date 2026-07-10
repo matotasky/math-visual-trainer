@@ -731,3 +731,13 @@ Visual helper components under `components/curriculum/visuals` are presentationa
 Completion remains local-only and explicit inside each mini-lesson component. The shell and visual helpers do not write progress automatically.
 
 No scoring, diagnostics, mastery, backend behavior, attempts, sessions, aggregates, dashboard data, or module verification status changes are introduced by the lesson shell.
+
+## Local Child Profile Boundary
+
+The local child profile is a browser-only convenience for the MVP trial. It stores a nickname and parent-friendly grade hint in `localStorage`.
+
+It is separate from local preview progress. The profile does not create account progress, diagnostic placement, mastery, Firestore data, attempts, sessions, aggregates, or dashboard entries.
+
+The local grade must not be used as an official curriculum decision, placement decision, lock, or unlock rule without a later explicit product decision.
+
+The profile must not be used to claim official curriculum alignment or to infer verified learning outcomes.

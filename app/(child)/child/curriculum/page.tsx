@@ -6,6 +6,7 @@ import { ParentObservationTips } from "@/components/curriculum/ParentObservation
 import { ParentPreviewGuide } from "@/components/curriculum/ParentPreviewGuide";
 import { PreviewLearningPathProgress } from "@/components/curriculum/PreviewLearningPathProgress";
 import { PreviewReturnNotice } from "@/components/curriculum/PreviewReturnNotice";
+import { LocalChildGreeting } from "@/components/profile/LocalChildGreeting";
 import {
   SK_MATH_CURRICULUM_CYCLES,
   getCurriculumModulesByCycle
@@ -92,6 +93,10 @@ export default async function CurriculumPage() {
         </div>
 
         <ChildQuickStart {...childQuickStartCopy[locale]} />
+
+        <div className="mt-5 max-w-3xl">
+          <LocalChildGreeting />
+        </div>
 
         <Suspense fallback={null}>
           <PreviewReturnNotice />

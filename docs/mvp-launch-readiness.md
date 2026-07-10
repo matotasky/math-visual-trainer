@@ -27,6 +27,22 @@ Activities inside a lesson use local React state for the current step, selected 
 
 Lesson completion remains browser-local preview completion through the existing local preview progress helper. It does not change diagnostics, mastery, Firestore, attempts, sessions, aggregates, account progress, or dashboard data.
 
+## Local Child Profile MVP
+
+The MVP can store an optional child nickname and grade in browser `localStorage` under `math_visual_trainer_local_child_profile_v1`.
+
+This local child profile is a convenience for trying the app. It is not account data, not a secure identity, and is not sent to Firestore.
+
+The profile does not affect diagnostics, mastery, attempts, sessions, aggregates, dashboard data, official curriculum decisions, or lesson unlocking.
+
+Clearing browser data can remove the profile.
+
+Smoke test notes:
+- Create a local child profile on `/child`.
+- Confirm the greeting and local progress summary appear on `/child`.
+- Confirm `/parent` can show, edit, and clear the same browser-local profile.
+- Confirm `/child/curriculum` still works without a profile.
+
 ## Not Yet Production-Grade
 
 - The local preview path is not a full curriculum product.

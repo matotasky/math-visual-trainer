@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { LocalChildProfileSetup } from "@/components/profile/LocalChildProfileSetup";
+import { LocalPreviewProgressSummary } from "@/components/profile/LocalPreviewProgressSummary";
 import { MarketingCard } from "@/components/ui/MarketingCard";
 import { MvpCallout } from "@/components/ui/MvpCallout";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getRequestLocale } from "@/lib/i18n/server";
+
+export const metadata: Metadata = {
+  title: "Rodičovský prehľad | Math Visual Trainer"
+};
 
 const copy = {
   en: {
@@ -27,6 +34,7 @@ const copy = {
     status: [
       "The child preview works without sign-in.",
       "Local progress exists only in this browser.",
+      "The local profile is not account data or secure identity.",
       "The account parent dashboard is a separate protected area.",
       "Official curriculum mapping will be marked only after manual verification."
     ],
@@ -54,6 +62,7 @@ const copy = {
     status: [
       "Detská ukážka funguje bez prihlásenia.",
       "Lokálny progres je iba v tomto prehliadači.",
+      "Lokálny profil nie je účet ani bezpečná identita.",
       "Rodičovský dashboard s účtom je samostatná chránená časť.",
       "Oficiálne mapovanie učiva bude označené až po manuálnom overení."
     ],
@@ -84,6 +93,11 @@ export default async function ParentIndexPage() {
           </MarketingCard>
         ))}
       </div>
+
+      <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,380px)]">
+        <LocalChildProfileSetup />
+        <LocalPreviewProgressSummary />
+      </section>
 
       <MvpCallout title={labels.statusTitle} tone="sky">
         <ul className="grid gap-3">
