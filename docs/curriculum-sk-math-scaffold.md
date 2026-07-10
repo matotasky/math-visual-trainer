@@ -709,3 +709,13 @@ Until that verification is complete, all curriculum UI should use language such 
 ## Adaptive Grade Philosophy
 
 The app should stay adaptive. A third-grade child may still need visual number sense support, and a younger child may be ready for selected fluency practice. Grade navigation should explain the school map, not become a rigid gate.
+
+## MVP App Shell
+
+The public landing page, child home page, and parent entry page now provide a visible MVP shell around the local preview learning path.
+
+This shell is UI, navigation, and copy only. It does not change `localStorage`, account progress, Firestore, diagnostics, mastery, dashboard data, attempts, sessions, or aggregates.
+
+The child-facing shell links only to the active preview experience. Draft preview paths and internal review tools remain separate.
+
+The internal preview path index remains read-only and must not be exposed as child-facing navigation.
