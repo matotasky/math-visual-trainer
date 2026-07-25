@@ -92,6 +92,8 @@ The local child profile is `localStorage` only. It stores a browser-local nickna
 
 Preview lesson completion is also `localStorage` only. It is a browser-local convenience for the child preview path, not diagnostic scoring, mastery, or account progress.
 
+Preview progress emits browser-only events so local UI components can update after a lesson is completed or progress is cleared. These events are not analytics, are not sent to a server, and do not create attempts, sessions, aggregates, mastery updates, or dashboard entries.
+
 Internal launch and smoke-test pages are read-only. They may list routes, statuses, validation notes, and maintenance warnings, but they must not write to Firestore or browser storage.
 
 No new backend writes, Firestore collections, diagnostic scoring, mastery updates, attempts, sessions, aggregates, or dashboard writes should be introduced before an explicit product decision.

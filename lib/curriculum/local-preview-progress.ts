@@ -6,6 +6,7 @@ export type PreviewLessonId =
   | "addition_subtraction_to_100";
 
 const STORAGE_KEY = "math_visual_trainer_preview_progress_v1";
+const PREVIEW_PROGRESS_CHANGED_EVENT = "math_visual_trainer_preview_progress_changed";
 
 const previewLessonIds = new Set<PreviewLessonId>([
   "quantity_and_number_sense",
@@ -55,6 +56,7 @@ export function markPreviewLessonCompleted(lessonId: PreviewLessonId): void {
       : [...completedLessons, lessonId];
 
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextCompletedLessons));
+    notifyPreviewLessonProgressChanged();
   } catch {
     // Local preview progress is a convenience only. Ignore unavailable storage.
   }
@@ -71,7 +73,36 @@ export function clearPreviewLessonProgress(): void {
 
   try {
     window.localStorage.removeItem(STORAGE_KEY);
+    notifyPreviewLessonProgressChanged();
   } catch {
     // Local preview progress is a convenience only. Ignore unavailable storage.
   }
+}
+
+export function subscribeToPreviewLessonProgressChanges(callback: () => void): () => void {
+  if (typeof window === "undefined") {
+    return () => undefined;
+  }
+
+  function handleStorage(event: StorageEvent) {
+    if (event.key === STORAGE_KEY) {
+      callback();
+    }
+  }
+
+  window.addEventListener(PREVIEW_PROGRESS_CHANGED_EVENT, callback);
+  window.addEventListener("storage", handleStorage);
+
+  return () => {
+    window.removeEventListener(PREVIEW_PROGRESS_CHANGED_EVENT, callback);
+    window.removeEventListener("storage", handleStorage);
+  };
+}
+
+function notifyPreviewLessonProgressChanged() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(new Event(PREVIEW_PROGRESS_CHANGED_EVENT));
 }

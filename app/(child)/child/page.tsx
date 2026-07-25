@@ -51,7 +51,7 @@ export default async function ChildHomePage() {
       <LocalChildGreeting fallbackSubtitle={labels.subtitle} fallbackTitle="Ahoj" />
 
       <section className="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-6 shadow-sm sm:p-8">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,380px)] lg:items-center">
           <div>
             <p className="text-sm font-black uppercase text-emerald-700">MVP ukážka</p>
             <h2 className="mt-2 text-3xl font-black text-slate-950">{labels.primaryTitle}</h2>
@@ -65,21 +65,12 @@ export default async function ChildHomePage() {
               {labels.primaryCta}
             </Link>
           </div>
-          <div className="grid grid-cols-4 gap-2 rounded-3xl bg-white p-4 shadow-sm">
-            {Array.from({ length: 16 }, (_, index) => (
-              <span
-                aria-hidden="true"
-                className={index < 10 ? "aspect-square rounded-xl bg-sky-500" : "aspect-square rounded-xl bg-emerald-100"}
-                key={index}
-              />
-            ))}
-          </div>
+          <LocalPreviewProgressSummary />
         </div>
       </section>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,380px)]">
+      <div className="grid gap-4">
         <LocalChildProfileSetup />
-        <LocalPreviewProgressSummary />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">

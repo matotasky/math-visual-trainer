@@ -743,3 +743,13 @@ It is separate from local preview progress. The profile does not create account 
 The local grade must not be used as an official curriculum decision, placement decision, lock, or unlock rule without a later explicit product decision.
 
 The profile must not be used to claim official curriculum alignment or to infer verified learning outcomes.
+
+## Preview Continue Flow
+
+The child home page and curriculum page can show a local-only continue card derived from browser preview progress.
+
+The continue flow uses the active `cycle_1_number_foundations` preview path and the first incomplete lesson to suggest the next action. If all preview lessons are complete, it points back to the first lesson for review.
+
+Preview completion emits browser-only events so local UI can refresh after a lesson is completed or progress is cleared.
+
+This is not adaptive mastery, diagnostic placement, account progress, or parent analytics. It does not write to Firestore, attempts, sessions, aggregates, dashboard data, or curriculum verification state.

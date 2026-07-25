@@ -4,6 +4,7 @@ import { ChildQuickStart } from "@/components/curriculum/ChildQuickStart";
 import { ParentLocalProgressNote } from "@/components/curriculum/ParentLocalProgressNote";
 import { ParentObservationTips } from "@/components/curriculum/ParentObservationTips";
 import { ParentPreviewGuide } from "@/components/curriculum/ParentPreviewGuide";
+import { PreviewContinueCard } from "@/components/curriculum/PreviewContinueCard";
 import { PreviewLearningPathProgress } from "@/components/curriculum/PreviewLearningPathProgress";
 import { PreviewReturnNotice } from "@/components/curriculum/PreviewReturnNotice";
 import { LocalChildGreeting } from "@/components/profile/LocalChildGreeting";
@@ -97,6 +98,8 @@ export default async function CurriculumPage() {
         <div className="mt-5 max-w-3xl">
           <LocalChildGreeting />
         </div>
+
+        <PreviewContinueCard />
 
         <Suspense fallback={null}>
           <PreviewReturnNotice />

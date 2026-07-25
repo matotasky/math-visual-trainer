@@ -43,6 +43,17 @@ Smoke test notes:
 - Confirm `/parent` can show, edit, and clear the same browser-local profile.
 - Confirm `/child/curriculum` still works without a profile.
 
+## First-Run Flow
+
+The first-run path is designed to let a new family try the child preview quickly:
+- Open `/child` without login.
+- Optionally add a browser-local child nickname.
+- Use the local preview progress summary to open the next incomplete lesson.
+- Complete a lesson and return to `/child/curriculum?previewCompleted=1`.
+- Confirm the return notice points to the recommended next step.
+
+This flow is browser-local only. It does not create account progress, diagnostic scoring, mastery updates, Firestore writes, attempts, sessions, aggregates, or parent dashboard data.
+
 ## MVP Smoke Test Page
 
 `/internal/mvp-smoke-test` is a read-only manual launch checklist for developer/product review.

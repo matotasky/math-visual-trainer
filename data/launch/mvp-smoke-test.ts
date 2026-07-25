@@ -24,6 +24,20 @@ export const mvpSmokeTestItems: MvpSmokeTestItem[] = [
     notes: "Local profile, local progress summary, and preview path CTA."
   },
   {
+    id: "first_run_child_profile",
+    label: "First-run child profile",
+    route: "/child",
+    status: "ready",
+    notes: "Create optional browser-local child profile and continue without login."
+  },
+  {
+    id: "continue_next_lesson_cta",
+    label: "Continue next lesson CTA",
+    route: "/child",
+    status: "ready",
+    notes: "Local preview summary links to the next incomplete lesson."
+  },
+  {
     id: "child_curriculum",
     label: "Child curriculum",
     route: "/child/curriculum",
@@ -64,6 +78,13 @@ export const mvpSmokeTestItems: MvpSmokeTestItem[] = [
     route: "/child/curriculum/addition-subtraction-to-100",
     status: "ready",
     notes: "Local-only interactive preview lesson."
+  },
+  {
+    id: "return_after_lesson_completion",
+    label: "Return after lesson completion",
+    route: "/child/curriculum?previewCompleted=1",
+    status: "ready",
+    notes: "Shows local-only completion notice and recommended next step."
   },
   {
     id: "parent_entry",

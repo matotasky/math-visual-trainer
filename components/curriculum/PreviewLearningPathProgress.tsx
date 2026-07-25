@@ -140,7 +140,7 @@ export function PreviewLearningPathProgress({
   }
 
   return (
-    <div className="mt-5 rounded-2xl border border-emerald-200 bg-white p-4 shadow-sm md:p-5">
+    <div className="mt-5 rounded-2xl border border-emerald-200 bg-white p-4 shadow-sm md:p-5" id="preview-progress">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-black uppercase text-emerald-800">
@@ -170,7 +170,7 @@ export function PreviewLearningPathProgress({
         </p>
       ) : null}
 
-      <section className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 md:p-5">
+      <section className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 md:p-5" id="preview-next-step">
         <p className="text-sm font-black uppercase text-amber-800">{resolvedLabels.recommendedTitle}</p>
         {firstIncompleteLesson ? (
           <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
@@ -224,7 +224,7 @@ export function PreviewLearningPathProgress({
         </section>
       ) : null}
 
-      <section className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <section className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4" id="preview-lesson-list">
         <h3 className="text-base font-black text-slate-950">{resolvedLabels.compactListTitle}</h3>
         <div className="mt-3 grid gap-2">
           {lessons.map((lesson, index) => {
