@@ -94,6 +94,39 @@ export const mvpSmokeTestItems: MvpSmokeTestItem[] = [
     notes: "Parent-facing public MVP entry with local profile summary."
   },
   {
+    id: "local_data_page",
+    label: "Local data page",
+    route: "/about/local-data",
+    status: "ready",
+    notes: "Public explanation of browser-local profile and preview progress boundaries."
+  },
+  {
+    id: "friendly_not_found",
+    label: "Friendly 404",
+    route: "/this-route-does-not-exist",
+    status: "manual_check",
+    notes: "Unknown route should show the Slovak 404 page with safe public links."
+  },
+  {
+    id: "global_error_ui",
+    label: "Global error UI",
+    status: "manual_check",
+    notes: "Reset UI must not expose details or send error data externally."
+  },
+  {
+    id: "curriculum_loading_state",
+    label: "Curriculum loading state",
+    route: "/child/curriculum",
+    status: "manual_check",
+    notes: "Loading shell should render without writing progress or reading Firebase."
+  },
+  {
+    id: "static_mvp_route_validation",
+    label: "Static MVP route validation",
+    status: "ready",
+    notes: "Run npm run validate:mvp."
+  },
+  {
     id: "internal_preview_path_index",
     label: "Internal preview path index",
     route: "/internal/preview-paths",

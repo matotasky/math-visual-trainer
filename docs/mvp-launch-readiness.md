@@ -71,6 +71,14 @@ This flow is browser-local only. It does not create account progress, diagnostic
 - The local child profile and preview progress do not sync between devices.
 - Classroom and teacher workflows are not available yet.
 
+## Release Candidate 1
+
+Version `0.1.0-rc.1` is a release candidate for a private demo and a limited soft launch, not a production-ready declaration.
+
+It adds a public local-data page, shared MVP footer, friendly 404/error/loading states, static route validation through `npm run validate:mvp`, and the release candidate checklist in `docs/mvp-release-candidate-checklist.md`.
+
+The existing boundaries remain: no claim of full official ŠVP alignment, no account analytics or diagnostic/mastery interpretation from local preview progress, no multi-device sync, and no teacher or classroom workflow.
+
 ## MVP Smoke Test Page
 
 `/internal/mvp-smoke-test` is a read-only manual launch checklist for developer/product review.

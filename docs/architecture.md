@@ -100,6 +100,12 @@ The current MVP route boundary is documented in `docs/mvp-route-inventory.md`. T
 
 No new backend writes, Firestore collections, diagnostic scoring, mastery updates, attempts, sessions, aggregates, or dashboard writes should be introduced before an explicit product decision.
 
+## Release Integrity Checks
+
+`npm run validate:mvp` statically checks that required MVP route source files and launch documents exist. It is a repository integrity check and does not replace browser testing.
+
+The global error UI does not send error data externally. The public `/about/local-data` page explains browser-only storage boundaries without reading local data itself.
+
 ## Future-Ready Decisions
 
 - `parentChildLinks` supports future child accounts and shared guardians.

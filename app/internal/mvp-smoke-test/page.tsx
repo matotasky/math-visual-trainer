@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MVP_RELEASE } from "@/data/launch/mvp-release";
 import { mvpSmokeTestItems, type MvpSmokeTestStatus } from "@/data/launch/mvp-smoke-test";
 
 export const metadata: Metadata = {
@@ -40,12 +41,45 @@ export default function MvpSmokeTestPage() {
           <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-slate-700">
             Read-only manual launch checklist. This page does not write data or change child progress.
           </p>
+          <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+            <div className="rounded-xl bg-slate-50 p-3">
+              <dt className="font-black text-slate-600">Version</dt>
+              <dd className="mt-1 font-mono font-bold text-slate-950">{MVP_RELEASE.version}</dd>
+            </div>
+            <div className="rounded-xl bg-slate-50 p-3">
+              <dt className="font-black text-slate-600">Stage</dt>
+              <dd className="mt-1 font-mono font-bold text-slate-950">{MVP_RELEASE.stage}</dd>
+            </div>
+            <div className="rounded-xl bg-slate-50 p-3 sm:col-span-1">
+              <dt className="font-black text-slate-600">Release</dt>
+              <dd className="mt-1 font-bold text-slate-950">{MVP_RELEASE.title}</dd>
+            </div>
+          </dl>
           <Link
             className="mt-4 inline-flex min-h-10 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 transition hover:border-sky-300 hover:bg-sky-50"
             href="/internal/preview-paths"
           >
             Back to preview path index
           </Link>
+        </section>
+
+        <section className="mt-6 grid gap-4 lg:grid-cols-2">
+          <article className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-950">
+            <h2 className="text-xl font-black">Released in this candidate</h2>
+            <ul className="mt-3 grid list-disc gap-2 pl-5 text-sm font-bold leading-6">
+              {MVP_RELEASE.releasedFeatures.map((feature) => (
+                <li key={feature}>{feature}</li>
+              ))}
+            </ul>
+          </article>
+          <article className="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-rose-950">
+            <h2 className="text-xl font-black">Blocked claims</h2>
+            <ul className="mt-3 grid list-disc gap-2 pl-5 text-sm font-bold leading-6">
+              {MVP_RELEASE.blockedClaims.map((claim) => (
+                <li key={claim}>{claim}</li>
+              ))}
+            </ul>
+          </article>
         </section>
 
         <section className="mt-6 grid gap-4 md:grid-cols-3">

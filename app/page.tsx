@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MvpFooter } from "@/components/layout/MvpFooter";
 import { RouteShell } from "@/components/layout/RouteShell";
 import { MvpNavigation } from "@/components/navigation/MvpNavigation";
 import { LandingPageContent } from "@/components/marketing/LandingPageContent";
@@ -13,6 +14,7 @@ export default function HomePage() {
     <RouteShell variant="public">
       <MvpNavigation />
       <LandingPageContent />
+      <MvpFooter />
     </RouteShell>
   );
 }

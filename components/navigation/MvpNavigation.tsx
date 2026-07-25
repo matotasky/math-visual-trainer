@@ -4,7 +4,8 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/child", label: "Dieťa" },
   { href: "/parent", label: "Rodič" },
-  { href: "/child/curriculum", label: "Ukážková cesta" }
+  { href: "/child/curriculum", label: "Ukážková cesta" },
+  { href: "/about/local-data", label: "Lokálne údaje" }
 ] as const;
 
 export function MvpNavigation() {

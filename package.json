@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "validate:mvp": "node --preserve-symlinks-main scripts/validate-mvp-routes.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.0",

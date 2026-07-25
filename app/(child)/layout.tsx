@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ChildBackNavigation } from "@/components/child/ChildBackNavigation";
+import { MvpFooter } from "@/components/layout/MvpFooter";
 import { RouteShell } from "@/components/layout/RouteShell";
 import { MvpNavigation } from "@/components/navigation/MvpNavigation";
 import { getRequestDictionary } from "@/lib/i18n/server";
@@ -19,6 +20,7 @@ export default async function ChildLayout({ children }: { children: ReactNode })
         <MvpNavigation />
         <ChildBackNavigation labels={dictionary.child.navigation} />
         {children}
+        <MvpFooter />
       </RouteShell>
     </ProtectedRoute>
   );

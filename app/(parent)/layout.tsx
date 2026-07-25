@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { RouteShell } from "@/components/layout/RouteShell";
+import { MvpFooter } from "@/components/layout/MvpFooter";
 import { MvpNavigation } from "@/components/navigation/MvpNavigation";
 import { ParentNavigation } from "@/components/parent/ParentNavigation";
 import { ParentPinBoundary } from "@/components/parent/ParentPinBoundary";
@@ -20,6 +21,7 @@ export default async function ParentLayout({ children }: { children: ReactNode }
           <MvpNavigation />
           <ParentNavigation labels={dictionary.parent.navigation} />
           {children}
+          <MvpFooter />
         </RouteShell>
       </ParentPinBoundary>
     </ProtectedRoute>
