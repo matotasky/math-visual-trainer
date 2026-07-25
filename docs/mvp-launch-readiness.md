@@ -54,6 +54,23 @@ The first-run path is designed to let a new family try the child preview quickly
 
 This flow is browser-local only. It does not create account progress, diagnostic scoring, mastery updates, Firestore writes, attempts, sessions, aggregates, or parent dashboard data.
 
+## Demo Script
+
+1. Open `/` and choose **Začať teraz**.
+2. On `/child`, optionally create a local child profile or continue without one.
+3. Open the suggested first preview lesson and complete its activities.
+4. Select **Dokončiť lekciu**, then return to `/child/curriculum?previewCompleted=1`.
+5. Confirm the next recommended preview lesson changes.
+6. Clear local preview progress and confirm only this browser resets.
+
+## Known MVP Boundaries
+
+- Do not claim full official ŠVP alignment.
+- Local preview completion does not create account analytics.
+- Local preview completion is not diagnostic scoring or mastery.
+- The local child profile and preview progress do not sync between devices.
+- Classroom and teacher workflows are not available yet.
+
 ## MVP Smoke Test Page
 
 `/internal/mvp-smoke-test` is a read-only manual launch checklist for developer/product review.
@@ -83,6 +100,7 @@ It must not be shown as child-facing UI and must not be linked from public, chil
 - `/child/curriculum/addition-subtraction-to-100`
 - `/parent`
 - `/internal/preview-paths`
+- `/internal/mvp-smoke-test`
 
 ## No-Claims Rule
 

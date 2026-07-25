@@ -42,7 +42,7 @@ export function LandingPageContent() {
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link
                 className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white transition hover:bg-slate-800"
-                href="/child/curriculum"
+                href="/child"
               >
                 Vyskúšať detskú ukážku
               </Link>
@@ -85,6 +85,7 @@ export function LandingPageContent() {
             <p className="mt-3 text-base font-semibold leading-7 text-slate-700">
               Rýchla ukážka funguje bez účtu a bez platených služieb.
             </p>
+            <p className="mt-2 text-sm font-bold leading-6 text-emerald-800">Dieťa môže začať aj bez profilu.</p>
             <Link
               className="mt-5 inline-flex min-h-12 items-center justify-center rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white transition hover:bg-slate-800"
               href="/child"
@@ -94,7 +95,7 @@ export function LandingPageContent() {
           </div>
           <div className="grid gap-3 md:grid-cols-3">
             {firstRunSteps.map((step, index) => (
-              <article className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4" key={step.title}>
+              <article className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 shadow-sm" key={step.title}>
                 <span className="inline-flex size-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-black text-white">
                   {index + 1}
                 </span>

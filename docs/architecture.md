@@ -96,6 +96,8 @@ Preview progress emits browser-only events so local UI components can update aft
 
 Internal launch and smoke-test pages are read-only. They may list routes, statuses, validation notes, and maintenance warnings, but they must not write to Firestore or browser storage.
 
+The current MVP route boundary is documented in `docs/mvp-route-inventory.md`. The first-run route from the public landing page through `/child` and the active preview lessons remains browser-local: it does not change server data, account progress, Firestore, diagnostics, mastery, attempts, sessions, aggregates, or dashboard records. Continue cards only read the existing browser-local preview progress to suggest the next active lesson.
+
 No new backend writes, Firestore collections, diagnostic scoring, mastery updates, attempts, sessions, aggregates, or dashboard writes should be introduced before an explicit product decision.
 
 ## Future-Ready Decisions

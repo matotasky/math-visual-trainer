@@ -87,6 +87,30 @@ export default async function ChildHomePage() {
         ))}
       </div>
 
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-sm font-black uppercase text-sky-700">Rýchle odkazy</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <Link
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-center text-sm font-black text-slate-800 transition hover:border-sky-300 hover:bg-sky-50"
+            href="/child/curriculum"
+          >
+            Celá ukážková cesta
+          </Link>
+          <Link
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-center text-sm font-black text-slate-800 transition hover:border-sky-300 hover:bg-sky-50"
+            href="/child/curriculum/quantity-and-number-sense"
+          >
+            Prvá lekcia
+          </Link>
+          <Link
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-center text-sm font-black text-slate-800 transition hover:border-sky-300 hover:bg-sky-50"
+            href="/parent"
+          >
+            Rodičovský prehľad
+          </Link>
+        </div>
+      </section>
+
       <MvpCallout tone="emerald">{labels.localOnly}</MvpCallout>
     </section>
   );

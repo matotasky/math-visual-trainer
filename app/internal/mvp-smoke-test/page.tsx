@@ -106,6 +106,33 @@ export default function MvpSmokeTestPage() {
             </ul>
           </div>
         </section>
+
+        <section className="mt-6 grid gap-4 lg:grid-cols-2">
+          <article className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-950">
+            <h2 className="text-xl font-black">Manual demo script</h2>
+            <ol className="mt-3 grid list-decimal gap-2 pl-5 text-sm font-bold leading-6">
+              <li>Open <code>/</code>.</li>
+              <li>Click “Začať teraz”.</li>
+              <li>On <code>/child</code>, optionally create a local profile.</li>
+              <li>Open the suggested first lesson.</li>
+              <li>Complete all activities.</li>
+              <li>Click “Dokončiť lekciu”.</li>
+              <li>Return to <code>/child/curriculum?previewCompleted=1</code>.</li>
+              <li>Confirm the recommended next step changed.</li>
+              <li>Clear local progress and confirm it resets only locally.</li>
+            </ol>
+          </article>
+          <article className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950">
+            <h2 className="text-xl font-black">Do not demo as ready</h2>
+            <ul className="mt-3 grid list-disc gap-2 pl-5 text-sm font-bold leading-6">
+              <li>Official ŠVP alignment</li>
+              <li>Account analytics</li>
+              <li>Diagnostics or mastery</li>
+              <li>Multi-device sync</li>
+              <li>Teacher or classroom workflows</li>
+            </ul>
+          </article>
+        </section>
       </div>
     </main>
   );

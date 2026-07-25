@@ -59,6 +59,12 @@ Internal maintenance pages may link to each other. For example, `/internal/previ
 
 Internal maintenance routes must not be added to public, child, or parent navigation.
 
+## Route Inventory And First-Run Links
+
+See `docs/mvp-route-inventory.md` for the current public, parent, and internal route boundary.
+
+First-run and continue CTAs must point only to lessons in the active preview path. Draft paths must not appear in continue CTAs. CTAs must not point to internal routes or curriculum modules without a visible preview lesson.
+
 MVP smoke test statuses do not imply official curriculum verification.
 
 ## Copy Localization

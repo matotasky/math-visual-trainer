@@ -42,6 +42,10 @@ export function LocalChildProfileSetup() {
   }
 
   const showForm = editing || !profile;
+  const localOnlyNoteId = "local-child-profile-note";
+  const nicknameInputId = "local-child-profile-nickname";
+  const gradeInputId = "local-child-profile-grade";
+  const gradeHintId = "local-child-profile-grade-hint";
 
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -66,6 +70,7 @@ export function LocalChildProfileSetup() {
               className="min-h-11 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 transition hover:bg-slate-50"
               onClick={handleEdit}
               type="button"
+              aria-label="Upraviť lokálny profil dieťaťa"
             >
               Upraviť
             </button>
@@ -73,6 +78,7 @@ export function LocalChildProfileSetup() {
               className="min-h-11 rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-black text-rose-700 transition hover:bg-rose-50"
               onClick={handleClear}
               type="button"
+              aria-label="Vymazať lokálny profil dieťaťa"
             >
               Vymazať lokálny profil
             </button>
@@ -80,22 +86,30 @@ export function LocalChildProfileSetup() {
         </div>
       ) : (
         <div className="mt-5 grid gap-4">
-          <label className="grid gap-2 text-sm font-black text-slate-800">
-            Meno alebo prezývka
+          <div className="grid gap-2">
+            <label className="text-sm font-black text-slate-800" htmlFor={nicknameInputId}>
+              Meno alebo prezývka
+            </label>
             <input
+              aria-describedby={localOnlyNoteId}
               className="min-h-12 rounded-xl border border-slate-300 bg-white px-4 py-2 text-base font-semibold text-slate-950 outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+              id={nicknameInputId}
               maxLength={32}
               onChange={(event) => setNickname(event.target.value)}
               placeholder="Dieťa"
               type="text"
               value={nickname}
             />
-          </label>
+          </div>
 
-          <label className="grid gap-2 text-sm font-black text-slate-800">
-            Ročník
+          <div className="grid gap-2">
+            <label className="text-sm font-black text-slate-800" htmlFor={gradeInputId}>
+              Ročník
+            </label>
             <select
+              aria-describedby={`${gradeHintId} ${localOnlyNoteId}`}
               className="min-h-12 rounded-xl border border-slate-300 bg-white px-4 py-2 text-base font-semibold text-slate-950 outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+              id={gradeInputId}
               onChange={(event) => setGrade(event.target.value as LocalChildProfile["grade"])}
               value={grade}
             >
@@ -105,7 +119,10 @@ export function LocalChildProfileSetup() {
                 </option>
               ))}
             </select>
-          </label>
+          </div>
+          <p className="text-sm font-semibold leading-6 text-slate-600" id={gradeHintId}>
+            Ročník je iba orientačný údaj. Neodomyká ani nezamyká lekcie.
+          </p>
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <button
@@ -125,7 +142,7 @@ export function LocalChildProfileSetup() {
               </button>
             ) : null}
           </div>
-          <p className="rounded-2xl border border-sky-200 bg-sky-50 p-3 text-sm font-bold leading-6 text-sky-950">
+          <p className="rounded-2xl border border-sky-200 bg-sky-50 p-3 text-sm font-bold leading-6 text-sky-950" id={localOnlyNoteId}>
             Tento profil nie je účet a neposiela sa na server.
           </p>
         </div>

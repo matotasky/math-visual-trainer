@@ -34,7 +34,7 @@ export function PreviewContinueCard() {
     progress.completedCount === 0
       ? "Začni prvou ukážkovou lekciou."
       : progress.isComplete
-        ? "Cestu si môžeš zopakovať od začiatku."
+        ? "Ukážkovú cestu máš dokončenú. Môžeš si ju zopakovať od začiatku."
         : "Ďalší odporúčaný krok je pripravený.";
 
   return (
@@ -54,12 +54,14 @@ export function PreviewContinueCard() {
           <Link
             className="inline-flex min-h-12 items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white transition hover:bg-slate-800"
             href={progress.nextLessonHref}
+            aria-label={`Otvoriť odporúčanú lekciu: ${progress.nextLessonTitle}`}
           >
             {progress.completedCount === 0 ? "Začať" : progress.isComplete ? "Zopakovať" : "Pokračovať"}
           </Link>
           <Link
             className="inline-flex min-h-11 items-center justify-center rounded-xl border border-emerald-300 bg-white px-4 py-2 text-sm font-black text-emerald-900 transition hover:bg-emerald-100"
             href="#preview-lesson-list"
+            aria-label="Pozrieť všetky lekcie v ukážkovej ceste"
           >
             Pozrieť lekcie
           </Link>

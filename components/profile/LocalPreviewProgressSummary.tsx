@@ -39,7 +39,7 @@ export function LocalPreviewProgressSummary() {
     progress.completedCount === 0
       ? "Začni prvou lekciou."
       : progress.isComplete
-        ? "Môžeš si cestu zopakovať od začiatku."
+        ? "Ukážková cesta je dokončená. Môžeš si ju zopakovať od začiatku."
         : "Pokračuj ďalšou odporúčanou lekciou.";
   const buttonLabel =
     progress.completedCount === 0
@@ -50,9 +50,9 @@ export function LocalPreviewProgressSummary() {
 
   return (
     <section className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
-      <p className="text-sm font-black uppercase text-emerald-800">Lokálny progres</p>
+      <p className="text-sm font-black uppercase text-emerald-800">Pokračovanie v ukážke</p>
       <h2 className="mt-2 text-3xl font-black text-slate-950">
-        {progress.completedCount} / {progress.totalCount}
+        {progress.completedCount} / {progress.totalCount} lekcií
       </h2>
       <p className="mt-2 text-sm font-bold leading-6 text-emerald-950">
         {profile ? `${profile.nickname}: ` : ""}
@@ -65,12 +65,14 @@ export function LocalPreviewProgressSummary() {
         <Link
           className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white transition hover:bg-slate-800 sm:w-fit"
           href={progress.nextLessonHref}
+          aria-label={`Otvoriť ďalšiu ukážkovú lekciu: ${progress.nextLessonTitle}`}
         >
           {buttonLabel}
         </Link>
         <Link
           className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-emerald-300 bg-white px-5 py-3 text-sm font-black text-emerald-900 transition hover:bg-emerald-100 sm:w-fit"
           href="/child/curriculum"
+          aria-label="Otvoriť celú ukážkovú cestu"
         >
           Otvoriť celú cestu
         </Link>
