@@ -726,7 +726,9 @@ The five child preview lessons use a shared lesson shell and shared completion s
 
 The shell is UI-only. It provides the friendly header, local-only/no-pressure wording, parent tip area, concept badges, back link, and page footer.
 
-Visual helper components under `components/curriculum/visuals` are presentational only. They do not hold state, write progress, score answers, or connect to Firestore.
+Visual helpers are currently local presentational helpers inside the preview lesson components. They do not hold state, write progress, score answers, or connect to Firestore.
+
+If helpers are extracted later, they must remain presentational. Do not create `components/curriculum/visuals` unless it is useful in a later refactor.
 
 Completion remains local-only and explicit inside each mini-lesson component. The shell and visual helpers do not write progress automatically.
 

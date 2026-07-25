@@ -55,6 +55,12 @@ Do not let this route change the selected preview path in `/child/curriculum`.
 
 Do not add `/internal/preview-paths` to public, child, or parent MVP navigation. Child-facing MVP pages should only link to active preview experiences.
 
+Internal maintenance pages may link to each other. For example, `/internal/preview-paths` may link to `/internal/mvp-smoke-test`.
+
+Internal maintenance routes must not be added to public, child, or parent navigation.
+
+MVP smoke test statuses do not imply official curriculum verification.
+
 ## Copy Localization
 
 - Every path needs Slovak and English title and description.

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { previewLearningPaths } from "@/data/curriculum/sk-math/preview-paths";
 import { validatePreviewLearningPaths } from "@/lib/curriculum/preview-path-validation";
 
@@ -58,6 +59,12 @@ export default function PreviewPathsPage() {
             Read-only developer overview. This page does not change child progress, diagnostics, mastery,
             Firestore, or dashboard data.
           </p>
+          <Link
+            className="mt-4 inline-flex min-h-10 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 transition hover:border-sky-300 hover:bg-sky-50"
+            href="/internal/mvp-smoke-test"
+          >
+            Open MVP smoke test checklist
+          </Link>
         </div>
 
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">

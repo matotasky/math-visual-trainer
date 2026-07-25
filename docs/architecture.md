@@ -86,6 +86,16 @@ The dashboard must not load all attempts. Attempts are append-only details. Aggr
 
 Realtime listeners are not used by default. One-time reads are preferred for dashboard screens. Detailed attempts must be paginated.
 
+## Local MVP Runtime Boundaries
+
+The local child profile is `localStorage` only. It stores a browser-local nickname and grade hint for MVP testing and does not create account data.
+
+Preview lesson completion is also `localStorage` only. It is a browser-local convenience for the child preview path, not diagnostic scoring, mastery, or account progress.
+
+Internal launch and smoke-test pages are read-only. They may list routes, statuses, validation notes, and maintenance warnings, but they must not write to Firestore or browser storage.
+
+No new backend writes, Firestore collections, diagnostic scoring, mastery updates, attempts, sessions, aggregates, or dashboard writes should be introduced before an explicit product decision.
+
 ## Future-Ready Decisions
 
 - `parentChildLinks` supports future child accounts and shared guardians.

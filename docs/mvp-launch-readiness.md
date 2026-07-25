@@ -43,6 +43,16 @@ Smoke test notes:
 - Confirm `/parent` can show, edit, and clear the same browser-local profile.
 - Confirm `/child/curriculum` still works without a profile.
 
+## MVP Smoke Test Page
+
+`/internal/mvp-smoke-test` is a read-only manual launch checklist for developer/product review.
+
+It lists launch routes and readiness statuses, including ready, manual check, and blocked items.
+
+The page does not write data and does not change local child profile, preview progress, Firestore, diagnostics, mastery, attempts, sessions, aggregates, dashboard data, or account progress.
+
+It must not be shown as child-facing UI and must not be linked from public, child, or parent navigation.
+
 ## Not Yet Production-Grade
 
 - The local preview path is not a full curriculum product.
